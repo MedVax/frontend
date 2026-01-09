@@ -5,7 +5,7 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import { Box, CircularProgress } from "@mui/material";
-import { lightTheme } from "@/configs/theme";
+import theme from "@/configs/theme";
 import { ReduxProvider } from "./ReduxProvider";
 import { SnackbarCloseButton } from "@/common/snackbar-close-button";
 
@@ -27,7 +27,7 @@ function LoadingFallback() {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ReduxProvider>
-      <MuiThemeProvider theme={lightTheme}>
+      <MuiThemeProvider theme={theme}>
         <CssBaseline />
         <SnackbarProvider
           maxSnack={3}

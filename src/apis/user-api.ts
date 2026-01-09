@@ -213,12 +213,7 @@ const userApi = medvaxApi.injectEndpoints({
         method: "PUT",
         ...config,
       }),
-      invalidatesTags: [
-        RtkqTag.USER,
-        RtkqTag.AGENT,
-        RtkqTag.ADMIN,
-        RtkqTag.ORGANIZATION,
-      ],
+      invalidatesTags: [RtkqTag.USER],
     }),
   }),
 });
