@@ -1,0 +1,11 @@
+.EmptyContent {
+  @apply flex flex-col items-center justify-center py-8 sticky left-0 right-0;
+}
+.EmptyContent__icon {
+  @apply text-primary-light;
+  font-size: 50px;
+}
+
+.EmptyContent__text {
+  @apply text-primary-light;
+}

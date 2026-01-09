@@ -1,0 +1,11 @@
+export const USER = "USER";
+export const AUTH = "AUTH";
+export const AGENT = "AGENT";
+export const ADMIN = "ADMIN";
+export const ORGANIZATION = "ORGANIZATION";
+export const PRODUCT = "PRODUCT";
+export const CART = "CART";
+export const ORDER = "ORDER";
+export const PRESCRIPTION = "PRESCRIPTION";
+export const PHARMACY = "PHARMACY";
+export const CATEGORY = "CATEGORY";
