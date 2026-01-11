@@ -76,7 +76,7 @@ export function Header() {
             <Box className="flex items-center gap-2">
               <Box
                 component="img"
-                src="/logo.svg"
+                src="/assets/logo.svg"
                 alt="MedVax Logo"
                 sx={{ width: 25.13, height: 29.15 }}
                 onError={(e) => {

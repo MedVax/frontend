@@ -1,65 +1,66 @@
-'use client';
+"use client";
 
-import { Box } from '@mui/material';
-import { DM_Sans } from 'next/font/google';
+import { Box } from "@mui/material";
+import { Icon } from "@iconify/react";
+import { DM_Sans } from "next/font/google";
 
 const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-dm-sans',
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-sans",
 });
 
-export function PartnersSection() {
-  const partnerLogos = [
-    'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=111&h=111&fit=crop',
-    'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=111&h=111&fit=crop',
-    'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=111&h=111&fit=crop',
-  ];
+interface PartnerLogo {
+  icon: string;
+  bgColor: string;
+  iconColor: string;
+}
 
+const partnerLogos: PartnerLogo[] = [
+  { icon: "mdi:hospital-building", bgColor: "#e0f2fe", iconColor: "#0ea5e9" },
+  { icon: "mdi:medical-bag", bgColor: "#fef3c7", iconColor: "#f59e0b" },
+  { icon: "mdi:pill", bgColor: "#dcfce7", iconColor: "#22c55e" },
+];
+
+export function PartnersSection() {
   return (
     <Box
       sx={{
-        backgroundColor: 'white',
-        borderRadius: '24px',
-        p: 5,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 7,
-        alignItems: 'center',
-        mb: 16,
+        backgroundColor: "white",
+        borderRadius: "24px",
+        py: 6,
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        alignItems: "center",
+        mb: 8,
       }}
     >
       <Box
         className={`${dmSans.variable} font-medium text-[30px] text-black text-center tracking-[-0.4px]`}
-        sx={{ fontFamily: 'var(--font-dm-sans)' }}
+        sx={{ fontFamily: "var(--font-dm-sans)" }}
       >
         Our partners
       </Box>
-      <Box className="flex gap-7">
-        {partnerLogos.map((logo, index) => (
+      <Box className="flex gap-6">
+        {partnerLogos.map((partner, index) => (
           <Box
             key={index}
             sx={{
-              width: 111,
-              height: 111,
-              borderRadius: '1108.89px',
-              backgroundColor: '#f3f4f6',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              p: 1.08,
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              backgroundColor: partner.bgColor,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <Box
-              component="img"
-              src={logo}
-              alt={`Partner ${index + 1}`}
-              sx={{
-                width: 79.52,
-                height: 79.52,
-                borderRadius: '999px',
-                objectFit: 'cover',
-              }}
+            <Icon
+              icon={partner.icon}
+              width={36}
+              height={36}
+              style={{ color: partner.iconColor }}
             />
           </Box>
         ))}
@@ -67,4 +68,3 @@ export function PartnersSection() {
     </Box>
   );
 }
-

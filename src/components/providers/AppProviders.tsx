@@ -5,7 +5,7 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import { Box, CircularProgress } from "@mui/material";
-import theme from "@/configs/theme";
+import { theme } from "@/theme";
 import { ReduxProvider } from "./ReduxProvider";
 import { SnackbarCloseButton } from "@/common/snackbar-close-button";
 

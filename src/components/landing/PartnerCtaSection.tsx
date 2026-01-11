@@ -1,62 +1,66 @@
-'use client';
+"use client";
 
-import { Box, Button } from '@mui/material';
-import { DM_Sans, Nunito } from 'next/font/google';
+import { Box, Button } from "@mui/material";
+import { DM_Sans, Nunito } from "next/font/google";
 
 const dmSans = DM_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-dm-sans',
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-sans",
 });
 
 const nunito = Nunito({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-nunito',
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-nunito",
 });
 
 export function PartnerCtaSection() {
   return (
     <Box
       sx={{
-        backgroundColor: 'white',
-        borderRadius: '24px',
-        p: 5,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 6,
-        alignItems: 'center',
-        justifyContent: 'center',
-        mb: 16,
+        backgroundColor: "white",
+        py: 8,
+        display: "flex",
+        flexDirection: "column",
+        gap: 5,
+        alignItems: "center",
+        justifyContent: "center",
+        mb: 10,
       }}
     >
-      <Box className="flex flex-col gap-3 items-center text-center w-[444px]">
+      <Box className="flex flex-col gap-3 items-center text-center max-w-[444px]">
         <Box
-          className={`${dmSans.variable} font-medium text-[30px] text-black tracking-[-0.4px]`}
-          sx={{ fontFamily: 'var(--font-dm-sans)' }}
+          className={`${dmSans.variable} font-medium text-[30px] text-black tracking-[-0.4px] leading-tight`}
+          sx={{ fontFamily: "var(--font-dm-sans)" }}
         >
-          Are You a Pharmacy, HMO, or Healthcare Partner?
+          Are You a Pharmacy, HMO, or
+          <br />
+          Healthcare Partner?
         </Box>
         <Box
           className={`${nunito.variable} font-normal text-base text-[#4b5563]`}
-          sx={{ fontFamily: 'var(--font-nunito)' }}
+          sx={{ fontFamily: "var(--font-nunito)" }}
         >
           Let Medvax power your medication access and delivery.
         </Box>
       </Box>
       <Button
         sx={{
-          backgroundColor: '#e91d74',
-          borderRadius: '84px',
+          backgroundColor: "transparent",
+          border: "2px solid #e91d74",
+          borderRadius: "84px",
           height: 48,
-          width: 290,
-          textTransform: 'none',
-          fontFamily: 'var(--font-nunito)',
+          px: 5,
+          textTransform: "none",
+          fontFamily: "var(--font-nunito)",
           fontWeight: 500,
           fontSize: 16,
-          color: 'white',
-          '&:hover': {
-            backgroundColor: '#c2185b',
+          color: "#e91d74",
+          boxShadow: "none",
+          "&:hover": {
+            backgroundColor: "#e91d74",
+            color: "white",
           },
         }}
       >
@@ -65,4 +69,3 @@ export function PartnerCtaSection() {
     </Box>
   );
 }
-

@@ -18,7 +18,7 @@ export default function LandingPage() {
     <Box className="bg-white min-h-screen w-full">
       <Header />
       <HeroSection />
-      <Box className="bg-white pt-[72px] pb-16">
+      <Box className="bg-white">
         <Container maxWidth="xl" className="px-12">
           <FeaturesSection />
           <BestSellingProducts />
