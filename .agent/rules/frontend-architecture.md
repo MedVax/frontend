@@ -5,7 +5,7 @@ trigger: always_on
 # Frontend Architecture
 
 This document defines the authoritative frontend architecture for this project.
-All code (human or AI-generated) must follow these rules.
+ALL CODE (HUMAN OR AI-GENERATED) MUST FOLLOW THESE RULES.
 
 ---
 
