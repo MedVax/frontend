@@ -1,24 +1,15 @@
 "use client";
 
 import { Box, Button, Container } from "@mui/material";
+import { Shell } from "../ui";
 
 export function HeroSection() {
   return (
-    <Box
-      sx={{
-        position: "relative",
-        width: "100%",
-        overflow: "hidden",
-        backgroundColor: "white",
-        pb: 10,
-      }}
-    >
-      <Container maxWidth="xl" className="px-12">
+    <Shell as="section">
+      <Container maxWidth="xl">
         <div className="flex items-start pt-16 gap-6">
-          {/* Left Content */}
           <div className="flex flex-col gap-10 w-[500px] pt-8">
             <div className="flex flex-col gap-6">
-              {/* Trusted Badge */}
               <div className="flex items-center gap-3">
                 <img
                   src="/assets/logo.svg"
@@ -30,7 +21,6 @@ export function HeroSection() {
                 </span>
               </div>
 
-              {/* Main Heading */}
               <div>
                 <h1 className="font-semibold leading-[1.08] text-[56px] tracking-[-2px] text-gray-900 font-[family-name:var(--font-nunito)]">
                   E-Pharmacy &<br />
@@ -128,6 +118,6 @@ export function HeroSection() {
           </div>
         </div>
       </Container>
-    </Box>
+    </Shell>
   );
 }

@@ -13,10 +13,10 @@ import { AltArrowDown, User, Magnifer } from "@solar-icons/react";
 import {
   CartButton,
   DropdownButton,
+  Link,
   Shell,
   WhatsAppButton,
 } from "@/components/ui";
-import Link from "next/link";
 
 const categoryMenuItems = [
   { label: "Category 1", href: "#category/health-wellness" },
@@ -37,13 +37,11 @@ const prescriptionMenuItems = [
 export function Header() {
   return (
     <>
-      {/* Main Header */}
       <AppBar
         position="static"
         elevation={0}
         sx={{
           backgroundColor: "white",
-          borderBottom: "1px solid #e5e7eb",
           px: 12,
           height: 96,
         }}
@@ -142,95 +140,52 @@ export function Header() {
       </AppBar>
 
       {/* Navigation Bar */}
-      <Box
-        sx={{
-          backgroundColor: "#111827",
-        }}
-      >
-        <Container sx={{ px: "0 !important" }} maxWidth="xl">
-          <Shell className="flex items-center gap-6 py-4">
-            <DropdownButton
-              label="Shop by category"
-              items={categoryMenuItems}
-              variant="dark"
-            />
+      <div className="bg-gray-900">
+        <Shell className="flex items-center gap-6 py-4">
+          <DropdownButton
+            label="Shop by category"
+            items={categoryMenuItems}
+            variant="dark"
+          />
 
-            <Link href="/consultation">
-              <Button
-                variant="text"
-                sx={{
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  },
-                }}
-              >
-                Consultation
-              </Button>
-            </Link>
+          <Link href="#/consultation">Consultation</Link>
 
-            <DropdownButton
-              label="Upload Prescription"
-              items={prescriptionMenuItems}
-              variant="dark"
-            />
+          <DropdownButton
+            label="Upload Prescription"
+            items={prescriptionMenuItems}
+            variant="dark"
+          />
 
-            <Button
-              sx={{
-                color: "white",
-                fontWeight: 500,
-                fontSize: 16,
-                letterSpacing: "-0.4px",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              Contact Us
-            </Button>
+          <Link href="#/contact">Contact Us</Link>
 
-            <Button
-              sx={{
-                color: "white",
-                fontWeight: 500,
-                fontSize: 16,
-                letterSpacing: "-0.4px",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                },
-              }}
-            >
-              About
-            </Button>
-          </Shell>
+          <Link href="#/about">About</Link>
+        </Shell>
 
-          {/* Category Dropdown Menu */}
-          <div className="bg-white shadow-sm">
-            <Shell className="flex items-center gap-6 py-5">
-              {[
-                "Health & Wellness",
-                "Mother & Child",
-                "Hair",
-                "Skin",
-                "Toiletries",
-                "Mens",
-                "Gum",
-                "Hot Details",
-              ].map((category) => (
-                <DropdownButton
+        <div className="bg-white shadow-sm shadow-black/4">
+          <Shell className="flex items-center gap-6 py-5">
+            {[
+              "Health & Wellness",
+              "Mother & Child",
+              "Hair",
+              "Skin",
+              "Toiletries",
+              "Mens",
+              "Gum",
+              "Hot Details",
+            ].map((category) => (
+              <DropdownButton
                 variant="light"
-                  key={category}
-                  label={category}
-                  items={[
-                    { label: "Subcategory 1", href: "#" },
-                    { label: "Subcategory 2", href: "#" },
-                  ]}
-                />
-              ))}
-            </Shell>
-          </div>
-        </Container>
-      </Box>
+                key={category}
+                label={category}
+                items={[
+                  { label: "Subcategory 1", href: "#" },
+                  { label: "Subcategory 2", href: "#" },
+                ]}
+              />
+            ))}
+          </Shell>
+        </div>
+      </div>
     </>
   );
 }

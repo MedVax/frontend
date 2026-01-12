@@ -43,6 +43,7 @@ export function DropdownButton({
           fontWeight: 500,
           fontSize: 16,
           letterSpacing: "-0.4px",
+          // borderRadius: "12px",
           "&:hover": {
             backgroundColor: "rgba(255, 255, 255, 0.1)",
           },
@@ -52,6 +53,7 @@ export function DropdownButton({
           fontWeight: 500,
           fontSize: 16,
           letterSpacing: "-0.4px",
+          // borderRadius: "12px",
           "&:hover": {
             backgroundColor: "rgba(233, 29, 116, 0.1)",
           },
