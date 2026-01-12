@@ -1,14 +1,6 @@
 "use client";
 
-import { Box } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { DM_Sans } from "next/font/google";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-sans",
-});
 
 interface PartnerLogo {
   icon: string;
@@ -17,44 +9,26 @@ interface PartnerLogo {
 }
 
 const partnerLogos: PartnerLogo[] = [
-  { icon: "mdi:hospital-building", bgColor: "#e0f2fe", iconColor: "#0ea5e9" },
-  { icon: "mdi:medical-bag", bgColor: "#fef3c7", iconColor: "#f59e0b" },
-  { icon: "mdi:pill", bgColor: "#dcfce7", iconColor: "#22c55e" },
+  {
+    icon: "mdi:hospital-building",
+    bgColor: "bg-sky-100",
+    iconColor: "#0ea5e9",
+  },
+  { icon: "mdi:medical-bag", bgColor: "bg-amber-100", iconColor: "#f59e0b" },
+  { icon: "mdi:pill", bgColor: "bg-green-100", iconColor: "#22c55e" },
 ];
 
 export function PartnersSection() {
   return (
-    <Box
-      sx={{
-        backgroundColor: "white",
-        borderRadius: "24px",
-        py: 6,
-        display: "flex",
-        flexDirection: "column",
-        gap: 6,
-        alignItems: "center",
-        mb: 8,
-      }}
-    >
-      <Box
-        className={`${dmSans.variable} font-medium text-[30px] text-black text-center tracking-[-0.4px]`}
-        sx={{ fontFamily: "var(--font-dm-sans)" }}
-      >
+    <section className="bg-white rounded-3xl py-6 flex flex-col gap-6 items-center mb-8">
+      <h2 className="font-medium text-[30px] text-black text-center tracking-[-0.4px] font-[family-name:var(--font-dm-sans)]">
         Our partners
-      </Box>
-      <Box className="flex gap-6">
+      </h2>
+      <div className="flex gap-6">
         {partnerLogos.map((partner, index) => (
-          <Box
+          <div
             key={index}
-            sx={{
-              width: 80,
-              height: 80,
-              borderRadius: "50%",
-              backgroundColor: partner.bgColor,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className={`w-20 h-20 rounded-full ${partner.bgColor} flex items-center justify-center`}
           >
             <Icon
               icon={partner.icon}
@@ -62,9 +36,9 @@ export function PartnersSection() {
               height={36}
               style={{ color: partner.iconColor }}
             />
-          </Box>
+          </div>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </section>
   );
 }

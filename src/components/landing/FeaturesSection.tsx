@@ -1,79 +1,54 @@
-'use client';
+"use client";
 
-import { Box, Grid } from '@mui/material';
-import { Icon } from '@iconify/react';
-import { Nunito } from 'next/font/google';
-
-const nunito = Nunito({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-nunito',
-});
+import { Icon } from "@iconify/react";
 
 const features = [
   {
-    icon: 'material-symbols:rocket-launch-outline',
-    title: 'Fast Delivery',
-    description: 'Get your medications delivered quickly, right when you need them.',
+    icon: "solar:rocket-2-bold",
+    title: "Fast Delivery",
+    description:
+      "Get your medications delivered quickly, right when you need them.",
   },
   {
-    icon: 'material-symbols:verified-user-outline',
-    title: 'Quality Service',
+    icon: "solar:shield-check-bold",
+    title: "Quality Service",
     description:
-      'Enjoy reliable support, verified products, and a seamless healthcare experience.',
+      "Enjoy reliable support, verified products, and a seamless healthcare experience.",
   },
   {
-    icon: 'material-symbols:favorite-outline',
-    title: 'Trusted Care',
+    icon: "solar:heart-bold",
+    title: "Trusted Care",
     description:
-      'Count on MedVax for safe handling, secure processes, and health solutions.',
+      "Count on MedVax for safe handling, secure processes, and health solutions.",
   },
 ];
 
 export function FeaturesSection() {
   return (
-    <Box className="flex gap-4 p-6 rounded-[24px] mb-16">
+    <section className="flex gap-4 py-6 rounded-3xl mb-16">
       {features.map((feature, index) => (
-        <Box
+        <div
           key={index}
-          className="flex-1 flex gap-4 items-center p-6 rounded-[24px]"
+          className="flex-1 flex gap-4 items-center p-6 rounded-3xl"
         >
-          <Box
-            sx={{
-              width: 64,
-              height: 64,
-              borderRadius: '99px',
-              backgroundColor: 'rgba(233, 29, 116, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
-            }}
-          >
+          <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
             <Icon
               icon={feature.icon}
               width={24}
               height={24}
-              style={{ color: '#e91d74' }}
+              className="text-[#e91d74]"
             />
-          </Box>
-          <Box className="flex-1 flex flex-col gap-2">
-            <Box
-              className={`${nunito.variable} font-medium text-xl text-black`}
-              sx={{ fontFamily: 'var(--font-nunito)' }}
-            >
+          </div>
+          <div className="flex-1 flex flex-col gap-2">
+            <h3 className="font-medium text-xl text-black font-[family-name:var(--font-nunito)]">
               {feature.title}
-            </Box>
-            <Box
-              className={`${nunito.variable} font-normal text-base text-[#4b5563]`}
-              sx={{ fontFamily: 'var(--font-nunito)' }}
-            >
+            </h3>
+            <p className="font-normal text-base text-gray-600 font-[family-name:var(--font-nunito)]">
               {feature.description}
-            </Box>
-          </Box>
-        </Box>
+            </p>
+          </div>
+        </div>
       ))}
-    </Box>
+    </section>
   );
 }
-

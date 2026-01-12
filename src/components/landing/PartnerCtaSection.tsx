@@ -1,50 +1,20 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
-import { DM_Sans, Nunito } from "next/font/google";
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-sans",
-});
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-nunito",
-});
+import { Button } from "@mui/material";
 
 export function PartnerCtaSection() {
   return (
-    <Box
-      sx={{
-        backgroundColor: "white",
-        py: 8,
-        display: "flex",
-        flexDirection: "column",
-        gap: 5,
-        alignItems: "center",
-        justifyContent: "center",
-        mb: 10,
-      }}
-    >
-      <Box className="flex flex-col gap-3 items-center text-center max-w-[444px]">
-        <Box
-          className={`${dmSans.variable} font-medium text-[30px] text-black tracking-[-0.4px] leading-tight`}
-          sx={{ fontFamily: "var(--font-dm-sans)" }}
-        >
+    <section className="bg-white py-8 flex flex-col gap-5 items-center justify-center mb-10">
+      <div className="flex flex-col gap-3 items-center text-center max-w-[444px]">
+        <h2 className="font-medium text-[30px] text-black tracking-[-0.4px] leading-tight font-[family-name:var(--font-dm-sans)]">
           Are You a Pharmacy, HMO, or
           <br />
           Healthcare Partner?
-        </Box>
-        <Box
-          className={`${nunito.variable} font-normal text-base text-[#4b5563]`}
-          sx={{ fontFamily: "var(--font-nunito)" }}
-        >
+        </h2>
+        <p className="font-normal text-base text-gray-600 font-[family-name:var(--font-nunito)]">
           Let Medvax power your medication access and delivery.
-        </Box>
-      </Box>
+        </p>
+      </div>
       <Button
         sx={{
           backgroundColor: "transparent",
@@ -66,6 +36,6 @@ export function PartnerCtaSection() {
       >
         Partner With Medvax Health
       </Button>
-    </Box>
+    </section>
   );
 }

@@ -15,10 +15,10 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <Box className="bg-white min-h-screen w-full">
+    <div className="bg-white min-h-screen w-full">
       <Header />
       <HeroSection />
-      <Box className="bg-white">
+      {/* <Box className="bg-white">
         <Container maxWidth="xl" className="px-12">
           <FeaturesSection />
           <BestSellingProducts />
@@ -29,8 +29,8 @@ export default function LandingPage() {
           <TestimonialsSection />
           <PartnerCtaSection />
         </Container>
-      </Box>
+      </Box> */}
       <Footer />
-    </Box>
+    </div>
   );
 }

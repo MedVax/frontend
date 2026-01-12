@@ -1,76 +1,30 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
-import { Nunito } from "next/font/google";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-nunito",
-});
+import { Button } from "@mui/material";
 
 export function CtaSection() {
   return (
-    <Box
-      sx={{
-        borderRadius: "24px",
-        position: "relative",
-        overflow: "hidden",
-        height: 500,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        mb: 16,
-      }}
-    >
+    <section className="rounded-3xl relative overflow-hidden h-[500px] flex flex-col items-center justify-center mb-16">
       {/* Background Image */}
-      <Box
-        component="img"
+      <img
         src="/assets/need-medication.png"
         alt="Need medication"
-        sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-        }}
+        className="absolute top-0 left-0 w-full h-full object-cover"
       />
 
       {/* Dark Overlay */}
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-        }}
-      />
+      <div className="absolute inset-0 bg-black/30" />
 
       {/* Content */}
-      <Box
-        className="flex flex-col gap-8 items-center relative z-10"
-        sx={{ maxWidth: 600 }}
-      >
-        <Box className="flex flex-col gap-4 items-center text-center text-white">
-          <Box
-            className={`${nunito.variable} font-semibold tracking-[-0.8px]`}
-            sx={{
-              fontFamily: "var(--font-nunito)",
-              fontSize: "48px",
-              lineHeight: 1.1,
-            }}
-          >
+      <div className="flex flex-col gap-8 items-center relative z-10 max-w-[600px]">
+        <div className="flex flex-col gap-4 items-center text-center text-white">
+          <h2 className="font-semibold text-5xl tracking-[-0.8px] leading-tight font-[family-name:var(--font-nunito)]">
             Need medication now?
-          </Box>
-          <Box
-            className={`${nunito.variable} font-medium text-xl tracking-[-0.4px] opacity-90`}
-            sx={{ fontFamily: "var(--font-nunito)" }}
-          >
+          </h2>
+          <p className="font-medium text-xl tracking-[-0.4px] opacity-90 font-[family-name:var(--font-nunito)]">
             Order, consult, or search — all in one place.
-          </Box>
-        </Box>
+          </p>
+        </div>
         <Button
           sx={{
             backgroundColor: "#e91d74",
@@ -90,7 +44,7 @@ export function CtaSection() {
         >
           Get Medication
         </Button>
-      </Box>
-    </Box>
+      </div>
+    </section>
   );
 }

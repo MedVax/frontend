@@ -1,22 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Nunito, DM_Sans } from "next/font/google";
 import { AppProviders } from "@/components/providers/AppProviders";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { nunito } from "@/configs/font";
+import { siteConfig } from "@/configs/site";
 
 export const metadata: Metadata = {
-  title: "MedVax - Healthcare Made Simple",
-  description:
-    "Your trusted online pharmacy for medications, healthcare products, and prescriptions",
+  title: siteConfig.title,
+  description: siteConfig.description,
 };
 
 export default function RootLayout({
@@ -27,7 +18,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${nunito.variable} antialiased`}
+        // style={{ fontFamily: "var(--font-nunito), sans-serif" }}
       >
         <AppProviders>{children}</AppProviders>
       </body>

@@ -1,51 +1,31 @@
 "use client";
 
-import { Box, Container, TextField, Button, Divider } from "@mui/material";
+import { Container, TextField, Button, Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { Nunito } from "next/font/google";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "800"],
-  variable: "--font-nunito",
-});
 
 export function Footer() {
   return (
-    <Box
-      sx={{
-        backgroundColor: "#f9fafb",
-        pt: 8,
-        pb: 6,
-      }}
-    >
+    <footer className="bg-gray-50 pt-8 pb-6">
       <Container maxWidth="xl" className="px-12">
-        <Box className="flex justify-between gap-8 mb-12">
+        <div className="flex justify-between gap-8 mb-12">
           {/* Logo */}
-          <Box className="flex items-start gap-2">
-            <Box
-              component="img"
+          <div className="flex items-start gap-2">
+            <img
               src="/assets/logo.svg"
               alt="MedVax Logo"
-              sx={{ width: 25, height: 29 }}
+              className="w-[25px] h-[29px]"
             />
-            <Box
-              className={`${nunito.variable} font-extrabold text-[22px] leading-[34px] tracking-[-0.57px] text-black`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+            <span className="font-extrabold text-[22px] leading-[34px] tracking-[-0.57px] text-black font-[family-name:var(--font-nunito)]">
               MedVax
-            </Box>
-          </Box>
+            </span>
+          </div>
 
           {/* MedVax Links */}
-          <Box className="flex flex-col gap-4">
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black opacity-50`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+          <div className="flex flex-col gap-4">
+            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
               MedVax
-            </Box>
-            <Box className="flex flex-col gap-3">
+            </span>
+            <div className="flex flex-col gap-3">
               {[
                 "Pharmacy",
                 "Consultation",
@@ -53,57 +33,50 @@ export function Footer() {
                 "Contact  Us",
                 "About Us",
               ].map((link) => (
-                <Box
+                <a
                   key={link}
-                  className={`${nunito.variable} font-medium text-base text-black cursor-pointer hover:text-[#e91d74] transition-colors`}
-                  sx={{ fontFamily: "var(--font-nunito)" }}
+                  href="#"
+                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors font-[family-name:var(--font-nunito)]"
                 >
                   {link}
-                </Box>
+                </a>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* Legal Links */}
-          <Box className="flex flex-col gap-4">
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black opacity-50`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+          <div className="flex flex-col gap-4">
+            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
               Legal
-            </Box>
-            <Box className="flex flex-col gap-3">
+            </span>
+            <div className="flex flex-col gap-3">
               {[
                 "Privacy Policy",
                 "Terms & Condition",
                 "Refund &\nDelivery Policy",
               ].map((link) => (
-                <Box
+                <a
                   key={link}
-                  className={`${nunito.variable} font-medium text-base text-black cursor-pointer hover:text-[#e91d74] transition-colors whitespace-pre-line`}
-                  sx={{ fontFamily: "var(--font-nunito)" }}
+                  href="#"
+                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors whitespace-pre-line font-[family-name:var(--font-nunito)]"
                 >
                   {link}
-                </Box>
+                </a>
               ))}
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* Social Media */}
-          <Box className="flex flex-col gap-4">
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black opacity-50`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+          <div className="flex flex-col gap-4">
+            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
               Social Media
-            </Box>
-            <Box className="flex gap-3 items-center">
+            </span>
+            <div className="flex gap-3 items-center">
               <Icon
                 icon="ri:instagram-fill"
                 width={20}
                 height={20}
-                className="cursor-pointer hover:opacity-70"
-                style={{ color: "#e91d74" }}
+                className="cursor-pointer hover:opacity-70 text-[#e91d74]"
               />
               <Icon
                 icon="ri:twitter-x-fill"
@@ -117,33 +90,24 @@ export function Footer() {
                 height={20}
                 className="cursor-pointer hover:opacity-70"
               />
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* Contact Us */}
-          <Box className="flex flex-col gap-4">
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black opacity-50`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+          <div className="flex flex-col gap-4">
+            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
               Contact Us
-            </Box>
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+            </span>
+            <span className="font-medium text-base text-black font-[family-name:var(--font-nunito)]">
               +234 812 383 4240
-            </Box>
-          </Box>
+            </span>
+          </div>
 
           {/* Newsletter */}
-          <Box className="flex flex-col gap-4 w-[280px]">
-            <Box
-              className={`${nunito.variable} font-medium text-base text-black opacity-50`}
-              sx={{ fontFamily: "var(--font-nunito)" }}
-            >
+          <div className="flex flex-col gap-4 w-[280px]">
+            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
               Subscribe to our Newsletter
-            </Box>
+            </span>
             <TextField
               placeholder="Enter email to sign up"
               variant="outlined"
@@ -188,22 +152,19 @@ export function Footer() {
             >
               Join newsletter
             </Button>
-          </Box>
-        </Box>
+          </div>
+        </div>
 
         {/* Divider */}
         <Divider sx={{ borderColor: "#e5e7eb" }} />
 
         {/* Copyright */}
-        <Box className="flex justify-start pt-6">
-          <Box
-            className={`${nunito.variable} font-normal text-base text-black`}
-            sx={{ fontFamily: "var(--font-nunito)" }}
-          >
+        <div className="flex justify-start pt-6">
+          <span className="font-normal text-base text-black font-[family-name:var(--font-nunito)]">
             © MexdVax 2025 | All Rights Reserved
-          </Box>
-        </Box>
+          </span>
+        </div>
       </Container>
-    </Box>
+    </footer>
   );
 }

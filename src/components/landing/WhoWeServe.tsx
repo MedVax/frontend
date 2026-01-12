@@ -1,14 +1,5 @@
 "use client";
 
-import { Box } from "@mui/material";
-import { Nunito } from "next/font/google";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-nunito",
-});
-
 const serveItems = [
   {
     title: "Individuals & Families",
@@ -31,79 +22,38 @@ const serveItems = [
 
 export function WhoWeServe() {
   return (
-    <Box className="flex flex-col items-center mb-20 gap-16">
-      <Box
-        className={`${nunito.variable} font-semibold text-4xl text-black text-center`}
-        sx={{ fontFamily: "var(--font-nunito)" }}
-      >
+    <section className="flex flex-col items-center mb-20 gap-16">
+      <h2 className="font-semibold text-4xl text-black text-center font-[family-name:var(--font-nunito)]">
         Who We Serve
-      </Box>
-      <Box className="flex gap-6 w-full">
+      </h2>
+      <div className="flex gap-6 w-full">
         {serveItems.map((item, index) => (
-          <Box
+          <div
             key={index}
-            sx={{
-              flex: 1,
-              height: 480,
-              borderRadius: "24px",
-              position: "relative",
-              overflow: "hidden",
-            }}
+            className="flex-1 h-[480px] rounded-3xl relative overflow-hidden"
           >
             {/* Background Image */}
-            <Box
-              component="img"
+            <img
               src={item.image}
               alt={item.title}
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
+              className="absolute top-0 left-0 w-full h-full object-cover"
             />
 
             {/* Gradient Overlay */}
-            <Box
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(to bottom, rgba(0,0,0,0) 30%, rgba(0,0,0,0.8) 100%)",
-              }}
-            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
 
             {/* Content */}
-            <Box
-              sx={{
-                position: "absolute",
-                bottom: 32,
-                left: 32,
-                right: 32,
-                display: "flex",
-                flexDirection: "column",
-                gap: 1.5,
-                color: "white",
-              }}
-            >
-              <Box
-                className={`${nunito.variable} font-semibold text-2xl`}
-                sx={{ fontFamily: "var(--font-nunito)" }}
-              >
+            <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-1.5 text-white">
+              <h3 className="font-semibold text-2xl font-[family-name:var(--font-nunito)]">
                 {item.title}
-              </Box>
-              <Box
-                className={`${nunito.variable} font-normal text-base opacity-90`}
-                sx={{ fontFamily: "var(--font-nunito)" }}
-              >
+              </h3>
+              <p className="font-normal text-base opacity-90 font-[family-name:var(--font-nunito)]">
                 {item.description}
-              </Box>
-            </Box>
-          </Box>
+              </p>
+            </div>
+          </div>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </section>
   );
 }

@@ -4,10 +4,10 @@ import { colors } from '../colors'
 export const MuiButton: Components<Theme>['MuiButton'] = {
     styleOverrides: {
         root: {
-            borderRadius: '9999px',
+            borderRadius: '84px',
             textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '0.875rem',
+            fontWeight: 500,
+            fontSize: '1rem',
             height: '48px',
             boxShadow: 'none',
             '&:hover': {

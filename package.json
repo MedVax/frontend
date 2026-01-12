@@ -22,6 +22,7 @@
     "@nestjs/schedule": "^6.1.0",
     "@nestjs/throttler": "^6.5.0",
     "@reduxjs/toolkit": "^2.11.2",
+    "@solar-icons/react": "^1.0.1",
     "axios": "^1.13.2",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",

@@ -1,13 +1,6 @@
 "use client";
 
 import { Box, Button, Container } from "@mui/material";
-import { Nunito } from "next/font/google";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-nunito",
-});
 
 export function HeroSection() {
   return (
@@ -21,65 +14,41 @@ export function HeroSection() {
       }}
     >
       <Container maxWidth="xl" className="px-12">
-        <Box className="flex items-start pt-16 gap-6">
+        <div className="flex items-start pt-16 gap-6">
           {/* Left Content */}
-          <Box className="flex flex-col gap-10 w-[500px] pt-8">
-            <Box className="flex flex-col gap-6">
+          <div className="flex flex-col gap-10 w-[500px] pt-8">
+            <div className="flex flex-col gap-6">
               {/* Trusted Badge */}
-              <Box className="flex items-center gap-3">
-                <Box
-                  component="img"
+              <div className="flex items-center gap-3">
+                <img
                   src="/assets/logo.svg"
                   alt="Trusted"
-                  sx={{ width: 16, height: 18 }}
+                  className="w-4 h-[18px]"
                 />
-                <Box
-                  className={`${nunito.variable} font-medium text-base text-black`}
-                  sx={{ fontFamily: "var(--font-nunito)" }}
-                >
+                <span className="font-medium text-base text-black font-[family-name:var(--font-nunito)]">
                   Trusted by 100k+ users
-                </Box>
-              </Box>
+                </span>
+              </div>
 
               {/* Main Heading */}
-              <Box>
-                <Box
-                  className={`${nunito.variable} font-semibold leading-[1.08]`}
-                  sx={{
-                    fontFamily: "var(--font-nunito)",
-                    fontSize: "56px",
-                    letterSpacing: "-2px",
-                    color: "#111827",
-                  }}
-                >
+              <div>
+                <h1 className="font-semibold leading-[1.08] text-[56px] tracking-[-2px] text-gray-900 font-[family-name:var(--font-nunito)]">
                   E-Pharmacy &<br />
                   Consultation{" "}
-                  <Box
-                    component="span"
-                    sx={{
-                      fontStyle: "italic",
-                      color: "#e91d74",
-                      fontWeight: 600,
-                    }}
-                  >
-                    made easy
-                  </Box>
-                </Box>
-              </Box>
+                  <span className="italic text-[#e91d74]">made easy</span>
+                </h1>
+              </div>
 
               {/* Description */}
-              <Box
-                className={`${nunito.variable} font-normal text-base text-[#4b5563]`}
-                sx={{ fontFamily: "var(--font-nunito)", maxWidth: 451 }}
-              >
+              <p className="font-normal text-base text-gray-600 max-w-[451px] font-[family-name:var(--font-nunito)]">
                 As a full-service pharmacy We connect people and healthcare
                 providers with quality medications and solutions that improve
                 health outcomes.
-              </Box>
-            </Box>
+              </p>
+            </div>
 
             {/* CTA Buttons */}
-            <Box className="flex items-start gap-3">
+            <div className="flex items-start gap-3">
               <Button
                 variant="contained"
                 sx={{
@@ -122,73 +91,42 @@ export function HeroSection() {
               >
                 Book Consultation
               </Button>
-            </Box>
-          </Box>
+            </div>
+          </div>
 
           {/* Right Images Grid */}
-          <Box className="flex gap-4 ml-auto">
+          <div className="flex gap-4 ml-auto">
             {/* Large left image - woman with baby */}
-            <Box
-              sx={{
-                width: 294,
-                height: 420,
-                borderRadius: "24px",
-                overflow: "hidden",
-                backgroundColor: "#f3f4f6",
-              }}
-            >
-              <Box
-                component="img"
+            <div className="w-[294px] h-[420px] rounded-3xl overflow-hidden bg-gray-100">
+              <img
                 src="/assets/woman-baby.png"
                 alt="Woman with baby"
-                sx={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                className="w-full h-full object-cover"
               />
-            </Box>
+            </div>
 
             {/* Right column with 2 images */}
-            <Box className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
               {/* Top image - healthcare professional */}
-              <Box
-                sx={{
-                  width: 249,
-                  height: 200,
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  backgroundColor: "#f3f4f6",
-                }}
-              >
-                <Box
-                  component="img"
+              <div className="w-[249px] h-[200px] rounded-3xl overflow-hidden bg-gray-100">
+                <img
                   src="/assets/nurse-caring-for-male-patient.png"
                   alt="Healthcare professional"
-                  sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  className="w-full h-full object-cover"
                 />
-              </Box>
+              </div>
 
               {/* Bottom image - medications/products */}
-              <Box
-                sx={{
-                  width: 249,
-                  height: 200,
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  backgroundColor: "#f3f4f6",
-                }}
-              >
-                <Box
-                  component="img"
+              <div className="w-[249px] h-[200px] rounded-3xl overflow-hidden bg-gray-100">
+                <img
                   src="/assets/medvax-e-pharmacy-inscription.png"
                   alt="Medications and products"
-                  sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  className="w-full h-full object-cover"
                 />
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+              </div>
+            </div>
+          </div>
+        </div>
       </Container>
     </Box>
   );
