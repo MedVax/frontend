@@ -1,5 +1,7 @@
 "use client";
 
+import { Shell } from "../ui";
+
 const serveItems = [
   {
     title: "Individuals & Families",
@@ -16,13 +18,17 @@ const serveItems = [
     title: "HMOs & Health Insurers",
     description:
       "Streamlined medication access for enrollees with improved efficiency, compliance, and data visibility.",
-    image: "/assets/support.png",
+        image: "/assets/who-we-serve.png",
   },
 ];
 
 export function WhoWeServe() {
   return (
-    <section className="flex flex-col items-center mb-20 gap-16">
+    <Shell
+      as="section"
+      id="who-we-serve"
+      className="flex flex-col items-center gap-20 sm:py-10"
+    >
       <h2 className="font-semibold text-4xl text-black text-center">
         Who We Serve
       </h2>
@@ -30,19 +36,16 @@ export function WhoWeServe() {
         {serveItems.map((item, index) => (
           <div
             key={index}
-            className="flex-1 h-[480px] rounded-3xl relative overflow-hidden"
+            className="flex-1 h-[480px] rounded-xl relative overflow-hidden"
           >
-            {/* Background Image */}
             <img
               src={item.image}
               alt={item.title}
               className="absolute top-0 left-0 w-full h-full object-cover"
             />
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
+            <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/80" />
 
-            {/* Content */}
             <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-1.5 text-white">
               <h3 className="font-semibold text-2xl">{item.title}</h3>
               <p className="font-normal text-base opacity-90">
@@ -52,6 +55,6 @@ export function WhoWeServe() {
           </div>
         ))}
       </div>
-    </section>
+    </Shell>
   );
 }

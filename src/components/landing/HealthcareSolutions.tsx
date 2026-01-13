@@ -5,8 +5,8 @@ import { Shell } from "../ui";
 
 export function HealthcareSolutions() {
   return (
-    <Shell as="section" className="flex flex-col items-center mb-16">
-      <h2 className="font-semibold text-4xl text-black text-center mb-12">
+    <Shell as="section" className="flex flex-col items-center">
+      <h2 className="font-semibold text-4xl text-black text-center">
         One-top healthcare
         <br />
         solutions provider
@@ -67,7 +67,7 @@ export function HealthcareSolutions() {
             <span className="font-semibold text-base text-gray-600">
               Chatbot
             </span>
-            <h3 className="font-medium text-4xl text-black tracking-[-0.8px]">
+            <h3 className="font-medium text-4xl text-black">
               Instant answers,
               <br />
               personalized support.
@@ -99,55 +99,12 @@ export function HealthcareSolutions() {
         </div>
 
         {/* Phone Mockup */}
-        <div className="w-[280px] h-[400px] relative bg-gray-100 rounded-[40px] border-8 border-gray-800 overflow-hidden shadow-2xl">
-          {/* Phone notch */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-6 bg-gray-800 rounded-b-2xl z-10" />
-
-          {/* Chat UI */}
-          <div className="p-4 pt-8 h-full bg-white">
-            {/* Bot message */}
-            <div className="mb-3">
-              <div className="bg-gray-100 rounded-2xl rounded-bl-sm p-3 max-w-[80%] text-xs">
-                Hello! How can I assist you today?
-              </div>
-              <span className="text-[10px] text-gray-400 mt-1 block">9:41</span>
-            </div>
-
-            {/* User message */}
-            <div className="mb-3 flex flex-col items-end">
-              <div className="bg-gradient-to-br from-pink-400 to-pink-600 text-white rounded-2xl rounded-br-sm p-3 max-w-[80%] text-xs">
-                Hi, I need to speak with a doctor
-              </div>
-              <span className="text-[10px] text-gray-400 mt-1">9:42</span>
-            </div>
-
-            {/* Bot response */}
-            <div className="mb-3">
-              <div className="bg-gray-100 rounded-2xl rounded-bl-sm p-3 max-w-[80%] text-xs">
-                Sure, I can help with that.
-                <br />
-                <br />
-                Please briefly describe your symptoms.
-              </div>
-              <span className="text-[10px] text-gray-400 mt-1 block">9:42</span>
-            </div>
-
-            {/* User message */}
-            <div className="mb-3 flex flex-col items-end">
-              <div className="bg-gradient-to-br from-pink-400 to-pink-600 text-white rounded-2xl rounded-br-sm p-3 max-w-[80%] text-xs">
-                I've had a cough and sore throat since yesterday
-              </div>
-              <span className="text-[10px] text-gray-400 mt-1">9:43</span>
-            </div>
-
-            {/* Bot response */}
-            <div>
-              <div className="bg-gray-100 rounded-2xl rounded-bl-sm p-3 max-w-[80%] text-xs">
-                I will connect you with a doctor. One moment please
-              </div>
-              <span className="text-[10px] text-gray-400 mt-1 block">9:44</span>
-            </div>
-          </div>
+        <div className="flex justify-center w-full">
+          <img
+            src="/assets/support.svg"
+            alt="Support"
+            className="w-full max-w-sm h-auto"
+          />
         </div>
       </div>
     </Shell>

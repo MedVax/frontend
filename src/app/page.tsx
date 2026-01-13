@@ -21,10 +21,10 @@ export default function LandingPage() {
       <FeaturesSection />
       <BestSellingProducts />
       <HealthcareSolutions />
-      {/* <WhoWeServe />
+      <WhoWeServe />
       <PartnersSection />
       <CtaSection />
-      <TestimonialsSection />
+      {/* <TestimonialsSection />
       <PartnerCtaSection /> */}
       <Footer />
     </div>
