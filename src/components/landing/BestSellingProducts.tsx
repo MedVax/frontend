@@ -87,7 +87,7 @@ export function BestSellingProducts() {
   }, [emblaApi, onSelect]);
 
   return (
-    <Shell as="section" className="flex flex-col items-center sm:py-10">
+    <Shell as="section" className="flex flex-col items-center">
       <div className="w-full relative">
         {/* Header */}
         <div className="flex items-center justify-between h-[76px] mb-11">

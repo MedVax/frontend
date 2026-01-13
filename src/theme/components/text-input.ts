@@ -79,7 +79,7 @@ export const MuiInputLabel: Components<Theme>['MuiInputLabel'] = {
             position: 'static',
             marginBottom: '8px',
             '&.Mui-focused': {
-                color: colors.gray[700],
+                color: colors.gray[200],
             },
         },
     },

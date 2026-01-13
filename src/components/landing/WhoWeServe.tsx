@@ -27,7 +27,7 @@ export function WhoWeServe() {
     <Shell
       as="section"
       id="who-we-serve"
-      className="flex flex-col items-center gap-20 sm:py-10"
+      className="flex flex-col items-center gap-20"
     >
       <h2 className="font-semibold text-4xl text-black text-center">
         Who We Serve

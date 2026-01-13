@@ -2,6 +2,7 @@
 
 import { Card, CardContent, Avatar } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { Shell } from "../ui";
 
 const testimonials = [
   {
@@ -32,7 +33,7 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="flex flex-col gap-2.5 mb-16">
+    <Shell className="flex flex-col gap-2.5 py-2" id="testimonials">
       <div
         className="flex gap-4 overflow-x-auto"
         style={{ scrollbarWidth: "none" }}
@@ -41,15 +42,14 @@ export function TestimonialsSection() {
           <Card
             key={index}
             sx={{
-              minWidth: 340,
-              borderRadius: "24px",
               border: "1px solid #e4e4e4",
-              boxShadow: "0px 4px 25px 0px rgba(0,0,0,0.07)",
+              filter: "drop-shadow(0px 4px 25px #00000012) !important",
+              boxShadow: "none",
+              p: 0,
             }}
           >
-            <CardContent sx={{ p: 3 }}>
+            <CardContent sx={{ p: 4 }}>
               <div className="flex flex-col gap-3">
-                {/* User Info */}
                 <div className="flex items-center gap-1.5">
                   <Avatar
                     sx={{
@@ -60,19 +60,19 @@ export function TestimonialsSection() {
                     }}
                   >
                     <Icon
-                      icon="solar:user-bold"
+                      icon="solar:users-group-rounded-linear"
                       width={11}
                       height={11}
                       className="text-gray-600"
                     />
                   </Avatar>
-                  <span className="font-medium text-sm text-black font-[family-name:var(--font-dm-sans)]">
+                  <span className="font-medium text-sm text-black">
                     {testimonial.name}
                   </span>
                 </div>
 
                 {/* Review Text */}
-                <p className="font-normal text-base text-gray-600 font-[family-name:var(--font-dm-sans)]">
+                <p className="font-normal text-base text-gray-600">
                   {testimonial.review}
                 </p>
 
@@ -93,6 +93,6 @@ export function TestimonialsSection() {
           </Card>
         ))}
       </div>
-    </section>
+    </Shell>
   );
 }

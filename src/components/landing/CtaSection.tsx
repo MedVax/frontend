@@ -5,8 +5,8 @@ import { Shell } from "../ui";
 
 export function CtaSection() {
   return (
-    <Shell id="cta" className="sm:py-10">
-      <section className="rounded-xl relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
+    <Shell as="section" id="cta">
+      <div className="rounded-xl relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
         <img
           src="/assets/need-medication.png"
           alt="Need medication"
@@ -24,7 +24,7 @@ export function CtaSection() {
           </div>
           <Button variant="contained">Get Medication</Button>
         </div>
-      </section>
+      </div>
     </Shell>
   );
 }

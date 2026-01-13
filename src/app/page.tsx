@@ -15,7 +15,7 @@ import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="bg-white min-h-screen w-full">
+    <div className="bg-white min-h-screen w-full space-y-10">
       <Header />
       <HeroSection />
       <FeaturesSection />
@@ -24,8 +24,8 @@ export default function LandingPage() {
       <WhoWeServe />
       <PartnersSection />
       <CtaSection />
-      {/* <TestimonialsSection />
-      <PartnerCtaSection /> */}
+      <TestimonialsSection />
+      <PartnerCtaSection />
       <Footer />
     </div>
   );

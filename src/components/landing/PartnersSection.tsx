@@ -1,5 +1,7 @@
 "use client";
 
+import { Shell } from "../ui";
+
 interface PartnerLogo {
   src: string;
 }
@@ -18,8 +20,8 @@ const partnerLogos: PartnerLogo[] = [
 
 export function PartnersSection() {
   return (
-    <section className="bg-white rounded-3xl py-6 flex flex-col gap-6 items-center mb-8">
-      <h2 className="font-medium text-[30px] text-black text-center tracking-[-0.4px]">
+    <Shell id="partners" className="bg-white rounded-3xl py-6 flex flex-col gap-6 items-center">
+      <h2 className="font-medium text-[30px] text-black text-center font-dm-sans">
         Our partners
       </h2>
       <div className="flex gap-6">
@@ -32,6 +34,6 @@ export function PartnersSection() {
           </div>
         ))}
       </div>
-    </section>
+    </Shell>
   );
 }

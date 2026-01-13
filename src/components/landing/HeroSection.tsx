@@ -5,7 +5,7 @@ import { Shell } from "../ui";
 
 export function HeroSection() {
   return (
-    <Shell as="section" className="px-32 hero sm:py-10" id="hero">
+    <Shell as="section" className="px-32 hero" id="hero">
       <div className="flex items-start pt-16 gap-6">
         <div className="flex flex-col gap-10 w-[500px] pt-8">
           <div className="flex flex-col gap-6">
