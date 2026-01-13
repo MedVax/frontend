@@ -4,10 +4,12 @@ import { colors } from '../colors'
 export const MuiCard: Components<Theme>['MuiCard'] = {
     styleOverrides: {
         root: {
-            borderRadius: '16px',
+            borderRadius: '24px',
             boxShadow: 'none',
-            backgroundColor: colors.base.white,
-            border: `1px solid ${colors.gray[200]}`,
+            backgroundColor: colors.gray[50],
+            border: '1px solid',
+            borderColor: colors.gray[200],
+            padding: 4
         },
     },
 }
@@ -15,10 +17,10 @@ export const MuiCard: Components<Theme>['MuiCard'] = {
 export const MuiCardContent: Components<Theme>['MuiCardContent'] = {
     styleOverrides: {
         root: {
-            padding: '24px',
-            '&:last-child': {
-                paddingBottom: '24px',
-            },
+            padding: 4,
+            // '&:last-child': {
+            //     paddingBottom: '24px',
+            // },
         },
     },
 }

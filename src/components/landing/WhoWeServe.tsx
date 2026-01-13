@@ -23,7 +23,7 @@ const serveItems = [
 export function WhoWeServe() {
   return (
     <section className="flex flex-col items-center mb-20 gap-16">
-      <h2 className="font-semibold text-4xl text-black text-center font-[family-name:var(--font-nunito)]">
+      <h2 className="font-semibold text-4xl text-black text-center">
         Who We Serve
       </h2>
       <div className="flex gap-6 w-full">
@@ -44,10 +44,8 @@ export function WhoWeServe() {
 
             {/* Content */}
             <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-1.5 text-white">
-              <h3 className="font-semibold text-2xl font-[family-name:var(--font-nunito)]">
-                {item.title}
-              </h3>
-              <p className="font-normal text-base opacity-90 font-[family-name:var(--font-nunito)]">
+              <h3 className="font-semibold text-2xl">{item.title}</h3>
+              <p className="font-normal text-base opacity-90">
                 {item.description}
               </p>
             </div>

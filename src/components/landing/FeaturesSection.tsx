@@ -1,22 +1,23 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import { Shell } from "../ui";
 
 const features = [
   {
-    icon: "solar:rocket-2-bold",
+    icon: "solar:rocket-linear",
     title: "Fast Delivery",
     description:
       "Get your medications delivered quickly, right when you need them.",
   },
   {
-    icon: "solar:shield-check-bold",
+    icon: "solar:shield-check-broken",
     title: "Quality Service",
     description:
       "Enjoy reliable support, verified products, and a seamless healthcare experience.",
   },
   {
-    icon: "solar:heart-bold",
+    icon: "solar:hand-heart-linear",
     title: "Trusted Care",
     description:
       "Count on MedVax for safe handling, secure processes, and health solutions.",
@@ -25,13 +26,13 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <section className="flex gap-4 py-6 rounded-3xl mb-16">
+    <Shell as="section" className="flex gap-4 sm:py-6">
       {features.map((feature, index) => (
         <div
           key={index}
-          className="flex-1 flex gap-4 items-center p-6 rounded-3xl"
+          className="flex-1 flex gap-4 items-center rounded-3xl"
         >
-          <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
             <Icon
               icon={feature.icon}
               width={24}
@@ -40,15 +41,15 @@ export function FeaturesSection() {
             />
           </div>
           <div className="flex-1 flex flex-col gap-2">
-            <h3 className="font-medium text-xl text-black font-[family-name:var(--font-nunito)]">
+            <h3 className="font-medium text-xl text-black">
               {feature.title}
             </h3>
-            <p className="font-normal text-base text-gray-600 font-[family-name:var(--font-nunito)]">
+            <p className="font-normal text-base text-gray-600">
               {feature.description}
             </p>
           </div>
         </div>
       ))}
-    </section>
+    </Shell>
   );
 }

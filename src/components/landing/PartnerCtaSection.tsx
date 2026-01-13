@@ -11,7 +11,7 @@ export function PartnerCtaSection() {
           <br />
           Healthcare Partner?
         </h2>
-        <p className="font-normal text-base text-gray-600 font-[family-name:var(--font-nunito)]">
+        <p className="font-normal text-base text-gray-600">
           Let Medvax power your medication access and delivery.
         </p>
       </div>

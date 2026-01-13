@@ -15,16 +15,14 @@ export function Footer() {
               alt="MedVax Logo"
               className="w-[25px] h-[29px]"
             />
-            <span className="font-extrabold text-[22px] leading-[34px] tracking-[-0.57px] text-black font-[family-name:var(--font-nunito)]">
+            <span className="font-extrabold text-[22px] leading-[34px] tracking-[-0.57px] text-black">
               MedVax
             </span>
           </div>
 
           {/* MedVax Links */}
           <div className="flex flex-col gap-4">
-            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
-              MedVax
-            </span>
+            <span className="font-medium text-base text-black/50">MedVax</span>
             <div className="flex flex-col gap-3">
               {[
                 "Pharmacy",
@@ -36,7 +34,7 @@ export function Footer() {
                 <a
                   key={link}
                   href="#"
-                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors font-[family-name:var(--font-nunito)]"
+                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors"
                 >
                   {link}
                 </a>
@@ -46,9 +44,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div className="flex flex-col gap-4">
-            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
-              Legal
-            </span>
+            <span className="font-medium text-base text-black/50">Legal</span>
             <div className="flex flex-col gap-3">
               {[
                 "Privacy Policy",
@@ -58,7 +54,7 @@ export function Footer() {
                 <a
                   key={link}
                   href="#"
-                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors whitespace-pre-line font-[family-name:var(--font-nunito)]"
+                  className="font-medium text-base text-black hover:text-[#e91d74] transition-colors whitespace-pre-line"
                 >
                   {link}
                 </a>
@@ -68,7 +64,7 @@ export function Footer() {
 
           {/* Social Media */}
           <div className="flex flex-col gap-4">
-            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
+            <span className="font-medium text-base text-black/50">
               Social Media
             </span>
             <div className="flex gap-3 items-center">
@@ -95,17 +91,17 @@ export function Footer() {
 
           {/* Contact Us */}
           <div className="flex flex-col gap-4">
-            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
+            <span className="font-medium text-base text-black/50">
               Contact Us
             </span>
-            <span className="font-medium text-base text-black font-[family-name:var(--font-nunito)]">
+            <span className="font-medium text-base text-black">
               +234 812 383 4240
             </span>
           </div>
 
           {/* Newsletter */}
           <div className="flex flex-col gap-4 w-[280px]">
-            <span className="font-medium text-base text-black/50 font-[family-name:var(--font-nunito)]">
+            <span className="font-medium text-base text-black/50">
               Subscribe to our Newsletter
             </span>
             <TextField
@@ -160,7 +156,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="flex justify-start pt-6">
-          <span className="font-normal text-base text-black font-[family-name:var(--font-nunito)]">
+          <span className="font-normal text-base text-black">
             © MexdVax 2025 | All Rights Reserved
           </span>
         </div>

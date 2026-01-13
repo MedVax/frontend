@@ -11,12 +11,20 @@ declare module '@mui/material/styles' {
             backdropBlur?: Record<string, string>
         }
     }
+
+    interface PaletteColor {
+        lighter?: string;
+    }
+    interface SimplePaletteColorOptions {
+        lighter?: string;
+    }
 }
 
 declare module '@mui/material/Button' {
     interface ButtonPropsVariantOverrides {
         ghost: true
         text: true
+        white: true
     }
 }
 

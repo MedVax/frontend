@@ -18,10 +18,10 @@ export function CtaSection() {
       {/* Content */}
       <div className="flex flex-col gap-8 items-center relative z-10 max-w-[600px]">
         <div className="flex flex-col gap-4 items-center text-center text-white">
-          <h2 className="font-semibold text-5xl tracking-[-0.8px] leading-tight font-[family-name:var(--font-nunito)]">
+          <h2 className="font-semibold text-5xl tracking-[-0.8px] leading-tight">
             Need medication now?
           </h2>
-          <p className="font-medium text-xl tracking-[-0.4px] opacity-90 font-[family-name:var(--font-nunito)]">
+          <p className="font-medium text-xl tracking-[-0.4px] opacity-90">
             Order, consult, or search — all in one place.
           </p>
         </div>

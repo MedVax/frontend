@@ -3,6 +3,7 @@ import { colors } from './colors'
 const palette = {
     primary: {
         light: '#F472B6',
+        lighter: '#FEF1F8',
         main: '#E91D74',
         dark: '#BE185D',
         contrastText: colors.base.white,

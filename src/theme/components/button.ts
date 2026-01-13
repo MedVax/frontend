@@ -62,5 +62,15 @@ export const MuiButton: Components<Theme>['MuiButton'] = {
                 },
             },
         },
+        {
+            props: { variant: 'white' },
+            style: {
+                backgroundColor: colors.base.white,
+                color: colors.gray[950],
+                '&:hover': {
+                    backgroundColor: colors.gray[100],
+                },
+            },
+        }
     ],
 }

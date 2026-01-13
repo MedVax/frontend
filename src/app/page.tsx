@@ -18,18 +18,14 @@ export default function LandingPage() {
     <div className="bg-white min-h-screen w-full">
       <Header />
       <HeroSection />
-      {/* <Box className="bg-white">
-        <Container maxWidth="xl" className="px-12">
-          <FeaturesSection />
-          <BestSellingProducts />
-          <HealthcareSolutions />
-          <WhoWeServe />
-          <PartnersSection />
-          <CtaSection />
-          <TestimonialsSection />
-          <PartnerCtaSection />
-        </Container>
-      </Box> */}
+      <FeaturesSection />
+      <BestSellingProducts />
+      <HealthcareSolutions />
+      {/* <WhoWeServe />
+      <PartnersSection />
+      <CtaSection />
+      <TestimonialsSection />
+      <PartnerCtaSection /> */}
       <Footer />
     </div>
   );

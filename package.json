@@ -26,6 +26,7 @@
     "axios": "^1.13.2",
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
+    "embla-carousel-react": "^8.6.0",
     "nestjs-cls": "^6.1.0",
     "nestjs-pino": "^4.5.0",
     "next": "16.1.1",
