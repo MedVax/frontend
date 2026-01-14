@@ -42,19 +42,18 @@ export function Header() {
         elevation={0}
         sx={{
           backgroundColor: "white",
-          px: 12,
-          height: 96,
+          px: 0,
+          py: 6,
+          my: 0,
         }}
       >
-        <Container maxWidth="xl">
+        <Shell>
           <Toolbar
             disableGutters
             sx={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              minHeight: "96px !important",
-              height: 96,
             }}
           >
             <div className="flex gap-6 items-center">
@@ -86,6 +85,10 @@ export function Header() {
                       border: "none",
                     },
                   },
+                  display: {
+                    xs: "none !important",
+                    md: "flex !important",
+                  },
                 }}
                 slotProps={{
                   input: {
@@ -112,7 +115,7 @@ export function Header() {
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-4">
+            <div className="sm:flex items-center gap-4 hidden">
               {/* My Account */}
               <Button
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full"
@@ -136,11 +139,11 @@ export function Header() {
               <WhatsAppButton />
             </div>
           </Toolbar>
-        </Container>
+        </Shell>
       </AppBar>
 
       {/* Navigation Bar */}
-      <div className="bg-gray-900">
+      <div className="bg-gray-900 hidden sm:block">
         <Shell className="flex items-center gap-6 py-4">
           <DropdownButton
             label="Shop by category"

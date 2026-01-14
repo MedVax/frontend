@@ -5,8 +5,8 @@ import { Shell } from "../ui";
 
 export function HeroSection() {
   return (
-    <Shell as="section" className="px-32 hero" id="hero">
-      <div className="flex items-start pt-16 gap-6">
+    <Shell as="section" className="sm:px-32 hero" id="hero">
+      <div className="flex sm:flex-row flex-col items-start pt-16 gap-6">
         <div className="flex flex-col gap-10 w-[500px] pt-8">
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export function HeroSection() {
         </div>
 
         <div className="flex gap-4 ml-auto">
-          <div className="w-[294px] h-[420px] rounded-xl overflow-hidden bg-gray-100">
+          <div className="sm:w-[294px] sm:h-[420px] w-full h-full rounded-xl overflow-hidden bg-gray-100">
             <img
               src="/assets/woman-baby.png"
               alt="Woman with baby"
@@ -54,7 +54,7 @@ export function HeroSection() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="w-[249px] h-[200px] rounded-xl overflow-hidden bg-gray-100">
+            <div className="sm:w-[249px] sm:h-[200px] w-full h-full rounded-xl overflow-hidden bg-gray-100">
               <img
                 src="/assets/nurse-caring-for-male-patient.png"
                 alt="Healthcare professional"
@@ -62,7 +62,7 @@ export function HeroSection() {
               />
             </div>
 
-            <div className="w-[249px] h-[200px] rounded-xl overflow-hidden bg-gray-100">
+            <div className="sm:w-[249px] sm:h-[200px] w-full h-full rounded-xl overflow-hidden bg-gray-100">
               <img
                 src="/assets/medvax-e-pharmacy-inscription.png"
                 alt="Medications and products"

@@ -9,6 +9,7 @@ import { opacity } from './opacity'
 import { components } from './components'
 
 export const theme = createTheme({
+    cssVariables: true,
     palette,
     typography,
     spacing: (factor: number) => spacing[factor] || spacing[0],

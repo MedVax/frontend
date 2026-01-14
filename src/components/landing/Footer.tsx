@@ -7,7 +7,7 @@ import { Shell } from "../ui";
 export function Footer() {
   return (
     <Shell id="footer" as="section" className="bg-gray-50 pt-12 pb-8">
-      <div className="flex justify-between gap-8 mb-12">
+      <div className="flex sm:flex-row flex-col justify-between gap-8 mb-12">
         {/* Logo */}
         <div className="flex items-start gap-2">
           <img

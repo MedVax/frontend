@@ -125,16 +125,16 @@ export function BestSellingProducts() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_calc(25%-18px)]"
+                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] md:flex-[0_0_calc(25%-18px)]"
                 >
                   <Card>
                     <CardContent>
                       {/* Product Image */}
-                      <div className="relative w-full h-[259px] rounded-2xl bg-gray-50 mb-3 overflow-hidden">
+                      <div className="relative w-full rounded-2xl bg-gray-50 mb-3 overflow-hidden flex items-center justify-center">
                         <img
                           src={product.image}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          className="size-[203px] object-center"
                         />
                         {/* Wishlist Button */}
                         <IconButton
@@ -216,6 +216,7 @@ export function BestSellingProducts() {
             onClick={scrollPrev}
             disabled={!canScrollPrev}
             sx={{
+              display: { xs: "none", md: "flex" },
               position: "absolute",
               left: -24,
               top: "50%",
@@ -243,6 +244,7 @@ export function BestSellingProducts() {
             onClick={scrollNext}
             disabled={!canScrollNext}
             sx={{
+              display: { xs: "none", md: "flex" },
               position: "absolute",
               right: -24,
               top: "50%",

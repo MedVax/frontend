@@ -12,7 +12,7 @@ export function HealthcareSolutions() {
         solutions provider
       </h2>
 
-      <div className="flex gap-4 mb-4 w-full">
+      <div className="flex sm:flex-row flex-col gap-4 mb-4 w-full">
         <div className="flex-1 bg-gray-50 rounded-3xl p-10 flex flex-col gap-6">
           <div className="flex flex-col items-start w-full">
             <span className="font-semibold text-base text-gray-600 mb-2">

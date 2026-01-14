@@ -26,11 +26,11 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <Shell as="section" className="flex gap-4 sm:py-6" id="features">
+    <Shell as="section" className="flex sm:flex-row flex-col gap-4 sm:py-6" id="features">
       {features.map((feature, index) => (
         <div
           key={index}
-          className="flex-1 flex gap-4 items-center rounded-3xl"
+          className="flex-1 flex gap-4 items-center"
         >
           <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
             <Icon

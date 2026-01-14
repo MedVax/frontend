@@ -32,7 +32,7 @@ export function WhoWeServe() {
       <h2 className="font-semibold text-4xl text-black text-center">
         Who We Serve
       </h2>
-      <div className="flex gap-6 w-full">
+      <div className="flex sm:flex-row flex-col gap-6 w-full">
         {serveItems.map((item, index) => (
           <div
             key={index}

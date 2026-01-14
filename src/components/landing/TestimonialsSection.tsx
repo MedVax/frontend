@@ -35,7 +35,7 @@ export function TestimonialsSection() {
   return (
     <Shell className="flex flex-col gap-2.5 py-2" id="testimonials">
       <div
-        className="flex gap-4 overflow-x-auto"
+        className="flex sm:flex-row flex-col gap-4 overflow-x-auto"
         style={{ scrollbarWidth: "none" }}
       >
         {testimonials.map((testimonial, index) => (
