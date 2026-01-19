@@ -52,13 +52,13 @@ function isAdminRoute(pathname: string): boolean {
 
 function isStaticAsset(pathname: string): boolean {
   return (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/static") ||
-    pathname.includes(".") // Files with extensions (images, etc.)
+    // Files with extensions (images, etc.)
+    (pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") || pathname.includes("."))
   );
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip middleware for static assets
