@@ -207,32 +207,21 @@ export function Header() {
                 onMouseEnter={() => setActiveMegaMenu(category.name)}
                 onMouseLeave={() => setActiveMegaMenu(null)}
               >
-                <button className="text-gray-600 hover:text-[#E91D74] font-medium text-base transition-colors duration-200 py-2 flex items-center gap-2">
+                <button className="text-gray-600 hover:text-gray-600/80 font-medium text-base transition-colors duration-200 py-2 flex items-center gap-2">
                   {category.name} <AltArrowDown size={12} />
                 </button>
                 {activeMegaMenu === category.name && (
-                  <div className="absolute left-0 top-full w-[491px] h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50 -ml-8">
+                  <div className="absolute left-0 top-full w-[591px] h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50 -ml-8">
                     <div className="max-w-[1200px] mx-auto px-8 py-10">
                       <div className="flex gap-12">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-6">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="24"
-                              height="24"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                            >
-                              <path
-                                d="M12 2L2 7L12 12L22 7L12 2Z"
-                                fill="#E91D74"
-                              />
-                              <path
-                                d="M2 17L12 22L22 17V12L12 17L2 12V17Z"
-                                fill="#E91D74"
-                              />
-                            </svg>
-                            <h3 className="text-lg font-semibold text-gray-900">
+                            <img
+                              src="/assets/logo.svg"
+                              alt="MedVax Logo"
+                              className="w-[13px] h-[16px]"
+                            />
+                            <h3 className="text-lg font-medium text-black">
                               Main Category
                             </h3>
                           </div>
@@ -241,7 +230,7 @@ export function Header() {
                               <a
                                 key={index}
                                 href="#"
-                                className="text-sm text-gray-600 hover:text-[#E91D74] transition-colors duration-200 py-1"
+                                className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
                               >
                                 Category 1
                               </a>
