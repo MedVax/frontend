@@ -9,6 +9,7 @@ import {
   InputAdornment,
   Container,
 } from "@mui/material";
+import { useState } from "react";
 import { AltArrowDown, User, Magnifer } from "@solar-icons/react";
 import {
   CartButton,
@@ -35,6 +36,8 @@ const prescriptionMenuItems = [
 ];
 
 export function Header() {
+  const [isHovered, setIsHovered] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
   return (
     <>
       <AppBar
@@ -143,7 +146,11 @@ export function Header() {
       </AppBar>
 
       {/* Navigation Bar */}
-      <div className="bg-gray-900 hidden sm:block">
+      <div
+        className="bg-gray-900 hidden sm:block relative"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <Shell className="flex items-center gap-6 py-4">
           <DropdownButton
             label="Shop by category"
@@ -164,27 +171,94 @@ export function Header() {
           <Link href="#/about">About</Link>
         </Shell>
 
-        <div className="bg-white shadow-sm shadow-black/4">
+        <div
+          className={`bg-white shadow-sm shadow-black/4 absolute left-0 w-full transition-all duration-300 ease-in-out ${
+            isHovered
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-0 invisible -translate-y-2"
+          }`}
+        >
           <Shell className="flex items-center gap-6 py-5">
             {[
-              "Health & Wellness",
-              "Mother & Child",
-              "Hair",
-              "Skin",
-              "Toiletries",
-              "Mens",
-              "Gum",
-              "Hot Details",
+              {
+                name: "Health & Wellness",
+                image: "/assets/category-mother-child.png",
+              },
+              {
+                name: "Mother & Child",
+                image: "/assets/category-mother-child.png",
+              },
+              { name: "Hair", image: "/assets/category-mother-child.png" },
+              { name: "Skin", image: "/assets/category-mother-child.png" },
+              {
+                name: "Toiletries",
+                image: "/assets/category-mother-child.png",
+              },
+              { name: "Mens", image: "/assets/category-mother-child.png" },
+              { name: "Gum", image: "/assets/category-mother-child.png" },
+              {
+                name: "Hot Details",
+                image: "/assets/category-mother-child.png",
+              },
             ].map((category) => (
-              <DropdownButton
-                variant="light"
-                key={category}
-                label={category}
-                items={[
-                  { label: "Subcategory 1", href: "#" },
-                  { label: "Subcategory 2", href: "#" },
-                ]}
-              />
+              <div
+                key={category.name}
+                className="relative group"
+                onMouseEnter={() => setActiveMegaMenu(category.name)}
+                onMouseLeave={() => setActiveMegaMenu(null)}
+              >
+                <button className="text-gray-600 hover:text-[#E91D74] font-medium text-base transition-colors duration-200 py-2 flex items-center gap-2">
+                  {category.name} <AltArrowDown size={12} />
+                </button>
+                {activeMegaMenu === category.name && (
+                  <div className="absolute left-0 top-full w-[491px] h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50 -ml-8">
+                    <div className="max-w-[1200px] mx-auto px-8 py-10">
+                      <div className="flex gap-12">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-6">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="24"
+                              height="24"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                            >
+                              <path
+                                d="M12 2L2 7L12 12L22 7L12 2Z"
+                                fill="#E91D74"
+                              />
+                              <path
+                                d="M2 17L12 22L22 17V12L12 17L2 12V17Z"
+                                fill="#E91D74"
+                              />
+                            </svg>
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Main Category
+                            </h3>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            {[...Array(4)].map((_, index) => (
+                              <a
+                                key={index}
+                                href="#"
+                                className="text-sm text-gray-600 hover:text-[#E91D74] transition-colors duration-200 py-1"
+                              >
+                                Category 1
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                        <div
+                          className="w-[273.68px] h-[185px] rounded-lg bg-gray-300 bg-center bg-contain bg-no-repeat"
+                          style={{
+                            backgroundImage: `url(${category.image})`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </Shell>
         </div>
