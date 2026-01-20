@@ -1,34 +1,37 @@
 "use client";
 
 import {
-  Box,
   AppBar,
   Toolbar,
   Button,
   TextField,
   InputAdornment,
+  Autocomplete,
   Container,
+  Menu,
+  MenuItem,
+  Divider,
+  Typography,
+  IconButton,
+  Badge,
+  ButtonBase,
+  useMediaQuery,
+  Popover,
 } from "@mui/material";
 import { useState } from "react";
-import { AltArrowDown, User, Magnifer } from "@solar-icons/react";
 import {
-  CartButton,
-  DropdownButton,
-  Link,
-  Shell,
-  WhatsAppButton,
-} from "@/components/ui";
-
-const categoryMenuItems = [
-  { label: "Category 1", href: "#category/health-wellness" },
-  { label: "Category 2", href: "#category/mother-child" },
-  { label: "Category 3", href: "#category/hair" },
-  { label: "Category 4", href: "#category/skin" },
-  { label: "Category 5", href: "#category/toiletries" },
-  { label: "Category 6", href: "#category/mens" },
-  { label: "Category 7", href: "#category/gum" },
-  { label: "Category 8", href: "#category/hot-details" },
-];
+  AltArrowDown,
+  User,
+  Magnifer,
+  Heart,
+  Shop,
+  CartLarge,
+} from "@solar-icons/react";
+import { DropdownButton, WhatsAppButton } from "@/components/ui";
+import { useRouter } from "next/navigation";
+import usePopover from "@/hooks/use-popover";
+import useAuthUser from "@/hooks/use-auth";
+import Link from "next/link";
 
 const prescriptionMenuItems = [
   { label: "Upload Prescription", href: "/prescription/upload" },
@@ -37,20 +40,122 @@ const prescriptionMenuItems = [
 
 export function Header() {
   const [isHovered, setIsHovered] = useState(false);
-  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+  const isSmallScreen = useMediaQuery(`(max-width:900px)`);
+
+  const router = useRouter();
+  const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
+
+  const navigationMenuItems = [
+    {
+      label: "Shop by category",
+      onClick: () => setIsHovered((prev) => !prev),
+      onMouseEnter: () => setIsHovered(true),
+    },
+    {
+      label: "Consultation",
+      icon: <></>,
+      onClick: () => router.push("/consultation"),
+    },
+    {
+      label: "Upload Prescription",
+      items: prescriptionMenuItems,
+    },
+    {
+      label: "Contact Us",
+      icon: <></>,
+      onClick: () => router.push("/contact"),
+    },
+    {
+      label: "About",
+      icon: <></>,
+      onClick: () => router.push("/about"),
+    },
+  ];
+
+  const categoryMenuItems = [
+    {
+      name: "Health & Wellness",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Mother & Child",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Hair",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Skin",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Toiletries",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Mens",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+    {
+      name: "Hot Details",
+      image: "/assets/category-mother-child.png",
+      subCategories: [
+        { name: "Category 1", href: "/category-1" },
+        { name: "Category 2", href: "/category-2" },
+        { name: "Category 3", href: "/category-3" },
+      ],
+    },
+  ];
+
+  console.log({ isSmallScreen });
+
   return (
     <>
       <AppBar
-        position="static"
+        position="sticky"
         elevation={0}
         sx={{
+          top: 0,
+          zIndex: 1000,
+          transition: "all 0.3s ease-in-out",
           backgroundColor: "white",
           px: 0,
-          py: 6,
+          py: 0,
           my: 0,
         }}
       >
-        <Shell>
+        <Container maxWidth="xl" className="sm:py-2 py-1 container mx-auto">
           <Toolbar
             disableGutters
             sx={{
@@ -69,189 +174,239 @@ export function Header() {
                 <span className="font-extrabold text-black">MedVax</span>
               </div>
               {/* Search Bar */}
-              <TextField
-                placeholder="Search medication"
-                variant="outlined"
-                size="small"
-                sx={{
-                  width: 420,
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: "99px",
-                    height: 48,
-                    backgroundColor: "white",
-                    border: "1.3px solid #e5e7eb",
-                    pr: 0.5,
-                    "& fieldset": {
-                      border: "none",
-                    },
-                    "&.Mui-focused fieldset": {
-                      border: "none",
-                    },
-                  },
-                  display: {
-                    xs: "none !important",
-                    md: "flex !important",
-                  },
-                }}
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Magnifer size={24} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Button
-                          variant="contained"
-                          sx={{
-                            minWidth: 106,
-                          }}
-                        >
-                          Search
-                        </Button>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
+
+              <div className="hidden sm:block">
+                <SearchBar />
+              </div>
             </div>
 
             {/* Right Actions */}
-            <div className="sm:flex items-center gap-4 hidden">
-              {/* My Account */}
-              <Button
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full"
-                sx={{
-                  backgroundColor: "#fef1f8",
-                  color: "#e91d74",
-                  fontWeight: 500,
-                  fontSize: 16,
-                  gap: 2,
-                  "&:hover": {
-                    backgroundColor: "#fce7f3",
-                  },
-                }}
-              >
-                <User size={20} />
-                My account
-                <AltArrowDown size={16} />
-              </Button>
-
-              <CartButton count={4} />
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:block">
+                <MyAccountButton />
+              </div>
+              <IconButton onClick={() => router.push("/cart")}>
+                <Badge badgeContent={1} color="primary">
+                  <CartLarge size={20} />
+                </Badge>
+              </IconButton>
               <WhatsAppButton />
             </div>
           </Toolbar>
-        </Shell>
-      </AppBar>
 
-      {/* Navigation Bar */}
-      <div
-        className="bg-gray-900 hidden sm:block relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <Shell className="flex items-center gap-6 py-4">
-          <DropdownButton
-            label="Shop by category"
-            items={categoryMenuItems}
-            variant="dark"
-          />
+          <div className="sm:hidden mb-1 flex justify-center">
+            <SearchBar />
+          </div>
+        </Container>
 
-          <Link href="#/consultation">Consultation</Link>
+        {/* Navigation Bar */}
+        <div className="bg-gray-900 relative ">
+          <div className="overflow-x-auto no-scrollbar flex justify-center">
+            <Container
+              maxWidth="xl"
+              className="flex items-center container gap-6 py-4 mx-auto no-scrollbar"
+            >
+              {navigationMenuItems.map((item) => (
+                <DropdownButton key={item.label} {...item} />
+              ))}
+            </Container>
+          </div>
 
-          <DropdownButton
-            label="Upload Prescription"
-            items={prescriptionMenuItems}
-            variant="dark"
-          />
+          {/* Category Menu */}
+          <div
+            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${
+              isHovered
+                ? "opacity-100 visible translate-y-0"
+                : "opacity-100 invisible -translate-y-2"
+            }`}
+            {...(isSmallScreen
+              ? {}
+              : { onMouseLeave: () => setIsHovered(false) })}
+          >
+            <Container
+              maxWidth="xl"
+              className="flex flex-wrap container gap-6 py-3 mx-auto"
+            >
+              {categoryMenuItems.map((category) => (
+                <div key={category.name} className="group">
+                  <ButtonBase
+                    component="button"
+                    // onClick={togglePopover}
+                    onMouseEnter={togglePopover}
+                    className="text-gray-600! text-nowrap hover:text-gray-600!/80 transition-colors duration-200 flex items-center gap-2"
+                  >
+                    {category.name} <AltArrowDown size={12} />
+                  </ButtonBase>
 
-          <Link href="#/contact">Contact Us</Link>
-
-          <Link href="#/about">About</Link>
-        </Shell>
-
-        <div
-          className={`bg-white shadow-sm shadow-black/4 absolute left-0 w-full transition-all duration-300 ease-in-out ${
-            isHovered
-              ? "opacity-100 visible translate-y-0"
-              : "opacity-0 invisible -translate-y-2"
-          }`}
-        >
-          <Shell className="flex items-center gap-6 py-5">
-            {[
-              {
-                name: "Health & Wellness",
-                image: "/assets/category-mother-child.png",
-              },
-              {
-                name: "Mother & Child",
-                image: "/assets/category-mother-child.png",
-              },
-              { name: "Hair", image: "/assets/category-mother-child.png" },
-              { name: "Skin", image: "/assets/category-mother-child.png" },
-              {
-                name: "Toiletries",
-                image: "/assets/category-mother-child.png",
-              },
-              { name: "Mens", image: "/assets/category-mother-child.png" },
-              { name: "Gum", image: "/assets/category-mother-child.png" },
-              {
-                name: "Hot Details",
-                image: "/assets/category-mother-child.png",
-              },
-            ].map((category) => (
-              <div
-                key={category.name}
-                className="relative group"
-                onMouseEnter={() => setActiveMegaMenu(category.name)}
-                onMouseLeave={() => setActiveMegaMenu(null)}
-              >
-                <button className="text-gray-600 hover:text-gray-600/80 font-medium text-base transition-colors duration-200 py-2 flex items-center gap-2">
-                  {category.name} <AltArrowDown size={12} />
-                </button>
-                {activeMegaMenu === category.name && (
-                  <div className="absolute left-0 top-full w-[591px] h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50 -ml-8">
-                    <div className="max-w-[1200px] mx-auto px-8 py-10">
-                      <div className="flex gap-12">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-6">
-                            <img
-                              src="/assets/logo.svg"
-                              alt="MedVax Logo"
-                              className="w-[13px] h-[16px]"
-                            />
-                            <h3 className="text-lg font-medium text-black">
-                              Main Category
-                            </h3>
+                  <Popover
+                    id="mega-menu-popover-"
+                    open={isOpen}
+                    anchorEl={anchorEl}
+                    onClose={() => setAnchorEl(null)}
+                    elevation={0}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                  >
+                    <div className="w-full max-w-[591px] h-fit sm:h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50">
+                      <div className="max-w-[1200px] mx-auto px-8 py-10">
+                        <div className="flex gap-12">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-6">
+                              <img
+                                src="/assets/logo.svg"
+                                alt="MedVax Logo"
+                                className="w-[13px] h-[16px]"
+                              />
+                              <h3 className="text-lg font-medium text-black">
+                                {category.name}
+                              </h3>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              {category.subCategories.map((subCategory) => (
+                                <Link
+                                  key={subCategory.name}
+                                  href={subCategory.href}
+                                  className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
+                                >
+                                  {subCategory.name}
+                                </Link>
+                              ))}
+                            </div>
                           </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            {[...Array(4)].map((_, index) => (
-                              <a
-                                key={index}
-                                href="#"
-                                className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
-                              >
-                                Category 1
-                              </a>
-                            ))}
-                          </div>
+                          <div
+                            className="w-[273.68px] h-[185px] rounded-lg bg-gray-300 bg-center bg-contain bg-no-repeat hidden sm:block"
+                            style={{
+                              backgroundImage: `url(${category.image})`,
+                            }}
+                          />
                         </div>
-                        <div
-                          className="w-[273.68px] h-[185px] rounded-lg bg-gray-300 bg-center bg-contain bg-no-repeat"
-                          style={{
-                            backgroundImage: `url(${category.image})`,
-                          }}
-                        />
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </Shell>
+                  </Popover>
+                </div>
+              ))}
+            </Container>
+          </div>
         </div>
-      </div>
+      </AppBar>
     </>
+  );
+}
+
+function MyAccountButton() {
+  const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
+
+  const router = useRouter();
+  const authUser = useAuthUser();
+  const isAuthenticated = !!authUser;
+
+  const items = [
+    { label: "My account", href: "/account", icon: <User size={20} /> },
+    { label: "orders", href: "/logout", icon: <Shop size={20} /> },
+    { label: "watchlist", href: "/logout", icon: <Heart size={20} /> },
+  ];
+  return (
+    <>
+      {isAuthenticated ? (
+        <Button
+          variant="soft"
+          onClick={togglePopover}
+          startIcon={<User size={20} />}
+          endIcon={<AltArrowDown size={16} />}
+        >
+          My account
+        </Button>
+      ) : (
+        <Button
+          variant="soft"
+          onClick={() => router.push("/signin")}
+          // startIcon={<User size={20} />}
+        >
+          Sign in
+        </Button>
+      )}
+      <Menu
+        anchorEl={anchorEl}
+        open={isOpen}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <div className="px-4 space-y-2 ">
+          <Typography variant="h6" noWrap className="capitalize">
+            {authUser?.user?.first_name} {authUser?.user?.last_name} sylvernus
+            akubo
+          </Typography>
+
+          <Typography variant="body1" noWrap className="pb-2">
+            {authUser?.user?.email} sylvernusakubo@gmail.com
+          </Typography>
+
+          <Divider />
+        </div>
+
+        {items?.map((item) => (
+          <MenuItem
+            key={item.label}
+            onClick={() => {
+              setAnchorEl(null);
+              router.push(item.href);
+            }}
+          >
+            <div className="flex items-center gap-2">
+              {item.icon}
+              <span className="text-sm font-medium text-gray-600">
+                {item.label}
+              </span>
+            </div>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
+
+function SearchBar() {
+  return (
+    <Autocomplete
+      disablePortal
+      id="search-medication"
+      sx={{
+        "& .MuiInputBase-root": {
+          paddingRight: "0 !important",
+        },
+      }}
+      className="max-w-[420px]"
+      options={[
+        { label: "Medication 1", value: "medication-1" },
+        { label: "Medication 2", value: "medication-2" },
+        { label: "Medication 3", value: "medication-3" },
+      ]}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder="Search medication"
+          variant="outlined"
+          size="small"
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Magnifer size={18} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button variant="contained" className="z-10">
+                    Search
+                  </Button>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      )}
+    />
   );
 }

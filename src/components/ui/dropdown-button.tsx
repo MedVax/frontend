@@ -1,30 +1,31 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useState, ReactNode, PropsWithChildren } from "react";
 import Link from "next/link";
-import { Button, Menu, MenuItem, SxProps, Theme } from "@mui/material";
+import { ButtonBase, ButtonBaseProps, Menu, MenuItem } from "@mui/material";
 import { AltArrowDown } from "@solar-icons/react";
+import clsx from "clsx";
 
 interface DropdownMenuItem {
   label: string;
   href: string;
 }
 
-interface DropdownButtonProps {
+interface DropdownButtonProps extends ButtonBaseProps {
   label: string;
-  items: DropdownMenuItem[];
-  variant?: "light" | "dark";
+  items?: DropdownMenuItem[];
+  onClick?: () => void;
   icon?: ReactNode;
-  sx?: SxProps<Theme>;
+  className?: string;
 }
 
 export function DropdownButton({
   label,
   items,
-  variant = "dark",
   icon,
-  sx,
-}: DropdownButtonProps) {
+  className,
+  ...props
+}: PropsWithChildren<DropdownButtonProps>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -36,52 +37,27 @@ export function DropdownButton({
     setAnchorEl(null);
   };
 
-  const baseStyles: SxProps<Theme> =
-    variant === "dark"
-      ? {
-          color: "white",
-          fontWeight: 500,
-          fontSize: 16,
-          letterSpacing: "-0.4px",
-          // borderRadius: "12px",
-          "&:hover": {
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
-          },
-        }
-      : {
-          color: "#4b5563",
-          fontWeight: 500,
-          fontSize: 16,
-          letterSpacing: "-0.4px",
-          // borderRadius: "12px",
-          "&:hover": {
-            backgroundColor: "rgba(233, 29, 116, 0.1)",
-          },
-        };
-
   return (
     <>
-      <Button
+      <ButtonBase
+        component="button"
         onClick={handleClick}
-        endIcon={
-          icon ?? (
-            <AltArrowDown
-              size={12}
-              color={variant === "dark" ? "white" : undefined}
-            />
-          )
-        }
-        sx={{ ...baseStyles, ...sx }}
+        disableRipple
+        className={clsx(
+          "flex items-center gap-1 font-medium text-white! whitespace-nowrap",
+          className
+        )}
+        {...props}
       >
-        {label}
-      </Button>
+        {label} {icon ?? <AltArrowDown size={18} color="common.white" />}
+      </ButtonBase>
       <Menu
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        {items.map((item) => (
+        {items?.map((item) => (
           <Link key={item.href} href={item.href}>
             <MenuItem onClick={handleClose}>
               <span className="text-sm font-medium text-gray-600">

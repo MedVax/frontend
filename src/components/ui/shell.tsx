@@ -13,10 +13,10 @@ export function Shell({
   ...props
 }: ShellProps) {
   return (
-    <Container sx={{ px: "0 !important" }} maxWidth="xl">
-      <Component className={`px-12 ${className}`} {...props}>
-        {children}
-      </Component>
+    <Container className="container mx-auto" maxWidth="xl">
+      {/* <Component className={`px-12 ${className}`} {...props}> */}
+      {children}
+      {/* </Component> */}
     </Container>
   );
 }

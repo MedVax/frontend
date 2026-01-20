@@ -1,13 +1,12 @@
 "use client";
 
 import { ReactNode, Suspense } from "react";
-import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { SnackbarProvider } from "notistack";
 import { Box, CircularProgress } from "@mui/material";
-import { theme } from "@/theme";
 import { ReduxProvider } from "./ReduxProvider";
 import { SnackbarCloseButton } from "@/common/snackbar-close-button";
+import { ThemeProvider } from "./ThemeProvider";
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -27,7 +26,7 @@ function LoadingFallback() {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <ReduxProvider>
-      <MuiThemeProvider theme={theme}>
+      <ThemeProvider>
         <CssBaseline />
         <SnackbarProvider
           maxSnack={3}
@@ -42,7 +41,7 @@ export function AppProviders({ children }: AppProvidersProps) {
         >
           <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
         </SnackbarProvider>
-      </MuiThemeProvider>
+      </ThemeProvider>
     </ReduxProvider>
   );
 }
