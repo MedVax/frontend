@@ -2,6 +2,7 @@
 
 import { Icon } from "@iconify/react";
 import { Shell } from "../ui";
+import { Typography } from "@mui/material";
 
 const features = [
   {
@@ -26,12 +27,13 @@ const features = [
 
 export function FeaturesSection() {
   return (
-    <Shell as="section" className="flex sm:flex-row flex-col gap-4 sm:py-6" id="features">
+    <Shell
+      component="section"
+      className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:py-6"
+      id="features"
+    >
       {features.map((feature, index) => (
-        <div
-          key={index}
-          className="flex-1 flex gap-4 items-center"
-        >
+        <div key={index} className="flex-1 flex gap-4 items-center">
           <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
             <Icon
               icon={feature.icon}
@@ -40,13 +42,13 @@ export function FeaturesSection() {
               className="text-[#e91d74]"
             />
           </div>
-          <div className="flex-1 flex flex-col gap-2">
-            <h3 className="font-medium text-xl text-black">
+          <div>
+            <Typography variant="h6" className="font-medium">
               {feature.title}
-            </h3>
-            <p className="font-normal text-base text-gray-600">
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
               {feature.description}
-            </p>
+            </Typography>
           </div>
         </div>
       ))}

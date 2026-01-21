@@ -32,6 +32,7 @@ import { useRouter } from "next/navigation";
 import usePopover from "@/hooks/use-popover";
 import useAuthUser from "@/hooks/use-auth";
 import Link from "next/link";
+import categoryApi from "@/apis/category-api";
 
 const prescriptionMenuItems = [
   { label: "Upload Prescription", href: "/prescription/upload" },
@@ -44,6 +45,13 @@ export function Header() {
 
   const router = useRouter();
   const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const getAllCategories = categoryApi.useGetCategoriesQuery({
+    params: {
+      includeSubcategories: false,
+      hierarchy: false,
+    },
+  });
 
   const navigationMenuItems = [
     {
@@ -72,73 +80,16 @@ export function Header() {
     },
   ];
 
-  const categoryMenuItems = [
-    {
-      name: "Health & Wellness",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Mother & Child",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Hair",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Skin",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Toiletries",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Mens",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-    {
-      name: "Hot Details",
-      image: "/assets/category-mother-child.png",
-      subCategories: [
-        { name: "Category 1", href: "/category-1" },
-        { name: "Category 2", href: "/category-2" },
-        { name: "Category 3", href: "/category-3" },
-      ],
-    },
-  ];
+  const categoryMenuItems = getAllCategories.data?.data?.map((category) => ({
+    name: category.name,
+    image: category.image,
+    subCategories: category.children?.map((child) => ({
+      name: child.name,
+      href: `/category/${child.slug}`,
+    })),
+  }));
 
-  console.log({ isSmallScreen });
+  console.log({ anchorEl });
 
   return (
     <>
@@ -221,70 +172,97 @@ export function Header() {
             }`}
             {...(isSmallScreen
               ? {}
-              : { onMouseLeave: () => setIsHovered(false) })}
+              : {
+                  onMouseLeave: () => {
+                    setIsHovered(false);
+                    setAnchorEl(null);
+                  },
+                })}
           >
             <Container
               maxWidth="xl"
               className="flex flex-wrap container gap-6 py-3 mx-auto"
             >
-              {categoryMenuItems.map((category) => (
-                <div key={category.name} className="group">
+              {categoryMenuItems?.map((category, index) => (
+                <div
+                  key={category.name}
+                  className="group"
+                  onMouseEnter={() => setActiveIndex(index)}
+                >
                   <ButtonBase
                     component="button"
                     // onClick={togglePopover}
-                    onMouseEnter={togglePopover}
+                    aria-owns={
+                      isOpen ? `mega-menu-popover-${index}` : undefined
+                    }
+                    onMouseEnter={(e: any) => {
+                      setActiveIndex(index);
+                      setAnchorEl(e.currentTarget);
+                    }}
                     className="text-gray-600! text-nowrap hover:text-gray-600!/80 transition-colors duration-200 flex items-center gap-2"
                   >
                     {category.name} <AltArrowDown size={12} />
                   </ButtonBase>
 
-                  <Popover
-                    id="mega-menu-popover-"
-                    open={isOpen}
-                    anchorEl={anchorEl}
-                    onClose={() => setAnchorEl(null)}
-                    elevation={0}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                  >
-                    <div className="w-full max-w-[591px] h-fit sm:h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50">
-                      <div className="max-w-[1200px] mx-auto px-8 py-10">
-                        <div className="flex gap-12">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-6">
-                              <img
-                                src="/assets/logo.svg"
-                                alt="MedVax Logo"
-                                className="w-[13px] h-[16px]"
-                              />
-                              <h3 className="text-lg font-medium text-black">
-                                {category.name}
-                              </h3>
+                  {index === activeIndex && (
+                    <Popover
+                      id={`mega-menu-popover-${index}`}
+                      open={isOpen}
+                      anchorEl={anchorEl}
+                      onClose={() => {
+                        setAnchorEl(null);
+                        setActiveIndex(null);
+                      }}
+                      elevation={0}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                    >
+                      <div
+                        onMouseLeave={() => {
+                          setAnchorEl(null);
+                          setActiveIndex(null);
+                        }}
+                        className="w-full max-w-[591px] h-fit sm:h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50"
+                      >
+                        <div className="max-w-[1200px] mx-auto px-8 py-10">
+                          <div className="flex gap-12">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-6">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src="/assets/logo.svg"
+                                  alt="MedVax Logo"
+                                  className="w-[13px] h-[16px]"
+                                />
+                                <h3 className="text-lg font-medium text-black">
+                                  {category.name}
+                                </h3>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                {category?.subCategories?.map((subCategory) => (
+                                  <Link
+                                    key={subCategory.name}
+                                    href={subCategory.href}
+                                    className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
+                                  >
+                                    {subCategory.name}
+                                  </Link>
+                                ))}
+                              </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              {category.subCategories.map((subCategory) => (
-                                <Link
-                                  key={subCategory.name}
-                                  href={subCategory.href}
-                                  className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
-                                >
-                                  {subCategory.name}
-                                </Link>
-                              ))}
-                            </div>
+                            <div
+                              className="w-[273.68px] h-[185px] rounded-lg bg-gray-300 bg-center bg-contain bg-no-repeat hidden sm:block"
+                              style={{
+                                backgroundImage: `url(${category.image})`,
+                              }}
+                            />
                           </div>
-                          <div
-                            className="w-[273.68px] h-[185px] rounded-lg bg-gray-300 bg-center bg-contain bg-no-repeat hidden sm:block"
-                            style={{
-                              backgroundImage: `url(${category.image})`,
-                            }}
-                          />
                         </div>
                       </div>
-                    </div>
-                  </Popover>
+                    </Popover>
+                  )}
                 </div>
               ))}
             </Container>

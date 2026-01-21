@@ -1,22 +1,20 @@
 import type { ReactNode, ElementType, HTMLAttributes } from "react";
-import { Container } from "@mui/material";
+import { Container, ContainerProps } from "@mui/material";
+import clsx from "clsx";
 
-interface ShellProps extends HTMLAttributes<HTMLElement> {
+interface ShellProps extends ContainerProps {
   children: ReactNode;
   as?: ElementType;
 }
 
-export function Shell({
-  children,
-  className = "",
-  as: Component = "div",
-  ...props
-}: ShellProps) {
+export function Shell({ children, className = "", ...props }: ShellProps) {
   return (
-    <Container className="container mx-auto" maxWidth="xl">
-      {/* <Component className={`px-12 ${className}`} {...props}> */}
+    <Container
+      className={clsx("container mx-auto", className)}
+      maxWidth="xl"
+      {...props}
+    >
       {children}
-      {/* </Component> */}
     </Container>
   );
 }

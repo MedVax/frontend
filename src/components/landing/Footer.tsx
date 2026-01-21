@@ -6,7 +6,11 @@ import { Shell } from "../ui";
 
 export function Footer() {
   return (
-    <Shell id="footer" as="section" className="bg-gray-50 pt-12 pb-8">
+    <Shell
+      id="footer"
+      component="section"
+      className="bg-gray-50 pt-12 pb-8 rounded-3xl mb-8"
+    >
       <div className="flex sm:flex-row flex-col justify-between gap-8 mb-12">
         {/* Logo */}
         <div className="flex items-start gap-2">
@@ -72,19 +76,19 @@ export function Footer() {
               icon="ri:instagram-fill"
               width={20}
               height={20}
-              className="cursor-pointer hover:opacity-70 text-primary-500"
+              className="cursor-pointer hover:opacity-70 text-[#E1306C]"
             />
             <Icon
               icon="ri:twitter-x-fill"
               width={16}
               height={16}
-              className="cursor-pointer hover:opacity-70"
+              className="cursor-pointer hover:opacity-70 text-[#000000]"
             />
             <Icon
               icon="ic:baseline-facebook"
               width={20}
               height={20}
-              className="cursor-pointer hover:opacity-70"
+              className="cursor-pointer hover:opacity-70 text-[#1877F2]"
             />
           </div>
         </div>

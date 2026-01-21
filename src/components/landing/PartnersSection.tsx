@@ -1,5 +1,6 @@
 "use client";
 
+import { Typography } from "@mui/material";
 import { Shell } from "../ui";
 
 interface PartnerLogo {
@@ -20,10 +21,13 @@ const partnerLogos: PartnerLogo[] = [
 
 export function PartnersSection() {
   return (
-    <Shell id="partners" className="bg-white rounded-3xl py-6 flex flex-col gap-6 items-center">
-      <h2 className="font-medium text-[30px] text-black text-center font-dm-sans">
+    <Shell
+      id="partners"
+      className="bg-white rounded-3xl flex flex-col gap-6 items-center mt-20"
+    >
+      <Typography variant="h4" className="font-semibold! text-center">
         Our partners
-      </h2>
+      </Typography>
       <div className="flex gap-6">
         {partnerLogos.map((partner, index) => (
           <div

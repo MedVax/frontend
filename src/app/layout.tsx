@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Nunito, DM_Sans } from "next/font/google";
 import { AppProviders } from "@/components/providers/AppProviders";
 import "./globals.css";
 import { nunito, dmSans } from "@/configs/font";
@@ -19,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${nunito.variable} ${dmSans.variable} antialiased`}
-        // style={{ fontFamily: "var(--font-nunito), sans-serif" }}
+        style={{ fontFamily: "var(--font-nunito), sans-serif" }}
       >
         <AppProviders>{children}</AppProviders>
       </body>

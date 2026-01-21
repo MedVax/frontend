@@ -1,5 +1,6 @@
 "use client";
 
+import { Typography } from "@mui/material";
 import { Shell } from "../ui";
 
 const serveItems = [
@@ -18,21 +19,17 @@ const serveItems = [
     title: "HMOs & Health Insurers",
     description:
       "Streamlined medication access for enrollees with improved efficiency, compliance, and data visibility.",
-        image: "/assets/who-we-serve.png",
+    image: "/assets/who-we-serve.png",
   },
 ];
 
 export function WhoWeServe() {
   return (
-    <Shell
-      as="section"
-      id="who-we-serve"
-      className="flex flex-col items-center gap-20"
-    >
-      <h2 className="font-semibold text-4xl text-black text-center">
+    <Shell component="section" id="who-we-serve" className="mt-20">
+      <Typography variant="h4" className="font-semibold! text-center">
         Who We Serve
-      </h2>
-      <div className="flex sm:flex-row flex-col gap-6 w-full">
+      </Typography>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full mt-8">
         {serveItems.map((item, index) => (
           <div
             key={index}
@@ -46,11 +43,13 @@ export function WhoWeServe() {
 
             <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/80" />
 
-            <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-1.5 text-white">
-              <h3 className="font-semibold text-2xl">{item.title}</h3>
-              <p className="font-normal text-base opacity-90">
+            <div className="absolute bottom-8 left-8 right-8 flex flex-col gap-1 text-white">
+              <Typography variant="h5" color="white" className="font-semibold!">
+                {item.title}
+              </Typography>
+              <Typography variant="body1" color="white" className="opacity-90">
                 {item.description}
-              </p>
+              </Typography>
             </div>
           </div>
         ))}

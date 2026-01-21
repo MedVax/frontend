@@ -63,7 +63,7 @@ export const theme = responsiveFontSizes(
     },
     typography: {
       fontFamily: ["Nunito", "sans-serif"].join(","),
-      fontSize: 12,
+      fontSize: 13,
       button: {
         textTransform: "none",
       },
@@ -240,7 +240,7 @@ export const theme = responsiveFontSizes(
                       theme.palette[color]?.main || theme.palette.grey[600],
                     backgroundColor: alpha(
                       theme.palette[color]?.main || theme.palette.grey[600],
-                      0.3
+                      0.2
                     ),
                     "&:hover": {
                       backgroundColor: alpha(

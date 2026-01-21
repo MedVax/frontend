@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
 
 export function CtaSection() {
   return (
-    <Shell as="section" id="cta">
-      <div className="rounded-xl relative overflow-hidden h-[500px] flex flex-col items-center justify-center">
+    <Shell component="section" id="cta">
+      <div className="rounded-xl relative overflow-hidden h-[500px] flex flex-col items-center justify-center mt-20">
         <img
           src="/assets/need-medication.png"
           alt="Need medication"
@@ -15,14 +15,14 @@ export function CtaSection() {
         <div className="absolute inset-0 bg-black/30" />
         <div className="flex flex-col gap-8 items-center relative z-10 max-w-[600px]">
           <div className="flex flex-col gap-4 items-center text-center text-white">
-            <h2 className="font-semibold text-5xl leading-tight">
+            <Typography variant="h3" color="white" className="font-semibold!">
               Need medication now?
-            </h2>
-            <p className="font-medium text-xl tracking-[-0.4px] opacity-90">
+            </Typography>
+            <Typography variant="body1" color="white" className="opacity-90">
               Order, consult, or search — all in one place.
-            </p>
+            </Typography>
           </div>
-          <Button variant="contained">Get Medication</Button>
+          <Button>Get Medication</Button>
         </div>
       </div>
     </Shell>

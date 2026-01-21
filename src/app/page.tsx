@@ -9,7 +9,6 @@ import { HealthcareSolutions } from "@/components/landing/HealthcareSolutions";
 import { WhoWeServe } from "@/components/landing/WhoWeServe";
 import { PartnersSection } from "@/components/landing/PartnersSection";
 import { CtaSection } from "@/components/landing/CtaSection";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { PartnerCtaSection } from "@/components/landing/PartnerCtaSection";
 import { Footer } from "@/components/landing/Footer";
 
@@ -24,7 +23,6 @@ export default function LandingPage() {
       <WhoWeServe />
       <PartnersSection />
       <CtaSection />
-      <TestimonialsSection />
       <PartnerCtaSection />
       <Footer />
     </div>
