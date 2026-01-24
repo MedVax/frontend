@@ -7,6 +7,6 @@
 }
 
 .ErrorContent__icon {
-  @apply text-text-secondary;
+  color: var(--text-secondary);
   font-size: 100px;
 }

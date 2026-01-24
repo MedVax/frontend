@@ -170,6 +170,10 @@ export const theme = responsiveFontSizes(
             props: { size: "medium" },
             style: () => ({ padding: "10px 16px" }),
           },
+          {
+            props: { size: "small" },
+            style: () => ({ padding: "5px 12px" }),
+          },
         ],
         styleOverrides: {
           root: ({ theme, ownerState }) => {
@@ -366,7 +370,7 @@ export const theme = responsiveFontSizes(
                     "& .MuiInputBase-root": {
                       backgroundColor: (theme.vars || theme).palette.common
                         .white,
-                      borderRadius: 99,
+                      borderRadius: 12,
 
                       "&.Mui-focused fieldset": {
                         borderColor: (theme.vars || theme).palette.grey[6],
@@ -390,11 +394,11 @@ export const theme = responsiveFontSizes(
               ...(ownerState.variant === "filled"
                 ? {
                     "& .MuiFilledInput-input": {
-                      borderRadius: 99,
+                      borderRadius: 12,
                     },
 
                     "& .MuiInputBase-root": {
-                      borderRadius: 8,
+                      borderRadius: 12,
                       paddingTop: ownerState.size === "small" ? 1 : 2,
                       paddingBottom: ownerState.size === "small" ? 1 : 2,
                     },

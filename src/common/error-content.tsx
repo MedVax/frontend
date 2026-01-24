@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, Typography } from "@mui/material";
 import clsx from "clsx";
 import "./error-content.css";

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import "tailwindcss" important;
 
 :root {
   --background: #ffffff;
@@ -10,14 +10,136 @@
   --primary-200: #fbcfe8;
   --primary-300: #f9a8d4;
   --primary-400: #f472b6;
-  --primary-500: #E91D74;
+  --primary-500: #e91d74;
   --primary-600: #db2777;
   --primary-700: #be185d;
   --primary-800: #9d174d;
   --primary-900: #831843;
   --primary-950: #500724;
+}
 
+@theme {
+  /* Content paths - defined via @source or default */
+  /* Colors - Grey scale */
+  --color-grey-1: var(--mui-palette-grey-1);
+  --color-grey-2: var(--mui-palette-grey-2);
+  --color-grey-3: var(--mui-palette-grey-3);
+  --color-grey-4: var(--mui-palette-grey-4);
+  --color-grey-5: var(--mui-palette-grey-5);
+  --color-grey-6: var(--mui-palette-grey-6);
+  --color-grey-7: var(--mui-palette-grey-7);
+  --color-grey-8: var(--mui-palette-grey-8);
+  --color-grey-9: var(--mui-palette-grey-9);
+  --color-grey-10: var(--mui-palette-grey-10);
+  --color-grey-11: var(--mui-palette-grey-11);
+  --color-grey-12: var(--mui-palette-grey-12);
+  --color-grey-50: var(--mui-palette-grey-50);
+  --color-grey-100: var(--mui-palette-grey-100);
+  --color-grey-200: var(--mui-palette-grey-200);
+  --color-grey-300: var(--mui-palette-grey-300);
+  --color-grey-400: var(--mui-palette-grey-400);
+  --color-grey-500: var(--mui-palette-grey-500);
+  --color-grey-600: var(--mui-palette-grey-600);
+  --color-grey-700: var(--mui-palette-grey-700);
+  --color-grey-800: var(--mui-palette-grey-800);
+  --color-grey-900: var(--mui-palette-grey-900);
+  --color-grey-A100: var(--mui-palette-grey-A100);
+  --color-grey-A200: var(--mui-palette-grey-A200);
+  --color-grey-A400: var(--mui-palette-grey-A400);
+  --color-grey-A700: var(--mui-palette-grey-A700);
 
+  /* Primary colors */
+  --color-primary-main: var(--mui-palette-primary-main);
+  --color-primary-light: var(--mui-palette-primary-light);
+  --color-primary-lighter: var(--mui-palette-primary-lighter);
+  --color-primary-dark: var(--mui-palette-primary-dark);
+  --color-primary-darker: var(--mui-palette-primary-darker);
+  --color-primary-contrastText: var(--mui-palette-primary-contrastText);
+
+  /* Secondary colors */
+  --color-secondary-main: var(--mui-palette-secondary-main);
+  --color-secondary-light: var(--mui-palette-secondary-light);
+  --color-secondary-lighter: var(--mui-palette-secondary-lighter);
+  --color-secondary-dark: var(--mui-palette-secondary-dark);
+  --color-secondary-darker: var(--mui-palette-secondary-darker);
+  --color-secondary-contrastText: var(--mui-palette-secondary-contrastText);
+  --color-secondary-tertiary: var(--mui-palette-secondary-tertiary);
+
+  /* Success colors */
+  --color-success-main: var(--mui-palette-success-main);
+  --color-success-light: var(--mui-palette-success-light);
+  --color-success-lighter: var(--mui-palette-success-lighter);
+  --color-success-dark: var(--mui-palette-success-dark);
+  --color-success-contrastText: var(--mui-palette-success-contrastText);
+
+  /* Info colors */
+  --color-info-main: var(--mui-palette-info-main);
+  --color-info-light: var(--mui-palette-info-light);
+  --color-info-lighter: var(--mui-palette-info-lighter);
+  --color-info-dark: var(--mui-palette-info-dark);
+  --color-info-contrastText: var(--mui-palette-info-contrastText);
+
+  /* Warning colors */
+  --color-warning-main: var(--mui-palette-warning-main);
+  --color-warning-light: var(--mui-palette-warning-light);
+  --color-warning-lighter: var(--mui-palette-warning-lighter);
+  --color-warning-dark: var(--mui-palette-warning-dark);
+  --color-warning-contrastText: var(--mui-palette-warning-contrastText);
+
+  /* Error colors */
+  --color-error-main: var(--mui-palette-error-main);
+  --color-error-light: var(--mui-palette-error-light);
+  --color-error-lighter: var(--mui-palette-error-lighter);
+  --color-error-dark: var(--mui-palette-error-dark);
+  --color-error-contrastText: var(--mui-palette-error-contrastText);
+
+  /* Common colors */
+  --color-common-black: var(--mui-palette-common-black);
+  --color-common-white: var(--mui-palette-common-white);
+
+  /* Text colors */
+  --color-text-primary: var(--mui-palette-text-primary);
+  --color-text-secondary: var(--mui-palette-text-secondary);
+  --color-text-disabled: var(--mui-palette-text-disabled);
+  --color-text-gray: #374151;
+  --color-text-light-gray: #4b5563;
+
+  /* Background colors */
+  --color-background-paper: var(--mui-palette-background-paper);
+  --color-background-default: var(--mui-palette-background-default);
+
+  /* Action colors */
+  --color-action-active: var(--mui-palette-action-active);
+  --color-action-hover: var(--mui-palette-action-hover);
+  --color-action-selected: var(--mui-palette-action-selected);
+  --color-action-disabled: var(--mui-palette-action-disabled);
+  --color-action-disabledBackground: var(
+    --mui-palette-action-disabledBackground
+  );
+  --color-action-focus: var(--mui-palette-action-focus);
+
+  /* Font Families */
+  --font-family-inherit: inherit;
+  --font-family-nunito: "Nunito", sans-serif;
+
+  /* Z-Index */
+  --z-index-mobileStepper: var(--mui-zIndex-mobileStepper);
+  --z-index-fab: var(--mui-zIndex-fab);
+  --z-index-speedDial: var(--mui-zIndex-speedDial);
+  --z-index-appBar: var(--mui-zIndex-appBar);
+  --z-index-drawer: var(--mui-zIndex-drawer);
+  --z-index-modal: var(--mui-zIndex-modal);
+  --z-index-snackbar: var(--mui-zIndex-snackbar);
+  --z-index-tooltip: var(--mui-zIndex-tooltip);
+
+  /* Border Radius */
+  --radius-40: 2.5rem;
+
+  /* Font Size */
+  --font-size-28: 1.75rem;
+
+  /* Max Width */
+  --max-width-small: 23.5rem;
 }
 
 @theme inline {
@@ -416,8 +538,59 @@ body {
 }
 
 .hero {
-  background-image: url('/assets/hero.svg');
+  background-image: url("/assets/hero.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 5px;
+  width: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 10px;
+  width: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-main);
+}
+
+/* Horizontal scrollbar */
+
+::-webkit-scrollbar:horizontal {
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: var(--color-gray-300);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:horizontal:hover {
+  background: var(--color-primary-main);
+}
+
+/* End Horizontal scrollbar */

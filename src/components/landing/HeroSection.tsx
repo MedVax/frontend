@@ -2,8 +2,10 @@
 
 import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
+import { useRouter } from "next/navigation";
 
 export function HeroSection() {
+  const router = useRouter();
   return (
     <div
       className="hero flex items-center justify-center sm:h-[calc(100vh-250px)] sm:min-h-[500px] sm:max-h-[1200px]"
@@ -52,7 +54,12 @@ export function HeroSection() {
               </div>
 
               <div className="flex items-start justify-center sm:justify-start gap-3 mt-10">
-                <Button variant="contained">Visit Pharmacy</Button>
+                <Button
+                  onClick={() => router.push("/products")}
+                  variant="contained"
+                >
+                  Visit Pharmacy
+                </Button>
                 <Button
                   variant="white"
                   sx={{ boxShadow: "0px 0px 18px 0px #0000000A" }}

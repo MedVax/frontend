@@ -1,3 +1,5 @@
+"use client";
+
 import clsx from "clsx";
 import { useEffect } from "react";
 import LoadingIndicator from "./loading-Indicator";
@@ -15,7 +17,7 @@ function LoadingContent(props) {
     fullHeight,
     centered,
     onMount,
-    Component,
+    component: Component,
     loading,
     Loading,
     LoadingProps,
@@ -44,7 +46,7 @@ function LoadingContent(props) {
   }
 
   return (
-    <Component
+    <div
       className={clsx(
         "LoadingContent",
         className,
@@ -55,7 +57,7 @@ function LoadingContent(props) {
     >
       {blocking ? renderBlocking?.(props) : null}
       {error ? renderError?.(props) : renderLoading?.(props)}
-    </Component>
+    </div>
   );
 }
 

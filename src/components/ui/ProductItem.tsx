@@ -1,12 +1,20 @@
 "use client";
 
-import { Card, CardContent, Chip, IconButton, Typography } from "@mui/material";
-import { Cart, CartPlus, Heart } from "@solar-icons/react";
-import React from "react";
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  Chip,
+  IconButton,
+  Typography,
+} from "@mui/material";
+import { CartPlus, Heart } from "@solar-icons/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface ProductItemProps {
   product: {
+    id?: string;
     image: string;
     name: string;
     description: string;
@@ -18,13 +26,17 @@ interface ProductItemProps {
 }
 
 export const ProductItem = ({ product }: ProductItemProps) => {
+  const router = useRouter();
   return (
     <>
       {product.isLoading ? (
         <ProductLoader />
       ) : (
         <Card variant="outlined" className="bg-white! p-0!">
-          <CardContent className="bg-none! p-3!">
+          <CardActionArea
+            onClick={() => router.push(`/products/${product.id}`)}
+            className="bg-none! p-3!"
+          >
             {/* Product Image */}
             <div className="relative w-full rounded-2xl bg-gray-50 overflow-hidden">
               <Image
@@ -41,6 +53,10 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 variant="soft"
                 color="primary"
                 className="absolute! top-4 right-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("wishlist");
+                }}
               >
                 <Heart
                   size={20}
@@ -50,11 +66,16 @@ export const ProductItem = ({ product }: ProductItemProps) => {
               </IconButton>
               {/* Add to Cart Button */}
               <IconButton
-                variant="soft"
+                variant="contained"
                 color="primary"
                 className="absolute! bottom-4 right-4"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("wishlist");
+                }}
+                size="large"
               >
-                <CartPlus weight="Bold" size={20} className="text-primary" />
+                <CartPlus weight="Bold" size={20} className="text-white" />
               </IconButton>
 
               {/* Out of Stock Badge */}
@@ -82,7 +103,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 {product.price}
               </Typography>
             </div>
-          </CardContent>
+          </CardActionArea>
         </Card>
       )}
     </>

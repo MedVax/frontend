@@ -116,14 +116,19 @@ export function Header() {
             }}
           >
             <div className="flex gap-6 items-center">
-              <div className="flex items-center gap-2">
-                <img
-                  src="/assets/logo.svg"
-                  alt="MedVax Logo"
-                  className="w-[25px] h-[29px]"
-                />
-                <span className="font-extrabold text-black">MedVax</span>
-              </div>
+              <Link href="/">
+                {" "}
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/assets/logo.svg"
+                    alt="MedVax Logo"
+                    className="w-[25px] h-[29px]"
+                  />
+
+                  <span className="font-extrabold text-black">MedVax</span>
+                </div>{" "}
+              </Link>
+
               {/* Search Bar */}
 
               <div className="hidden sm:block">
@@ -152,10 +157,10 @@ export function Header() {
 
         {/* Navigation Bar */}
         <div className="bg-gray-900 relative ">
-          <div className="overflow-x-auto no-scrollbar flex justify-center">
+          <div className="overflow-x-auto scrollbar-hidden flex justify-center">
             <Container
               maxWidth="xl"
-              className="flex items-center container gap-6 py-4 mx-auto no-scrollbar"
+              className="flex items-center container gap-6 py-4 mx-auto scrollbar-hidden"
             >
               {navigationMenuItems.map((item) => (
                 <DropdownButton key={item.label} {...item} />
@@ -165,19 +170,18 @@ export function Header() {
 
           {/* Category Menu */}
           <div
-            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${
-              isHovered
-                ? "opacity-100 visible translate-y-0"
-                : "opacity-100 invisible -translate-y-2"
-            }`}
+            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${isHovered
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-100 invisible -translate-y-2"
+              }`}
             {...(isSmallScreen
               ? {}
               : {
-                  onMouseLeave: () => {
-                    setIsHovered(false);
-                    setAnchorEl(null);
-                  },
-                })}
+                onMouseLeave: () => {
+                  setIsHovered(false);
+                  setAnchorEl(null);
+                },
+              })}
           >
             <Container
               maxWidth="xl"
@@ -299,10 +303,10 @@ function MyAccountButton() {
       ) : (
         <Button
           variant="soft"
-          onClick={() => router.push("/signin")}
-          // startIcon={<User size={20} />}
+          onClick={() => router.push("/signup")}
+          startIcon={<User size={20} />}
         >
-          Sign in
+          Create Account
         </Button>
       )}
       <Menu
@@ -367,6 +371,11 @@ function SearchBar() {
           placeholder="Search medication"
           variant="outlined"
           size="small"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "99px",
+            },
+          }}
           slotProps={{
             input: {
               startAdornment: (

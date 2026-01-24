@@ -4,28 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Box,
-  Container,
   Typography,
   TextField,
-  Button,
-  Paper,
   InputAdornment,
-  IconButton,
-  CircularProgress,
   Alert,
   Divider,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { useSnackbar } from "notistack";
-import { Nunito } from "next/font/google";
 import { GuestGuard } from "@/components/auth/AuthGuard";
 import { useAuth } from "@/hooks/use-auth";
-
-const nunito = Nunito({
-  subsets: ["latin"],
-  variable: "--font-nunito",
-  weight: ["400", "500", "600", "700", "800"],
-});
+import PasswordTextField from "@/libs/mui/password-textfield";
+import { LoadingButton } from "@mui/lab";
 
 export default function SignupPage() {
   return (
@@ -44,8 +34,6 @@ function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
 
   const validateForm = () => {
@@ -94,94 +82,29 @@ function SignupForm() {
   };
 
   return (
-    <Container
-      maxWidth="sm"
-      className="flex items-center justify-center py-12"
-    >
-      <Paper
-        elevation={0}
-        className={`${nunito.variable} w-full p-8 md:p-12`}
-        sx={{
-          borderRadius: 4,
-          backgroundColor: "white",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.06)",
-        }}
-      >
-        {/* Logo */}
-        <Box className="flex items-center justify-center gap-2 mb-8">
-          <Box
-            component="img"
-            src="/logo.svg"
-            alt="MedVax Logo"
-            sx={{ width: 32, height: 37 }}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = "none";
-            }}
-          />
-          <Typography
-            sx={{
-              fontFamily: "var(--font-nunito)",
-              fontWeight: 800,
-              fontSize: 28,
-              color: "#111827",
-            }}
-          >
-            MedVax
-          </Typography>
-        </Box>
+    <div>
+      <Typography variant="h4" className="font-bold! mb-2">
+        Sign Up
+      </Typography>
 
-        {/* Title */}
-        <Typography
-          variant="h4"
-          className="text-center mb-2"
-          sx={{
-            fontFamily: "var(--font-nunito)",
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          Create an account
-        </Typography>
-        <Typography
-          className="text-center mb-8"
-          sx={{ color: "#6b7280", fontFamily: "var(--font-nunito)" }}
-        >
-          Join MedVax for a better healthcare experience
-        </Typography>
+      {/* Error Alert */}
+      {error && (
+        <Alert severity="error" className="mb-6" sx={{ borderRadius: 2 }}>
+          {error}
+        </Alert>
+      )}
 
-        {/* Error Alert */}
-        {error && (
-          <Alert severity="error" className="mb-6" sx={{ borderRadius: 2 }}>
-            {error}
-          </Alert>
-        )}
-
-        {/* Form */}
-        <Box component="form" onSubmit={handleSubmit} className="space-y-5">
-          <Box className="flex gap-4">
+      {/* Form */}
+      <Box component="form" onSubmit={handleSubmit} className="space-y-8 mt-10">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="flex gap-4">
             <TextField
               label="First Name"
               fullWidth
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Icon
-                      icon="material-symbols:person-outline"
-                      width={20}
-                      height={20}
-                    />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
+              placeholder="John"
             />
 
             <TextField
@@ -190,13 +113,9 @@ function SignupForm() {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               disabled={isLoading}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
+              placeholder="Doe"
             />
-          </Box>
+          </div>
 
           <TextField
             label="Email"
@@ -216,151 +135,49 @@ function SignupForm() {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 2,
-              },
-            }}
           />
 
-          <TextField
+          <PasswordTextField
             label="Password"
-            type={showPassword ? "text" : "password"}
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
             helperText="At least 8 characters"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon
-                    icon="material-symbols:lock-outline"
-                    width={20}
-                    height={20}
-                  />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                    disabled={isLoading}
-                  >
-                    <Icon
-                      icon={
-                        showPassword
-                          ? "material-symbols:visibility-off"
-                          : "material-symbols:visibility"
-                      }
-                      width={20}
-                      height={20}
-                    />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 2,
-              },
-            }}
           />
 
-          <TextField
+          <PasswordTextField
             label="Confirm Password"
-            type={showConfirmPassword ? "text" : "password"}
             fullWidth
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon
-                    icon="material-symbols:lock-outline"
-                    width={20}
-                    height={20}
-                  />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    edge="end"
-                    disabled={isLoading}
-                  >
-                    <Icon
-                      icon={
-                        showConfirmPassword
-                          ? "material-symbols:visibility-off"
-                          : "material-symbols:visibility"
-                      }
-                      width={20}
-                      height={20}
-                    />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 2,
-              },
-            }}
+            helperText="Passwords do not match"
           />
+        </div>
 
-          <Button
-            type="submit"
-            fullWidth
-            disabled={isLoading}
-            sx={{
-              backgroundColor: "#e91d74",
-              color: "white",
-              fontFamily: "var(--font-nunito)",
-              fontWeight: 600,
-              fontSize: 16,
-              py: 1.5,
-              borderRadius: 2,
-              textTransform: "none",
-              mt: 2,
-              "&:hover": {
-                backgroundColor: "#c2185b",
-              },
-              "&:disabled": {
-                backgroundColor: "#f5a0c0",
-              },
-            }}
-          >
-            {isLoading ? (
-              <CircularProgress size={24} sx={{ color: "white" }} />
-            ) : (
-              "Create Account"
-            )}
-          </Button>
-        </Box>
+        <LoadingButton type="submit" fullWidth loading={isLoading}>
+          Create Account
+        </LoadingButton>
+      </Box>
 
-        <Divider className="my-8">
-          <Typography sx={{ color: "#9ca3af", fontSize: 14 }}>or</Typography>
-        </Divider>
+      <Divider className="p-6">
+        <Typography sx={{ color: "#9ca3af", fontSize: 14 }}>or</Typography>
+      </Divider>
 
-        {/* Sign In Link */}
-        <Typography
-          className="text-center"
-          sx={{ color: "#6b7280", fontFamily: "var(--font-nunito)" }}
+      {/* Sign In Link */}
+      <Typography
+        className="text-center"
+        sx={{ color: "#6b7280", fontFamily: "var(--font-nunito)" }}
+      >
+        Already have an account?{" "}
+        <Link
+          href="/signin"
+          className="text-pink-600 hover:text-pink-700 font-semibold transition-colors"
         >
-          Already have an account?{" "}
-          <Link
-            href="/signin"
-            className="text-pink-600 hover:text-pink-700 font-semibold transition-colors"
-          >
-            Sign in
-          </Link>
-        </Typography>
-      </Paper>
-    </Container>
+          Sign in
+        </Link>
+      </Typography>
+    </div>
   );
 }
-
