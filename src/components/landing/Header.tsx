@@ -26,6 +26,7 @@ import {
   Heart,
   Shop,
   CartLarge,
+  Logout,
 } from "@solar-icons/react";
 import { DropdownButton, WhatsAppButton } from "@/components/ui";
 import { useRouter } from "next/navigation";
@@ -33,6 +34,11 @@ import usePopover from "@/hooks/use-popover";
 import useAuthUser from "@/hooks/use-auth";
 import Link from "next/link";
 import categoryApi from "@/apis/category-api";
+import useLogout from "@/hooks/use-logout";
+import { useGetCartQuery } from "@/apis/cart-api";
+import { Icon as Iconify } from "@iconify/react";
+import useSideMenu from "@/hooks/use-side-menu";
+import { usePathname } from "next/navigation";
 
 const prescriptionMenuItems = [
   { label: "Upload Prescription", href: "/prescription/upload" },
@@ -42,9 +48,12 @@ const prescriptionMenuItems = [
 export function Header() {
   const [isHovered, setIsHovered] = useState(false);
   const isSmallScreen = useMediaQuery(`(max-width:900px)`);
+  const isXSmallScreen = useMediaQuery(`(max-width:640px)`);
+  const pathname = usePathname();
 
   const router = useRouter();
   const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
+  const { toggleSideMenu } = useSideMenu();
   const [activeIndex, setActiveIndex] = useState(0);
   const getAllCategories = categoryApi.useGetCategoriesQuery({
     params: {
@@ -52,6 +61,12 @@ export function Header() {
       hierarchy: false,
     },
   });
+
+  // Get cart count for badge
+  const { data: cartData } = useGetCartQuery();
+  const cartItemCount =
+    cartData?.data?.items?.reduce((total, item) => total + item.quantity, 0) ||
+    0;
 
   const navigationMenuItems = [
     {
@@ -89,7 +104,7 @@ export function Header() {
     })),
   }));
 
-  console.log({ anchorEl });
+  const isDashboard = pathname.includes("/dashboard");
 
   return (
     <>
@@ -116,18 +131,30 @@ export function Header() {
             }}
           >
             <div className="flex gap-6 items-center">
-              <Link href="/">
-                {" "}
-                <div className="flex items-center gap-2">
-                  <img
-                    src="/assets/logo.svg"
-                    alt="MedVax Logo"
-                    className="w-[25px] h-[29px]"
-                  />
+              <div className="flex gap-1">
+                {isDashboard && isXSmallScreen && (
+                  <IconButton
+                    onClick={() => {
+                      toggleSideMenu();
+                    }}
+                  >
+                    <Iconify icon="material-symbols:menu" />
+                  </IconButton>
+                )}
 
-                  <span className="font-extrabold text-black">MedVax</span>
-                </div>{" "}
-              </Link>
+                <Link href="/">
+                  {" "}
+                  <div className="flex items-center gap-2">
+                    <img
+                      src="/assets/logo.svg"
+                      alt="MedVax Logo"
+                      className="w-[25px] h-[29px]"
+                    />
+
+                    <span className="font-extrabold text-black">MedVax</span>
+                  </div>{" "}
+                </Link>
+              </div>
 
               {/* Search Bar */}
 
@@ -142,7 +169,7 @@ export function Header() {
                 <MyAccountButton />
               </div>
               <IconButton onClick={() => router.push("/cart")}>
-                <Badge badgeContent={1} color="primary">
+                <Badge badgeContent={cartItemCount} color="primary">
                   <CartLarge size={20} />
                 </Badge>
               </IconButton>
@@ -170,18 +197,19 @@ export function Header() {
 
           {/* Category Menu */}
           <div
-            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${isHovered
-              ? "opacity-100 visible translate-y-0"
-              : "opacity-100 invisible -translate-y-2"
-              }`}
+            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${
+              isHovered
+                ? "opacity-100 visible translate-y-0"
+                : "opacity-100 invisible -translate-y-2"
+            }`}
             {...(isSmallScreen
               ? {}
               : {
-                onMouseLeave: () => {
-                  setIsHovered(false);
-                  setAnchorEl(null);
-                },
-              })}
+                  onMouseLeave: () => {
+                    setIsHovered(false);
+                    setAnchorEl(null);
+                  },
+                })}
           >
             <Container
               maxWidth="xl"
@@ -282,12 +310,29 @@ function MyAccountButton() {
 
   const router = useRouter();
   const authUser = useAuthUser();
-  const isAuthenticated = !!authUser;
+  const { logout } = useLogout();
+  const isAuthenticated = authUser?.isAuthenticated;
 
   const items = [
-    { label: "My account", href: "/account", icon: <User size={20} /> },
-    { label: "orders", href: "/logout", icon: <Shop size={20} /> },
-    { label: "watchlist", href: "/logout", icon: <Heart size={20} /> },
+    {
+      label: "My account",
+      href: "/dashboard",
+      icon: <User size={20} />,
+    },
+    { label: "orders", href: "/dashboard/orders", icon: <Shop size={20} /> },
+    {
+      label: "watchlist",
+      href: "/dashboard/watchlist",
+      icon: <Heart size={20} />,
+    },
+    {
+      label: "Logout",
+      href: "/",
+      onClick: () => {
+        logout();
+      },
+      icon: <Logout size={20} />,
+    },
   ];
   return (
     <>
@@ -315,14 +360,13 @@ function MyAccountButton() {
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <div className="px-4 space-y-2 ">
+        <div className="px-4 space-y-1">
           <Typography variant="h6" noWrap className="capitalize">
-            {authUser?.user?.first_name} {authUser?.user?.last_name} sylvernus
-            akubo
+            {authUser?.user?.firstName} {authUser?.user?.lastName}
           </Typography>
 
           <Typography variant="body1" noWrap className="pb-2">
-            {authUser?.user?.email} sylvernusakubo@gmail.com
+            {authUser?.user?.email}
           </Typography>
 
           <Divider />
@@ -333,7 +377,11 @@ function MyAccountButton() {
             key={item.label}
             onClick={() => {
               setAnchorEl(null);
-              router.push(item.href);
+              if (item.onClick) {
+                item.onClick();
+              } else {
+                router.push(item.href);
+              }
             }}
           >
             <div className="flex items-center gap-2">

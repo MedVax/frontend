@@ -1,6 +1,4 @@
 import { ServerResponse } from "./global";
-import { Merchant } from "./merchant";
-import { Organization } from "./organization";
 
 export enum UserType {
   USER = "USER",
@@ -25,33 +23,34 @@ export enum UserStatus {
   DEACTIVATED = "DEACTIVATED",
 }
 
+export enum UserProfileType {
+  CLIENT = "CLIENT",
+  CONSULTANT = "CONSULTANT",
+}
+
 export interface User {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
-  last_login_date?: string;
+  firstName: string;
+  lastName: string;
+  lastLoginDate?: string;
   type: UserType;
   gender: "" | null;
   dob: "" | null;
   status: UserStatus;
-  phone_number: string | null;
-  contract_role: string | null;
-  support_level: string | null;
-  supportLevelId: number | null;
-  organization_id: number | null;
-  organization: Organization | null;
-  merchant_id: number | null;
-  merchant: Merchant | null;
-  photo: string | null;
+  phoneNumber: string | null;
+  avatar: string | null;
   firstTimeLogin: boolean;
+  activeProfile?: {
+    id: string;
+    type: UserProfileType;
+  };
 }
 
 export type AuthUser = {
   user: User;
-  refreshToken: string;
+  isAuthenticated?: boolean;
   expiresIn: number;
-  accessToken: string;
 } | null;
 
 export type UserSignRequest = {

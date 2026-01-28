@@ -1,6 +1,5 @@
 "use client";
 
-import { Box, Container } from "@mui/material";
 import { Header } from "@/components/landing/Header";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";

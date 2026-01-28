@@ -20,8 +20,8 @@ export function setAuthCookie(data: AuthCookieData): void {
       id: data.user.id,
       email: data.user.email,
       type: data.user.type,
-      first_name: data.user.first_name,
-      last_name: data.user.last_name,
+      firstName: data.user.firstName,
+      lastName: data.user.lastName,
     },
   });
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useAuth } from "hooks/use-auth";
+import { UserProfileType } from "@/types/user";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -26,13 +27,10 @@ export function AuthGuard({
 }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading, user, hasPermission, hasRole } =
-    useAuth();
+  const { isAuthenticated, user, hasPermission, hasRole } = useAuth();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
-
     if (!isAuthenticated) {
       // Redirect to signin with return URL
       const returnUrl = encodeURIComponent(pathname);
@@ -63,7 +61,6 @@ export function AuthGuard({
     setIsAuthorized(true);
   }, [
     isAuthenticated,
-    isLoading,
     user,
     pathname,
     router,
@@ -75,7 +72,7 @@ export function AuthGuard({
   ]);
 
   // Show loading state
-  if (isLoading || !isAuthorized) {
+  if (!isAuthorized) {
     if (fallback) return <>{fallback}</>;
 
     return (
@@ -94,18 +91,38 @@ export function AuthGuard({
   return <>{children}</>;
 }
 
-interface AdminGuardProps {
+interface ConsultantGuardProps {
   children: React.ReactNode;
   fallback?: React.ReactNode;
 }
 
 /**
- * AdminGuard component for admin-only routes
+ * ConsultantGuard component for consultant-only routes
  */
-export function AdminGuard({ children, fallback }: AdminGuardProps) {
+export function ConsultantGuard({ children, fallback }: ConsultantGuardProps) {
   return (
     <AuthGuard
-      requiredRoles={["ADMIN", "SUPER_ADMIN"]}
+      requiredRoles={[UserProfileType.CONSULTANT]}
+      redirectTo="/signin"
+      fallback={fallback}
+    >
+      {children}
+    </AuthGuard>
+  );
+}
+
+interface ClientGuardProps {
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}
+
+/**
+ * ClientGuard component for client-only routes
+ */
+export function ClientGuard({ children, fallback }: ClientGuardProps) {
+  return (
+    <AuthGuard
+      requiredRoles={[UserProfileType.CLIENT]}
       redirectTo="/signin"
       fallback={fallback}
     >
@@ -125,21 +142,18 @@ interface GuestGuardProps {
  */
 export function GuestGuard({ children, redirectTo = "/" }: GuestGuardProps) {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
-
     if (isAuthenticated) {
       router.replace(redirectTo);
       return;
     }
-
     setIsGuest(true);
-  }, [isAuthenticated, isLoading, router, redirectTo]);
+  }, [isAuthenticated, router, redirectTo]);
 
-  if (isLoading || !isGuest) {
+  if (!isGuest) {
     return (
       <Box
         className="flex items-center justify-center min-h-screen"

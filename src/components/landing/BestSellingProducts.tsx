@@ -3,6 +3,7 @@
 import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
 import { ProductBestSelling } from "../../app/(public)/products/features/ProductBestSelling";
+import Link from "next/link";
 
 export function BestSellingProducts() {
   return (
@@ -17,7 +18,12 @@ export function BestSellingProducts() {
               Some of our best selling products
             </Typography>
           </div>
-          <Button variant="soft" color="primary">
+          <Button
+            variant="soft"
+            color="primary"
+            component={Link}
+            href="/products"
+          >
             View all
           </Button>
         </div>

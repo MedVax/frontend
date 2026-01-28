@@ -7,6 +7,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { ReduxProvider } from "./ReduxProvider";
 import { SnackbarCloseButton } from "@/common/snackbar-close-button";
 import { ThemeProvider } from "./ThemeProvider";
+import { ErrorBoundary } from "../ErrorBoundary";
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -25,23 +26,25 @@ function LoadingFallback() {
 
 export function AppProviders({ children }: AppProvidersProps) {
   return (
-    <ReduxProvider>
-      <ThemeProvider>
-        <CssBaseline />
-        <SnackbarProvider
-          maxSnack={3}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          autoHideDuration={4000}
-          action={(snackbarKey) => (
-            <SnackbarCloseButton snackbarKey={snackbarKey} />
-          )}
-        >
-          <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </ReduxProvider>
+    <ErrorBoundary>
+      <ReduxProvider>
+        <ThemeProvider>
+          <CssBaseline />
+          <SnackbarProvider
+            maxSnack={3}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            autoHideDuration={4000}
+            action={(snackbarKey) => (
+              <SnackbarCloseButton snackbarKey={snackbarKey} />
+            )}
+          >
+            <Suspense fallback={<LoadingFallback />}>{children}</Suspense>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </ReduxProvider>
+    </ErrorBoundary>
   );
 }

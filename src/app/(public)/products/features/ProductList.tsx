@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Button,
   Drawer,
@@ -7,6 +8,8 @@ import {
   PaginationItem,
   Typography,
   useMediaQuery,
+  Skeleton,
+  Box,
 } from "@mui/material";
 
 import { Shell } from "../../../../components/ui";
@@ -15,16 +18,59 @@ import { ProductBestSelling } from "./ProductBestSelling";
 import { Icon } from "@iconify/react";
 import useToggle from "@/hooks/use-toggle";
 import ProductListFilters from "./ProductListFilters";
+import productApi from "@/apis/product-api";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const ProductList = () => {
   const [open, toggle] = useToggle(false);
-  const isMediumScreen = useMediaQuery("(max-width: 600px)");
+  const isMediumScreen = useMediaQuery("(max-width: 640px)");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Get filter params from URL
+  const categoryIds = searchParams.getAll("categoryId");
+  const brandIds = searchParams.getAll("brandId");
+  const search = searchParams.get("search");
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "20", 10);
+  const availability = searchParams.get("availability");
+
+  const { data, isLoading, error } = productApi.useGetProductsQuery({
+    params: {
+      ...(categoryIds.length > 0 ? { categoryId: categoryIds.join(",") } : {}),
+      ...(brandIds.length > 0 ? { brandId: brandIds.join(",") } : {}),
+      ...(search ? { search } : {}),
+      ...(availability ? { availability } : {}),
+      skip: (page - 1) * limit,
+      take: limit,
+    },
+  });
+
+  const productList = data?.data?.data || [];
+
+  const totalCount = useMemo(() => {
+    if (!data?.data) return 0;
+    if (Array.isArray(data.data)) return data.data.length;
+    const paginatedData = data.data as {
+      totalRecords?: number;
+      skip?: number;
+      take?: number;
+    };
+    return paginatedData.totalRecords || 0;
+  }, [data]);
+
+  const totalPages = Math.ceil(totalCount / limit);
 
   return (
     <Shell component="section" className="my-20 ">
       <div className="flex justify-between items-center">
         <Typography variant="h5" className="font-semibold!">
-          Emzor Paracetamol Tablets - 2 Products Found
+          {search
+            ? `Search results for "${search}"`
+            : categoryIds.length > 0
+            ? "Products"
+            : "All Products"}{" "}
+          - {totalCount} {totalCount === 1 ? "Product" : "Products"} Found
         </Typography>
         {isMediumScreen && (
           <Button
@@ -56,45 +102,85 @@ const ProductList = () => {
         )}
 
         <div className="lg:w-[calc(100%-317px)] w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {products.map((product) => (
-              <ProductItem
-                key={product.id}
-                product={{ ...product, isLoading: false, favorite: false }}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, index) => (
+                <Skeleton key={index} variant="rectangular" height={300} />
+              ))}
+            </div>
+          ) : error || !productList.length ? (
+            <Box className="text-center py-12">
+              <Typography variant="body1" color="text.secondary">
+                {error ? "Failed to load products" : "No products found"}
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {productList.map((product) => (
+                  <ProductItem
+                    key={product.id}
+                    product={{
+                      ...product,
+                      isLoading: false,
+                      favorite: false,
+                      image:
+                        product.images && product.images.length > 0
+                          ? product.images[0]
+                          : "/assets/dummy-product.png",
+                      isOutOfStock: product.stockQuantity <= 0,
+                      description: product.description || "",
+                      price: new Intl.NumberFormat("en-NG", {
+                        style: "currency",
+                        currency: product.currency || "NGN",
+                      }).format(product.price / 100),
+                    }}
+                  />
+                ))}
+              </div>
 
-          <div className="flex justify-center mt-10">
-            <Pagination
-              count={10}
-              color="primary"
-              variant="outlined"
-              renderItem={(item) => (
-                <PaginationItem
-                  slots={{
-                    previous: () => (
-                      <Button
-                        variant="ghost"
-                        startIcon={<Icon icon="formkit:left" />}
-                      >
-                        Previous
-                      </Button>
-                    ),
-                    next: () => (
-                      <Button
-                        variant="ghost"
-                        endIcon={<Icon icon="formkit:right" />}
-                      >
-                        Next
-                      </Button>
-                    ),
-                  }}
-                  {...item}
-                />
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-10">
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    color="primary"
+                    variant="outlined"
+                    onChange={(_, newPage) => {
+                      const params = new URLSearchParams(
+                        searchParams.toString()
+                      );
+                      params.set("page", newPage.toString());
+                      router.push(`/products?${params.toString()}`);
+                    }}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{
+                          previous: () => (
+                            <Button
+                              variant="ghost"
+                              startIcon={<Icon icon="formkit:left" />}
+                            >
+                              Previous
+                            </Button>
+                          ),
+                          next: () => (
+                            <Button
+                              variant="ghost"
+                              endIcon={<Icon icon="formkit:right" />}
+                            >
+                              Next
+                            </Button>
+                          ),
+                        }}
+                        {...item}
+                      />
+                    )}
+                  />
+                </div>
               )}
-            />
-          </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -117,87 +203,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
-const products = [
-  {
-    id: 1,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 2,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 3,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: true,
-  },
-  {
-    id: 4,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 5,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 6,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 7,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 8,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 9,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-];

@@ -293,6 +293,12 @@ export const theme = responsiveFontSizes(
                       backgroundColor:
                         theme.palette[color]?.dark || theme.palette.grey[700],
                     },
+                    "&:disabled": {
+                      backgroundColor: alpha(
+                        theme.palette[color]?.main || theme.palette.grey[500],
+                        0.5
+                      ),
+                    },
                   }
                 : {}),
               ...(ownerState.variant === "soft"

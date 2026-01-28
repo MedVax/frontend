@@ -1,21 +1,11 @@
 "use client";
 
 import { Shell } from "@/components/ui";
-import {
-  Button,
-  ButtonBase,
-  Card,
-  IconButton,
-  Radio,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Card, TextField, Typography } from "@mui/material";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import currency from "currency.js";
 import Link from "next/link";
-import { formatNumberToCurrency } from "@/utils/number";
-import { Radio_Canada_Big } from "next/font/google";
 import { useState } from "react";
 
 const cartItems = [

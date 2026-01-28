@@ -1,63 +1,47 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Button, IconButton, Typography } from "@mui/material";
+import { Button, IconButton, Typography, Skeleton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ProductItem } from "../../../../components/ui/ProductItem";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
+import {
+  useGetRelatedProductsQuery,
+  useGetBestSellingProductsQuery,
+} from "@/apis/product-api";
+import { Product } from "@/types/product";
 
-const products = [
-  {
-    id: 1,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 2,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 3,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: true,
-  },
-  {
-    id: 4,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 5,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-];
+interface ProductRelatedItemProps {
+  productId?: string;
+  limit?: number;
+}
 
-export function ProductRelatedItem() {
+export function ProductRelatedItem({
+  productId,
+  limit = 10,
+}: ProductRelatedItemProps) {
   const router = useRouter();
+
+  // Fetch related products if productId is provided, otherwise fetch best selling
+  const { data: relatedData, isLoading: isLoadingRelated } =
+    useGetRelatedProductsQuery(
+      { path: { id: productId! }, params: { limit } },
+      { skip: !productId }
+    );
+
+  const { data: bestSellingData, isLoading: isLoadingBestSelling } =
+    useGetBestSellingProductsQuery(
+      { params: { limit } },
+      { skip: !!productId }
+    );
+
+  const isLoading = productId ? isLoadingRelated : isLoadingBestSelling;
+  const products: Product[] = productId
+    ? relatedData?.data || []
+    : bestSellingData?.data || [];
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 4,
@@ -77,23 +61,62 @@ export function ProductRelatedItem() {
     [emblaApi]
   );
 
-  const onSelect = useCallback((api: any) => {
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
-  }, []);
-
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect(emblaApi);
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-  }, [emblaApi, onSelect]);
+
+    // Set initial state
+    const updateState = () => {
+      setCanScrollPrev(emblaApi.canScrollPrev());
+      setCanScrollNext(emblaApi.canScrollNext());
+    };
+
+    updateState();
+    emblaApi.on("select", updateState);
+    emblaApi.on("reInit", updateState);
+
+    return () => {
+      emblaApi.off("select", updateState);
+      emblaApi.off("reInit", updateState);
+    };
+  }, [emblaApi]);
+
+  if (isLoading) {
+    return (
+      <div>
+        <div className="flex justify-between items-center gap-2">
+          <Typography variant="h5" className="font-semibold!">
+            {productId
+              ? "Products related to this item"
+              : "Best Selling Products"}
+          </Typography>
+          <Button
+            onClick={() => router.push("/products")}
+            variant="soft"
+            color="secondary"
+          >
+            View all
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} variant="rectangular" height={300} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!products || products.length === 0) {
+    return null;
+  }
 
   return (
     <div>
       <div className="flex justify-between items-center gap-2">
         <Typography variant="h5" className="font-semibold!">
-          Products related to this item
+          {productId
+            ? "Products related to this item"
+            : "Best Selling Products"}
         </Typography>
 
         <div>
@@ -110,16 +133,36 @@ export function ProductRelatedItem() {
       <div className="relative mt-5">
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex gap-6">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] md:flex-[0_0_calc(25%-18px)]"
-              >
-                <ProductItem
-                  product={{ ...product, isLoading: false, favorite: false }}
-                />
-              </div>
-            ))}
+            {products.map((product) => {
+              const productImage =
+                product.images && product.images.length > 0
+                  ? product.images[0]
+                  : "/assets/dummy-product.png";
+
+              const formattedPrice = new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: product.currency || "NGN",
+              }).format(product.price / 100);
+
+              return (
+                <div
+                  key={product.id}
+                  className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] md:flex-[0_0_calc(25%-18px)]"
+                >
+                  <ProductItem
+                    product={{
+                      ...product,
+                      isLoading: false,
+                      favorite: false,
+                      image: productImage,
+                      isOutOfStock: product.stockQuantity <= 0,
+                      description: product.description || "",
+                      price: formattedPrice,
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 

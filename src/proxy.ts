@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { UserProfileType } from "./types/user";
 
 // Routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -26,11 +27,8 @@ const PROTECTED_ROUTE_PREFIXES = [
   "/settings",
 ];
 
-// Admin-only routes
-const ADMIN_ROUTE_PREFIXES = ["/admin", "/dashboard/admin"];
-
-// Cookie name for auth state
-const AUTH_COOKIE_NAME = "medvax_auth";
+const CONSULTANT_ROUTE_PREFIXES = ["provider"];
+const CLIENT_ROUTE_PREFIXES = ["/client"];
 
 function isPublicRoute(pathname: string): boolean {
   // Check exact matches
@@ -46,15 +44,22 @@ function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
-function isAdminRoute(pathname: string): boolean {
-  return ADMIN_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+function isConsultantRoute(pathname: string): boolean {
+  return CONSULTANT_ROUTE_PREFIXES.some((prefix) =>
+    pathname.startsWith(prefix)
+  );
+}
+
+function isClientRoute(pathname: string): boolean {
+  return CLIENT_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 function isStaticAsset(pathname: string): boolean {
   return (
     // Files with extensions (images, etc.)
-    (pathname.startsWith("/_next") ||
-    pathname.startsWith("/static") || pathname.includes("."))
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/static") ||
+    pathname.includes(".")
   );
 }
 
@@ -66,22 +71,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Get auth cookie
-  const authCookie = request.cookies.get(AUTH_COOKIE_NAME);
-  let authData: { accessToken?: string; user?: { type?: string } } | null =
-    null;
-
-  if (authCookie?.value) {
-    try {
-      authData = JSON.parse(authCookie.value);
-    } catch {
-      // Invalid cookie, treat as unauthenticated
-      authData = null;
-    }
+  if (isPublicRoute(pathname)) {
+    return NextResponse.next();
   }
 
-  const isAuthenticated = !!authData?.accessToken;
-  const userType = authData?.user?.type;
+  const userProfileType = request.cookies.get("activeProfileType")?.value;
+  const isAuthenticated = !!request.cookies.get("accessToken");
 
   // Handle protected routes
   if (isProtectedRoute(pathname)) {
@@ -93,17 +88,36 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // Handle admin routes
-  if (isAdminRoute(pathname)) {
+  // Handle consultant routes
+  if (isConsultantRoute(pathname)) {
     if (!isAuthenticated) {
       const signinUrl = new URL("/signin", request.url);
       signinUrl.searchParams.set("returnUrl", pathname);
       return NextResponse.redirect(signinUrl);
     }
 
-    // Check if user is admin
-    const isAdmin = userType === "ADMIN" || userType === "SUPER_ADMIN";
-    if (!isAdmin) {
+    // Check if user is consultant
+    const isConsultant = userProfileType === UserProfileType.CONSULTANT;
+
+    if (!isConsultant) {
+      // Redirect to dashboard or home if not admin
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
+
+  // Handle client routes
+  if (isClientRoute(pathname)) {
+    console.log("isClientRoute");
+    if (!isAuthenticated) {
+      const signinUrl = new URL("/signin", request.url);
+      signinUrl.searchParams.set("returnUrl", pathname);
+      return NextResponse.redirect(signinUrl);
+    }
+
+    // Check if user is consultant
+    const isClient = userProfileType === UserProfileType.CLIENT;
+
+    if (!isClient) {
       // Redirect to dashboard or home if not admin
       return NextResponse.redirect(new URL("/", request.url));
     }

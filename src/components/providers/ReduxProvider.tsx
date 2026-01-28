@@ -2,8 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
-import store from "configs/store";
+import store, { makeStore } from "configs/store";
 import { setupInterceptors } from "configs/http-config";
+import { Store } from "@reduxjs/toolkit";
+import { RootState } from "configs/store";
 
 interface ReduxProviderProps {
   children: React.ReactNode;
@@ -12,13 +14,21 @@ interface ReduxProviderProps {
 export function ReduxProvider({ children }: ReduxProviderProps) {
   const interceptorsSetupRef = useRef(false);
 
+  const storeRef = useRef<Store<RootState>>(undefined);
+  // eslint-disable-next-line react-hooks/refs
+  if (!storeRef?.current) {
+    // Create the store instance the first time this renders
+    storeRef.current = makeStore();
+  }
+
   useEffect(() => {
     // Set up interceptors only once
     if (!interceptorsSetupRef.current) {
-      setupInterceptors(store);
+      setupInterceptors(storeRef.current as Store<RootState>);
       interceptorsSetupRef.current = true;
     }
   }, []);
 
-  return <Provider store={store}>{children}</Provider>;
+  // eslint-disable-next-line react-hooks/refs
+  return <Provider store={storeRef.current}>{children}</Provider>;
 }

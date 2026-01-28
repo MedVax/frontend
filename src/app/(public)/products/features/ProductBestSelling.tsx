@@ -1,61 +1,20 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Skeleton, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ProductItem } from "../../../../components/ui/ProductItem";
 import clsx from "clsx";
-
-const products = [
-  {
-    id: 1,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 2,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 3,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: true,
-  },
-  {
-    id: 4,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-  {
-    id: 5,
-    name: "Skineal Cream",
-    description:
-      "SKINEAL Is A Triple Action Cream With Anti-fungal, Ant-bacterial And Anti-pruritic Effects For Treatment Of Various Skin Conditions.",
-    price: "N12,000.00",
-    image: "/assets/dummy-product.png",
-    isOutOfStock: false,
-  },
-];
+import productApi from "@/apis/product-api";
 
 export function ProductBestSelling() {
+  const { data, isLoading, error } = productApi.useGetBestSellingProductsQuery({
+    params: { limit: 10 },
+  });
+
+  const products = data?.data || [];
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 4,
@@ -75,17 +34,48 @@ export function ProductBestSelling() {
     [emblaApi]
   );
 
-  const onSelect = useCallback((api: any) => {
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
-  }, []);
-
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect(emblaApi);
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-  }, [emblaApi, onSelect]);
+
+    const handleSelect = () => {
+      setCanScrollPrev(emblaApi.canScrollPrev());
+      setCanScrollNext(emblaApi.canScrollNext());
+    };
+
+    handleSelect(); // Initial state
+    emblaApi.on("select", handleSelect);
+    emblaApi.on("reInit", handleSelect);
+
+    return () => {
+      emblaApi.off("select", handleSelect);
+      emblaApi.off("reInit", handleSelect);
+    };
+  }, [emblaApi]);
+
+  if (isLoading) {
+    return (
+      <div className="flex gap-6">
+        {[...Array(4)].map((_, index) => (
+          <div
+            key={index}
+            className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] md:flex-[0_0_calc(25%-18px)]"
+          >
+            <Skeleton variant="rectangular" height={300} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error || !products.length) {
+    return (
+      <div className="text-center py-8">
+        <Typography variant="body2" color="text.secondary">
+          No products available
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -97,7 +87,19 @@ export function ProductBestSelling() {
               className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_calc(50%-12px)] md:flex-[0_0_calc(25%-18px)]"
             >
               <ProductItem
-                product={{ ...product, isLoading: false, favorite: false }}
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  description: product.description || "",
+                  price: new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: product.currency || "NGN",
+                  }).format(product.price / 100),
+                  image: product.images?.[0] || "/assets/dummy-product.png",
+                  isOutOfStock: product.stockQuantity <= 0,
+                  favorite: false,
+                  isLoading: false,
+                }}
               />
             </div>
           ))}

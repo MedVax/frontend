@@ -3,7 +3,7 @@ import { logoutAction } from "./store-actions";
 import { GlobalInitialStateType } from "types/global";
 import userApi from "apis/user-api";
 import { authApi } from "apis/auth-api";
-import { UserType, User } from "types/user";
+import { User } from "types/user";
 
 export const globalInitialState: GlobalInitialStateType = {
   authUser: null,
@@ -41,8 +41,6 @@ const slice = createSlice({
       if (state.authUser) {
         state.authUser = {
           ...state.authUser,
-          accessToken: payload.accessToken,
-          refreshToken: payload.refreshToken,
           expiresIn: payload.expiresIn,
         };
       }
@@ -72,11 +70,13 @@ const slice = createSlice({
       )
       .addMatcher(
         userApi.endpoints.getUserProfileInfo.matchFulfilled,
-        (state, { payload }) => {
-          if (state.authUser?.user) {
-            Object.assign(state.authUser.user, payload?.data, {
-              isAdmin: payload?.data?.type === UserType.ADMIN,
-            });
+        (state: any, { payload }) => {
+          const data = payload?.data;
+          if (data) {
+            state.authUser = {
+              user: { ...data },
+              isAuthenticated: true,
+            };
           }
         }
       )
@@ -94,8 +94,6 @@ const slice = createSlice({
           if (data) {
             state.authUser = {
               user: data.user,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
               expiresIn: data.expiresIn,
             };
           }
@@ -108,8 +106,6 @@ const slice = createSlice({
           if (data) {
             state.authUser = {
               user: data.user,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
               expiresIn: data.expiresIn,
             };
           }
@@ -122,8 +118,6 @@ const slice = createSlice({
           if (data) {
             state.authUser = {
               user: data.user,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
               expiresIn: data.expiresIn,
             };
           }
@@ -136,8 +130,6 @@ const slice = createSlice({
           if (state.authUser && data) {
             state.authUser = {
               ...state.authUser,
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
               expiresIn: data.expiresIn,
             };
           }

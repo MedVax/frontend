@@ -1,21 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  Box,
-  Typography,
-  TextField,
-  InputAdornment,
-  Alert,
-  Divider,
-} from "@mui/material";
+import { Typography, TextField, InputAdornment, Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { GuestGuard } from "@/components/auth/AuthGuard";
-import { useAuth } from "@/hooks/use-auth";
 import PasswordTextField from "@/libs/mui/password-textfield";
 import { LoadingButton } from "@mui/lab";
+import { getFormikTextFieldProps } from "@/utils/formik";
+import { authApi } from "@/apis/auth-api";
+import userApi from "@/apis/user-api";
 
 export default function SignupPage() {
   return (
@@ -26,60 +23,72 @@ export default function SignupPage() {
 }
 
 function SignupForm() {
-  const { signup, isLoading } = useAuth();
+  const router = useRouter();
+  const [signupMutation, { isLoading }] = authApi.useSignupMutation();
+  const [getUserProfileInfoQuery] = userApi.useLazyGetUserProfileInfoQuery();
   const { enqueueSnackbar } = useSnackbar();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object().shape({
+      firstName: Yup.string()
+        .required("First name is required")
+        .trim()
+        .min(2, "First name must be at least 2 characters"),
+      lastName: Yup.string()
+        .required("Last name is required")
+        .trim()
+        .min(2, "Last name must be at least 2 characters"),
+      email: Yup.string()
+        .required("Email is required")
+        .email("Invalid email address")
+        .trim(),
+      password: Yup.string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters")
+        .trim(),
+      confirmPassword: Yup.string()
+        .required("Please confirm your password")
+        .oneOf([Yup.ref("password")], "Passwords do not match")
+        .trim(),
+    }),
+    onSubmit: async (values: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }) => {
+      try {
+        await signupMutation({
+          data: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+          },
+        }).unwrap();
 
-  const validateForm = () => {
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      setError("Please fill in all fields");
-      return false;
-    }
+        await getUserProfileInfoQuery().unwrap();
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return false;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!validateForm()) return;
-
-    const result = await signup({
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-
-    if (result.success) {
-      enqueueSnackbar("Account created successfully!", { variant: "success" });
-    } else {
-      setError(result.error || "Failed to create account");
-    }
-  };
+        router.push("/");
+      } catch (error: unknown) {
+        const err = error as { defaultUserMessage?: string; message?: string };
+        enqueueSnackbar(
+          err?.defaultUserMessage || err?.message || "An error occurred",
+          {
+            variant: "error",
+          }
+        );
+      }
+    },
+  });
 
   return (
     <div>
@@ -87,79 +96,82 @@ function SignupForm() {
         Sign Up
       </Typography>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert severity="error" className="mb-6" sx={{ borderRadius: 2 }}>
-          {error}
-        </Alert>
-      )}
-
       {/* Form */}
-      <Box component="form" onSubmit={handleSubmit} className="space-y-8 mt-10">
+      <form onSubmit={formik.handleSubmit} className="mt-10">
         <div className="grid grid-cols-1 gap-4">
           <div className="flex gap-4">
             <TextField
+              {...getFormikTextFieldProps(formik, "firstName")}
               label="First Name"
               fullWidth
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
               disabled={isLoading}
               placeholder="John"
             />
 
             <TextField
+              {...getFormikTextFieldProps(formik, "lastName")}
               label="Last Name"
               fullWidth
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
               disabled={isLoading}
               placeholder="Doe"
             />
           </div>
 
           <TextField
+            {...getFormikTextFieldProps(formik, "email")}
             label="Email"
             type="email"
             fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Icon
-                    icon="material-symbols:mail-outline"
-                    width={20}
-                    height={20}
-                  />
-                </InputAdornment>
-              ),
+            placeholder="Enter email address"
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Icon
+                      icon="material-symbols:mail-outline"
+                      width={20}
+                      height={20}
+                    />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
           <PasswordTextField
+            {...getFormikTextFieldProps(
+              formik,
+              "password",
+              "At least 8 characters"
+            )}
             label="Password"
             fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
-            helperText="At least 8 characters"
+            placeholder="Enter your password"
           />
 
           <PasswordTextField
+            {...getFormikTextFieldProps(formik, "confirmPassword")}
             label="Confirm Password"
             fullWidth
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading}
-            helperText="Passwords do not match"
+            placeholder="Confirm your password"
           />
         </div>
 
-        <LoadingButton type="submit" fullWidth loading={isLoading}>
-          Create Account
-        </LoadingButton>
-      </Box>
+        <div className="mt-4">
+          <LoadingButton
+            type="submit"
+            fullWidth
+            loading={isLoading}
+            variant="contained"
+            size="large"
+          >
+            Create Account
+          </LoadingButton>
+        </div>
+      </form>
 
       <Divider className="p-6">
         <Typography sx={{ color: "#9ca3af", fontSize: 14 }}>or</Typography>
