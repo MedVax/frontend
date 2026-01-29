@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { Shell } from "@/components/ui";
 import {
     Typography,
@@ -16,20 +16,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
-import NextLink from "next/link";
 import { Icon } from "@iconify/react";
-import { LoadingButton } from "@mui/lab";
+import prescriptionApi from "apis/prescription-api";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
-
+// Helper component for the custom file input
 const FileUploadInput = ({
     formik,
     name,
-    label,
 }: {
     formik: any;
     name: string;
-    label: string;
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const file = formik.values[name];
@@ -48,8 +45,6 @@ const FileUploadInput = ({
         }
     };
 
-    const isError = formik.touched[name] && Boolean(formik.errors[name]);
-
     return (
         <div onClick={() => fileInputRef.current?.click()}>
             <input
@@ -60,7 +55,7 @@ const FileUploadInput = ({
                 style={{ display: "none" }}
             />
             <TextField
-                label={label}
+                label=""
                 fullWidth
                 value={file ? file.name : ""}
                 placeholder="Upload Prescription File"
@@ -84,8 +79,8 @@ const FileUploadInput = ({
                         "& input": { cursor: "pointer" },
                     },
                 }}
-                error={isError}
-                helperText={isError ? formik.errors[name] : "Only pdf, jpg, and jpeg files allowed"}
+                error={formik.touched[name] && Boolean(formik.errors[name])}
+                helperText={formik.touched[name] && formik.errors[name]}
             />
         </div>
     );
@@ -94,7 +89,10 @@ const FileUploadInput = ({
 export default function DoctorPrescriptionPage() {
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    /* eslint-disable no-console */
+    const [uploadPrescription, { isLoading }] =
+        prescriptionApi.useUploadPrescriptionMutation();
 
     const formik = useFormik({
         initialValues: {
@@ -102,7 +100,6 @@ export default function DoctorPrescriptionPage() {
             lastName: "",
             mobileNumber: "",
             email: "",
-            medicalLicenseNumber: "",
             prescriptionFile: null,
             additionalNote: "",
             consent: false,
@@ -112,27 +109,35 @@ export default function DoctorPrescriptionPage() {
             lastName: Yup.string().required("Last name is required"),
             mobileNumber: Yup.string().required("Mobile number is required"),
             email: Yup.string().email("Invalid email address"),
-            medicalLicenseNumber: Yup.string().required("Medical License Number is required"),
             prescriptionFile: Yup.mixed().required("Prescription file is required"),
             consent: Yup.boolean().oneOf(
                 [true],
-                "You must certify the prescription to proceed"
+                "You must consent to the terms to proceed"
             ),
         }),
         onSubmit: async (values) => {
-            setIsSubmitting(true);
             try {
-                // Simulate API call
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-                console.log("Form Values:", values);
-                enqueueSnackbar("Prescription uploaded successfully!", {
+                const payload: any = {
+                    file: values.prescriptionFile,
+                    notes: values.additionalNote,
+                };
+
+                const userDetails = `\n\nPrescription Source: Doctor Upload\nPatient Details:\nName: ${values.firstName} ${values.lastName}\nMobile: ${values.mobileNumber}\nEmail: ${values.email}`;
+                payload.notes = (payload.notes || "") + userDetails;
+
+                await uploadPrescription({
+                    data: payload,
+                }).unwrap();
+
+                enqueueSnackbar("Doctor Prescription uploaded successfully!", {
                     variant: "success",
                 });
                 formik.resetForm();
-            } catch (error) {
-                enqueueSnackbar("Failed to upload prescription", { variant: "error" });
-            } finally {
-                setIsSubmitting(false);
+            } catch (error: any) {
+                console.error("Upload error", error);
+                enqueueSnackbar(error?.data?.message || "Failed to upload prescription", {
+                    variant: "error",
+                });
             }
         },
     });
@@ -140,32 +145,30 @@ export default function DoctorPrescriptionPage() {
     return (
         <Shell component="main" className="py-20">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
-                <div className="flex flex-col gap-2 max-w-sm">
+                <div>
                     <Breadcrumbs aria-label="breadcrumb" className="mb-4">
                         <MuiLink
-                            component={NextLink}
+                            component="a"
                             underline="hover"
                             color="inherit"
                             href="/"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                router.push("/");
+                            }}
                         >
                             Home
                         </MuiLink>
-                        <Typography color="text.secondary">Upload prescription</Typography>
+                        <Typography color="text.primary">Upload prescription</Typography>
                         <Typography color="text.primary">Doctor</Typography>
                     </Breadcrumbs>
-
-                    <Typography variant="h4" className="font-bold!">
-                        Doctor Prescription Form
-                    </Typography>
-
-                    <Typography variant="body1" className="text-gray-600 mb-5">
-                        Kindly upload a patient prescription. As a licensed provider, please verify all details before submission.
+                    <Typography variant="h3" className="font-bold">
+                        Doctor Prescription Upload
                     </Typography>
                 </div>
-
                 <Button
                     variant="outlined"
-                    onClick={() => router.push("/prescription/patient")}
+                    onClick={() => router.push("/consultation")}
                     sx={{
                         borderRadius: "50px",
                         textTransform: "none",
@@ -173,133 +176,149 @@ export default function DoctorPrescriptionPage() {
                         borderColor: "grey.300",
                     }}
                 >
-                    Patient Form
+                    Book Consultation
                 </Button>
             </div>
-            <div className="max-w-md mx-auto">
 
-                <form onSubmit={formik.handleSubmit} className="mt-6">
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="flex gap-4">
-                            <TextField
-                                {...getFormikTextFieldProps(formik, "firstName")}
-                                label="First Name"
-                                fullWidth
-                                disabled={isSubmitting}
-                                placeholder="e.g. John"
-                            />
+            <Typography variant="body1" className="text-gray-600 mb-10 text-sm max-w-3xl">
+                Upload a valid prescription issued by a licensed doctor. Ensure the patient details and medication information are clearly visible.
+            </Typography>
 
-                            <TextField
-                                {...getFormikTextFieldProps(formik, "lastName")}
-                                label="Last Name"
-                                fullWidth
-                                disabled={isSubmitting}
-                                placeholder="e.g. Doe"
-                            />
-                        </div>
-
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "mobileNumber")}
-                            label="Mobile Number"
-                            fullWidth
-                            disabled={isSubmitting}
-                            placeholder="Enter Phone Number"
-                        />
-
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "email")}
-                            label="Email Address (Optional)"
-                            type="email"
-                            fullWidth
-                            disabled={isSubmitting}
-                            placeholder="johndoe@example.com"
-                        />
-
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "medicalLicenseNumber")}
-                            label="Medical License Number"
-                            fullWidth
-                            disabled={isSubmitting}
-                            placeholder="Enter License Number"
-                        />
-
-                        <FileUploadInput
-                            formik={formik}
-                            name="prescriptionFile"
-                            label="Prescription File *"
-                        />
-
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "additionalNote")}
-                            label="Additional Note (Optional)"
-                            fullWidth
-                            multiline
-                            rows={4}
-                            disabled={isSubmitting}
-                            placeholder=""
-                        />
-                    </div>
-
-                    <div className="bg-pink-50/50 p-4 rounded-lg my-6">
-                        <Typography variant="body2" className="text-gray-600">
-                            A valid Prescription should contain: date of prescription,
-                            patient&apos;s details, facility name/stamp, dosage and prescriber
-                            (Doctor).{" "}
-                            <span className="text-pink-600 font-semibold cursor-pointer">
-                                See Sample
-                            </span>
+            <form onSubmit={formik.handleSubmit} className="max-w-3xl">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                    <div className="flex flex-col gap-1">
+                        <Typography variant="subtitle2" className="mb-1">
+                            Patient First Name
                         </Typography>
-                    </div>
-
-                    <div className="mb-4">
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    name="consent"
-                                    checked={formik.values.consent}
-                                    onChange={formik.handleChange}
-                                    color="primary"
-                                />
-                            }
-                            label={
-                                <Typography variant="caption" className="text-gray-600">
-                                    I certify that I am a licensed healthcare professional and this prescription is authentic, issued in accordance with medical standards for the named patient.
-                                </Typography>
-                            }
-                            className="items-start -ml-2"
-                            sx={{
-                                "& .MuiCheckbox-root": {
-                                    paddingTop: "0px",
-                                },
-                            }}
-                        />
-                        {formik.touched.consent && formik.errors.consent && (
-                            <Typography variant="caption" color="error" className="ml-2 block mt-1">
-                                {formik.errors.consent}
-                            </Typography>
-                        )}
-                    </div>
-
-                    <div className="mt-28 flex flex-col items-center">
-                        <LoadingButton
-                            type="submit"
+                        <TextField
+                            {...getFormikTextFieldProps(formik, "firstName")}
+                            label=""
                             fullWidth
-                            loading={isSubmitting}
-                            variant="contained"
-                            size="large"
-                            sx={{
-                                bgcolor: "#4B5563",
-                                "&:hover": { bgcolor: "#374151" },
-                                borderRadius: "50px",
-                                textTransform: "none",
-                                py: 1.5,
-                            }}
-                        >
-                            Proceed
-                        </LoadingButton>
+                            disabled={isLoading}
+                            placeholder="e.g. John"
+                        />
                     </div>
-                </form>
-            </div>
+
+                    <div className="flex flex-col gap-1">
+                        <Typography variant="subtitle2" className="mb-1">
+                            Patient Last Name
+                        </Typography>
+                        <TextField
+                            {...getFormikTextFieldProps(formik, "lastName")}
+                            label=""
+                            fullWidth
+                            disabled={isLoading}
+                            placeholder="e.g. Doe"
+                        />
+                    </div>
+                </div>
+
+                <div className="mb-6 flex flex-col gap-1">
+                    <Typography variant="subtitle2" className="mb-1">
+                        Patient Mobile Number
+                    </Typography>
+                    <TextField
+                        {...getFormikTextFieldProps(formik, "mobileNumber")}
+                        label=""
+                        fullWidth
+                        disabled={isLoading}
+                        placeholder="Enter Phone Number"
+                    />
+                </div>
+
+                <div className="mb-6 flex flex-col gap-1">
+                    <Typography variant="subtitle2" className="mb-1">
+                        Patient Email Address (Optional)
+                    </Typography>
+                    <TextField
+                        {...getFormikTextFieldProps(formik, "email")}
+                        label=""
+                        type="email"
+                        fullWidth
+                        disabled={isLoading}
+                        placeholder="johndoe@example.com"
+                    />
+                </div>
+
+                <div className="mb-6 flex flex-col gap-1">
+                    <Typography variant="subtitle2" className="mb-1">
+                        Prescription File{" "}
+                        <span className="text-pink-600">
+                            (only pdf, jpg, and jpeg files allowed) *
+                        </span>
+                    </Typography>
+                    <FileUploadInput formik={formik} name="prescriptionFile" />
+                </div>
+
+                <div className="mb-6 flex flex-col gap-1">
+                    <Typography variant="subtitle2" className="mb-1">
+                        Doctor's Notes (Optional)
+                    </Typography>
+                    <TextField
+                        {...getFormikTextFieldProps(formik, "additionalNote")}
+                        label=""
+                        fullWidth
+                        multiline
+                        rows={4}
+                        disabled={isLoading}
+                        placeholder="Any specific instructions..."
+                    />
+                </div>
+
+                <div className="bg-pink-50/50 p-4 rounded-lg mb-6">
+                    <Typography variant="caption" className="text-gray-600">
+                        Ensure the uploaded file is a valid prescription. Any falsified documents will result in account suspension.
+                    </Typography>
+                </div>
+
+                <div className="mb-8">
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                name="consent"
+                                checked={formik.values.consent}
+                                onChange={formik.handleChange}
+                                color="primary"
+                            />
+                        }
+                        label={
+                            <Typography variant="body2" className="text-gray-600 text-sm">
+                                I verify that this prescription is authentic and issued by a licensed healthcare professional.
+                            </Typography>
+                        }
+                        className="items-start -ml-2"
+                        sx={{
+                            "& .MuiCheckbox-root": {
+                                paddingTop: "0px",
+                            },
+                        }}
+                    />
+                    {formik.touched.consent && formik.errors.consent && (
+                        <Typography variant="caption" color="error" className="ml-2">
+                            {formik.errors.consent}
+                        </Typography>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-4 max-w-md mx-auto">
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                        size="large"
+                        disabled={isLoading}
+                        sx={{
+                            bgcolor: "#4B5563",
+                            "&:hover": { bgcolor: "#374151" },
+                            borderRadius: "50px",
+                            textTransform: "none",
+                            py: 1.5,
+                        }}
+                    >
+                        {isLoading ? "Uploading..." : "Submit Prescription"}
+                    </Button>
+                </div>
+            </form>
         </Shell>
     );
 }

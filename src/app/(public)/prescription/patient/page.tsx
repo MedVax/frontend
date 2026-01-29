@@ -16,8 +16,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
-import NextLink from "next/link";
 import { Icon } from "@iconify/react";
+import prescriptionApi from "apis/prescription-api";
 import { LoadingButton } from "@mui/lab";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
@@ -94,7 +94,10 @@ const FileUploadInput = ({
 export default function PatientPrescriptionPage() {
     const router = useRouter();
     const { enqueueSnackbar } = useSnackbar();
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    /* eslint-disable no-console */
+    const [uploadPrescription, { isLoading }] =
+        prescriptionApi.useUploadPrescriptionMutation();
 
     const formik = useFormik({
         initialValues: {
@@ -118,30 +121,41 @@ export default function PatientPrescriptionPage() {
             ),
         }),
         onSubmit: async (values) => {
-            setIsSubmitting(true);
             try {
-                // Simulate API call
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-                console.log("Form Values:", values);
+                const payload: any = {
+                    file: values.prescriptionFile,
+                    notes: values.additionalNote,
+                    // Backend does not currently accept firstName/lastName/mobile/email in CreatePrescriptionDto
+                    // "POST /prescriptions with { fileUrl, notes }"
+                };
+
+                // Append user details to notes for context if not supported directly
+                const userDetails = `\n\nPatient Details:\nName: ${values.firstName} ${values.lastName}\nMobile: ${values.mobileNumber}\nEmail: ${values.email}`;
+                payload.notes = (payload.notes || "") + userDetails;
+
+                await uploadPrescription({
+                    data: payload,
+                }).unwrap();
+
                 enqueueSnackbar("Prescription uploaded successfully!", {
                     variant: "success",
                 });
                 formik.resetForm();
-            } catch (error) {
-                enqueueSnackbar("Failed to upload prescription", { variant: "error" });
-            } finally {
-                setIsSubmitting(false);
+            } catch (error: any) {
+                console.error("Upload error", error);
+                enqueueSnackbar(error?.data?.message || "Failed to upload prescription", {
+                    variant: "error",
+                });
             }
         },
     });
-
     return (
         <Shell component="main" className="py-20">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
                 <div className="flex flex-col gap-2 max-w-sm">
                     <Breadcrumbs aria-label="breadcrumb" className="mb-4">
                         <MuiLink
-                            component={NextLink}
+                            component="a"
                             underline="hover"
                             color="inherit"
                             href="/"
@@ -183,7 +197,7 @@ export default function PatientPrescriptionPage() {
                                 {...getFormikTextFieldProps(formik, "firstName")}
                                 label="First Name"
                                 fullWidth
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                                 placeholder="e.g. John"
                             />
 
@@ -191,7 +205,7 @@ export default function PatientPrescriptionPage() {
                                 {...getFormikTextFieldProps(formik, "lastName")}
                                 label="Last Name"
                                 fullWidth
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                                 placeholder="e.g. Doe"
                             />
                         </div>
@@ -200,7 +214,7 @@ export default function PatientPrescriptionPage() {
                             {...getFormikTextFieldProps(formik, "mobileNumber")}
                             label="Mobile Number"
                             fullWidth
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                             placeholder="Enter Phone Number"
                         />
 
@@ -209,7 +223,7 @@ export default function PatientPrescriptionPage() {
                             label="Email Address (Optional)"
                             type="email"
                             fullWidth
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                             placeholder="johndoe@example.com"
                         />
 
@@ -225,7 +239,7 @@ export default function PatientPrescriptionPage() {
                             fullWidth
                             multiline
                             rows={4}
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                             placeholder=""
                         />
                     </div>
@@ -271,12 +285,12 @@ export default function PatientPrescriptionPage() {
                     </div>
 
                     <div className="mt-28 flex flex-col items-center">
-                        <LoadingButton
+                        <Button
                             type="submit"
-                            fullWidth
-                            loading={isSubmitting}
                             variant="contained"
+                            fullWidth
                             size="large"
+                            disabled={isLoading}
                             sx={{
                                 bgcolor: "#4B5563",
                                 "&:hover": { bgcolor: "#374151" },
@@ -285,8 +299,8 @@ export default function PatientPrescriptionPage() {
                                 py: 1.5,
                             }}
                         >
-                            Proceed
-                        </LoadingButton>
+                            {isLoading ? "Uploading..." : "Proceed"}
+                        </Button>
 
                         <Typography variant="caption" className="text-gray-500 my-4">
                             Don&apos;t have a prescription?
@@ -301,7 +315,7 @@ export default function PatientPrescriptionPage() {
                                 borderRadius: "50px",
                                 textTransform: "none",
                                 py: 1.5,
-                                bgcolor: "#E91E63", // Pink color matching theme/image
+                                bgcolor: "#E91E63",
                                 "&:hover": { bgcolor: "#D81B60" },
                             }}
                         >
