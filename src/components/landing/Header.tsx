@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   Popover,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   AltArrowDown,
   User,
@@ -41,8 +41,8 @@ import useSideMenu from "@/hooks/use-side-menu";
 import { usePathname } from "next/navigation";
 
 const prescriptionMenuItems = [
-  { label: "Upload Prescription", href: "/prescription/upload" },
-  { label: "View Prescriptions", href: "/prescription/view" },
+  { label: "Patient Prescription", href: "/prescription/patient" },
+  { label: "Doctor Prescription", href: "/prescription/doctor" },
 ];
 
 export function Header() {
@@ -54,7 +54,7 @@ export function Header() {
   const router = useRouter();
   const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
   const { toggleSideMenu } = useSideMenu();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const getAllCategories = categoryApi.useGetCategoriesQuery({
     params: {
       includeSubcategories: false,
@@ -197,19 +197,18 @@ export function Header() {
 
           {/* Category Menu */}
           <div
-            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${
-              isHovered
-                ? "opacity-100 visible translate-y-0"
-                : "opacity-100 invisible -translate-y-2"
-            }`}
+            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${isHovered
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-100 invisible -translate-y-2"
+              }`}
             {...(isSmallScreen
               ? {}
               : {
-                  onMouseLeave: () => {
-                    setIsHovered(false);
-                    setAnchorEl(null);
-                  },
-                })}
+                onMouseLeave: () => {
+                  setIsHovered(false);
+                  setAnchorEl(null);
+                },
+              })}
           >
             <Container
               maxWidth="xl"
@@ -334,6 +333,24 @@ function MyAccountButton() {
       icon: <Logout size={20} />,
     },
   ];
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <Button
+        variant="soft"
+        onClick={() => router.push("/signup")}
+        startIcon={<User size={20} />}
+      >
+        Create Account
+      </Button>
+    );
+  }
+
   return (
     <>
       {isAuthenticated ? (
@@ -445,3 +462,4 @@ function SearchBar() {
     />
   );
 }
+

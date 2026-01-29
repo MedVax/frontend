@@ -1,6 +1,8 @@
 import { ServerResponse } from "./global";
 
 export enum UserType {
+  CLIENT = "CLIENT",
+  CONSULTANT = "CONSULTANT",
   USER = "USER",
   SUPER_ADMIN = "SUPER_ADMIN",
   ADMIN = "ADMIN",
@@ -51,6 +53,8 @@ export type AuthUser = {
   user: User;
   isAuthenticated?: boolean;
   expiresIn: number;
+  accessToken?: string;
+  refreshToken?: string;
 } | null;
 
 export type UserSignRequest = {
