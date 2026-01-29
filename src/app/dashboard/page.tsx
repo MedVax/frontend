@@ -1,25 +1,15 @@
 "use client";
 
-import useAuthUser from "@/hooks/use-auth";
-import { Button, Typography } from "@mui/material";
-import React from "react";
+import { useAuth } from "@/hooks/use-auth";
+import ClientDashboard from "./(client)/features/ClientDashboard";
+import ConsultantDashboard from "./(consultant)/features/ConsultantDashboard";
 
 const page = () => {
-  const authUser = useAuthUser();
+  const auth = useAuth();
   return (
     <div>
-      <div className="flex justify-between items-center w-full">
-        <div>
-          <Typography component="span" className="text-grey-9 capitalize">
-            Hi {authUser?.user?.firstName}
-          </Typography>
-          <Typography variant="h5" className="font-semibold mt-2">
-            Welcome back
-          </Typography>
-        </div>
-
-        <Button className="bg-black text-white">Book new session</Button>
-      </div>
+      {auth.isClient && <ClientDashboard />}{" "}
+      {auth.isConsultant && <ConsultantDashboard />}
     </div>
   );
 };

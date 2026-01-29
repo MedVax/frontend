@@ -14,6 +14,7 @@ import { Icon as Iconify } from "@iconify/react";
 import { Typography } from "@mui/material";
 import { usePathname } from "next/navigation";
 import useSideMenu from "@/hooks/use-side-menu";
+import useAuthUser from "@/hooks/use-auth";
 
 export const DashboardSidebar = () => {
   const { isSideMenu, toggleSideMenu } = useSideMenu();
@@ -51,6 +52,8 @@ export const DashboardSidebar = () => {
 const SideBar = () => {
   const pathname = usePathname();
   const { toggleSideMenu } = useSideMenu();
+  const authUser = useAuthUser();
+  const isConsultant = authUser?.user?.activeProfile?.type === "CONSULTANT";
 
   const segments = pathname.split("/").filter(Boolean);
   const breadcrumb = segments[segments.length - 1];
@@ -73,7 +76,17 @@ const SideBar = () => {
         Dashboard
       </Typography>
       <List className="flex-1 min-h-0 overflow-y-auto scrollbar-hidden space-y-3 mt-10">
-        {NAV_LINKS.map(({ icon, activeIcon, ...linkProps }, index) => {
+        {NAV_LINKS.filter((link) => {
+          // Show availability only for consultants
+          if (link.href === "/dashboard/availability") {
+            return isConsultant;
+          }
+          // Show assign consultant only for clients
+          if (link.clientOnly) {
+            return !isConsultant;
+          }
+          return true;
+        }).map(({ icon, activeIcon, clientOnly, ...linkProps }, index) => {
           function children(renderProps: any): React.ReactNode {
             throw new Error("Function not implemented.");
           }
@@ -135,6 +148,12 @@ const NAV_LINKS = [
     icon: "solar:heart-angle-outline",
   },
   {
+    children: "Assign Consultant",
+    href: "/dashboard/consultants",
+    icon: "solar:user-plus-outline",
+    clientOnly: true,
+  },
+  {
     children: "Security",
     href: "/dashboard/security",
     icon: "solar:lock-linear",
@@ -144,4 +163,9 @@ const NAV_LINKS = [
     href: "/dashboard/profile",
     icon: "solar:user-outline",
   },
-] as ({ icon?: string; activeIcon?: string; children: string } & LinkProps)[];
+  {
+    children: "Availability",
+    href: "/dashboard/availability",
+    icon: "solar:calendar-mark-outline",
+  },
+] as ({ icon?: string; activeIcon?: string; children: string; clientOnly?: boolean } & LinkProps)[];
