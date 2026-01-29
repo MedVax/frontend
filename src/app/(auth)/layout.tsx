@@ -42,7 +42,7 @@ export default function AuthLayout({
 
             <Typography
               variant="h4"
-              className="font-semibold! max-w-[280px] text-center mt-20"
+              className="font-semibold! max-w-[280px] text-center mt-10"
             >
               Get started with out E-Pharmacy & Consultation{" "}
             </Typography>

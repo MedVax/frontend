@@ -218,4 +218,21 @@ const userApi = medvaxApi.injectEndpoints({
   }),
 });
 
+export const {
+  useUserSigninMutation,
+  useUserForgotPasswordMutation,
+  useUserResetPasswordMutation,
+  useUserChangePasswordMutation,
+  useUserFirstTimePasswordChangeMutation,
+  useGetUserProfileInfoQuery,
+  useUpdateUserProfileInfoMutation,
+  useVerifyUserPasswordLessSigninMutation,
+  useUpdateUserPhotoMutation,
+  useGetUsersQuery,
+  useGetUsersVar2Query,
+  useUserRefreshTokenMutation,
+  useRequestDemoMutation,
+  useUpdateUserStatusMutation,
+} = userApi;
+
 export default userApi;
