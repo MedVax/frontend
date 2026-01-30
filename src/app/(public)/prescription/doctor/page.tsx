@@ -17,7 +17,7 @@ import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import prescriptionApi from "apis/prescription-api";
+import { prescriptionApi, PrescriptionType } from "apis/prescription-api";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
 // Helper component for the custom file input
@@ -91,8 +91,8 @@ export default function DoctorPrescriptionPage() {
     const { enqueueSnackbar } = useSnackbar();
 
     /* eslint-disable no-console */
-    const [uploadPrescription, { isLoading }] =
-        prescriptionApi.useUploadPrescriptionMutation();
+    const [createPrescription, { isLoading }] =
+        prescriptionApi.useCreatePrescriptionMutation();
 
     const formik = useFormik({
         initialValues: {
@@ -117,15 +117,16 @@ export default function DoctorPrescriptionPage() {
         }),
         onSubmit: async (values) => {
             try {
-                const payload: any = {
-                    file: values.prescriptionFile,
-                    notes: values.additionalNote,
+                const payload = {
+                    file: values.prescriptionFile!,
+                    prescriberType: PrescriptionType.DOCTOR,
+                    patientName: `${values.firstName} ${values.lastName}`,
+                    patientPhone: values.mobileNumber,
+                    patientEmail: values.email,
+                    additionalNote: values.additionalNote,
                 };
 
-                const userDetails = `\n\nPrescription Source: Doctor Upload\nPatient Details:\nName: ${values.firstName} ${values.lastName}\nMobile: ${values.mobileNumber}\nEmail: ${values.email}`;
-                payload.notes = (payload.notes || "") + userDetails;
-
-                await uploadPrescription({
+                await createPrescription({
                     data: payload,
                 }).unwrap();
 

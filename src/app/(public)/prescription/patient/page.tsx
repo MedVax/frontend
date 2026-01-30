@@ -17,7 +17,7 @@ import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import prescriptionApi from "apis/prescription-api";
+import { prescriptionApi, PrescriptionType } from "apis/prescription-api";
 import { LoadingButton } from "@mui/lab";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
@@ -96,8 +96,8 @@ export default function PatientPrescriptionPage() {
     const { enqueueSnackbar } = useSnackbar();
 
     /* eslint-disable no-console */
-    const [uploadPrescription, { isLoading }] =
-        prescriptionApi.useUploadPrescriptionMutation();
+    const [createPrescription, { isLoading }] =
+        prescriptionApi.useCreatePrescriptionMutation();
 
     const formik = useFormik({
         initialValues: {
@@ -122,18 +122,16 @@ export default function PatientPrescriptionPage() {
         }),
         onSubmit: async (values) => {
             try {
-                const payload: any = {
-                    file: values.prescriptionFile,
-                    notes: values.additionalNote,
-                    // Backend does not currently accept firstName/lastName/mobile/email in CreatePrescriptionDto
-                    // "POST /prescriptions with { fileUrl, notes }"
+                const payload = {
+                    file: values.prescriptionFile!,
+                    prescriberType: PrescriptionType.PATIENT,
+                    patientName: `${values.firstName} ${values.lastName}`,
+                    patientPhone: values.mobileNumber,
+                    patientEmail: values.email,
+                    additionalNote: values.additionalNote,
                 };
 
-                // Append user details to notes for context if not supported directly
-                const userDetails = `\n\nPatient Details:\nName: ${values.firstName} ${values.lastName}\nMobile: ${values.mobileNumber}\nEmail: ${values.email}`;
-                payload.notes = (payload.notes || "") + userDetails;
-
-                await uploadPrescription({
+                await createPrescription({
                     data: payload,
                 }).unwrap();
 

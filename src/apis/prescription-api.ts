@@ -104,6 +104,9 @@ export const prescriptionApi = medvaxApi.injectEndpoints({
       QueryRequest<CreatePrescriptionRequest, void, void>
     >({
       query: ({ data, ...config }) => {
+        if (!data) {
+          throw new Error("Data is required for creating a prescription");
+        }
         const formData = objectToFormData({
           file: data.file,
           prescriberType: data.prescriberType,
@@ -132,8 +135,10 @@ export const prescriptionApi = medvaxApi.injectEndpoints({
         return {
           url: TAG,
           method: "POST",
-          headers: { "Content-Type": "multipart/form-data" },
-          body: formData,
+          data: formData,
+          headers: {
+            "Content-Type": undefined,
+          },
           ...config,
         };
       },
