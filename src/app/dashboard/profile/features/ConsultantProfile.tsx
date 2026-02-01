@@ -28,12 +28,14 @@ import { useSnackbar } from "notistack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuthUser from "@/hooks/use-auth";
+import { getFormikTextFieldProps } from "@/utils/formik";
+import { LoadingButton } from "@mui/lab";
 
 const ConsultantProfile = () => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const { data: userData, isLoading: userLoading } = useGetUserProfileInfoQuery();
-  
+
   const consultantProfileId = authUser?.user?.activeProfile?.userProfileConsultant;
   const { data: consultantData, isLoading: consultantLoading } = useGetConsultantProfileQuery(
     { path: { id: consultantProfileId || "" } },
@@ -55,7 +57,6 @@ const ConsultantProfile = () => {
     firstName: Yup.string().required("First name is required"),
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: Yup.string().required("Phone number is required"),
     jobTitle: Yup.string(),
     bio: Yup.string(),
     rate: Yup.number().min(0, "Rate must be positive"),
@@ -68,7 +69,6 @@ const ConsultantProfile = () => {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
       email: user?.email || "",
-      phoneNumber: user?.phoneNumber || "",
       jobTitle: consultantProfile?.jobTitle || "",
       bio: consultantProfile?.bio || "",
       rate: consultantProfile?.rate || 0,
@@ -87,7 +87,6 @@ const ConsultantProfile = () => {
             email: values.email,
             firstName: values.firstName,
             lastName: values.lastName,
-            phoneNumber: values.phoneNumber,
           },
         }).unwrap();
 
@@ -110,12 +109,13 @@ const ConsultantProfile = () => {
 
         enqueueSnackbar("Profile updated successfully", { variant: "success" });
       } catch (error: unknown) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to update profile";
-        enqueueSnackbar(errorMessage, {
-          variant: "error",
-        });
+        const err = error as { defaultUserMessage?: string; message?: string };
+        enqueueSnackbar(
+          err?.defaultUserMessage || err?.message || "An error occurred",
+          {
+            variant: "error",
+          }
+        );
       }
     },
   });
@@ -140,12 +140,13 @@ const ConsultantProfile = () => {
       setPhotoFile(null);
       setPhotoPreview(null);
     } catch (error: unknown) {
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Failed to update photo";
-      enqueueSnackbar(errorMessage, {
-        variant: "error",
-      });
+      const err = error as { defaultUserMessage?: string; message?: string };
+      enqueueSnackbar(
+        err?.defaultUserMessage || err?.message || "An error occurred",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 
@@ -259,8 +260,8 @@ const ConsultantProfile = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <Typography variant="h4" className="font-semibold">
+    <div className="space-y-10">
+      <Typography variant="h5" className="font-semibold">
         My Profile
       </Typography>
 
@@ -293,6 +294,7 @@ const ConsultantProfile = () => {
             {photoFile && (
               <Button
                 variant="contained"
+                className="ml-1"
                 onClick={handlePhotoUpload}
                 disabled={isUploadingPhoto}
               >
@@ -340,26 +342,14 @@ const ConsultantProfile = () => {
 
           <TextField
             fullWidth
-            label="Email"
             name="email"
             type="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && !!formik.errors.email}
-            helperText={formik.touched.email && formik.errors.email}
+            label="Email"
+            disabled
+            {...getFormikTextFieldProps(formik, "email")}
           />
 
-          <TextField
-            fullWidth
-            label="Phone Number"
-            name="phoneNumber"
-            value={formik.values.phoneNumber}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
-            helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
-          />
+
 
           <Divider className="my-4" />
 
@@ -500,13 +490,14 @@ const ConsultantProfile = () => {
             </Typography>
           </div>
 
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             startIcon={<Iconify icon="solar:check-circle-linear" fontSize={20} />}
+            loading={formik.isSubmitting}
           >
             Save Changes
-          </Button>
+          </LoadingButton>
         </form>
       </Paper>
     </div>

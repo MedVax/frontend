@@ -3,20 +3,20 @@
 import { Shell } from "@/components/ui";
 import {
   Button,
-  Card,
   TextField,
   Typography,
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel,
   Alert,
   Skeleton,
   Checkbox,
   Select,
   MenuItem,
   InputLabel,
+  Paper,
+  Divider,
 } from "@mui/material";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -29,12 +29,13 @@ import { useGetAddressesQuery } from "@/apis/address-api";
 import {
   useCreateOrderMutation,
   CreateOrderRequest,
-  OrderRecurringFrequency,
 } from "@/apis/order-api";
 import { useSnackbar } from "notistack";
 import useAuthUser from "@/hooks/use-auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { OrderRecurringFrequency } from "@/types/order";
+import { getFormikTextFieldProps } from "@/utils/formik";
 
 const CheckoutPage = () => {
   const router = useRouter();
@@ -141,11 +142,11 @@ const CheckoutPage = () => {
       }
 
       const result = await createOrder({ data: orderPayload }).unwrap();
-      const order = result.data?.order;
-      const paymentLink = result.data?.paymentLink;
+
+      const order = result.data;
+      const paymentLink = result.data?.paymentUrl;
 
       if (paymentLink) {
-        // Redirect to payment
         window.location.href = paymentLink;
       } else {
         // Order created without payment (shouldn't happen normally)
@@ -153,7 +154,8 @@ const CheckoutPage = () => {
         router.push(`/checkout/success?orderId=${order?.id}`);
       }
     } catch (error: any) {
-      enqueueSnackbar(error?.data?.message || "Failed to create order", {
+      const err = error as { defaultUserMessage?: string; message?: string };
+      enqueueSnackbar(err?.defaultUserMessage || err?.message || "Failed to create order", {
         variant: "error",
       });
     }
@@ -197,7 +199,7 @@ const CheckoutPage = () => {
         </Typography>
       </div>
 
-      <div className="flex sm:flex-row flex-col justify-center gap-6 max-w-[1440px] mx-auto">
+      <div className="flex sm:flex-row flex-col justify-center gap-6 max-w-[1000px] mx-auto">
         <div className="flex-1">
           {!isAuthenticated && (
             <>
@@ -211,7 +213,7 @@ const CheckoutPage = () => {
                 </Link>
               </Typography>
 
-              <Card variant="outlined" className="p-6 mb-6">
+              <Paper variant="outlined" className="p-6 mb-6 bg-white!">
                 <Typography variant="h6" className="font-semibold mb-4">
                   Continue as a guest
                 </Typography>
@@ -222,25 +224,15 @@ const CheckoutPage = () => {
                       label="First name"
                       name="firstName"
                       fullWidth
-                      value={guestFormik.values.firstName}
-                      onChange={guestFormik.handleChange}
-                      onBlur={guestFormik.handleBlur}
-                      error={guestFormik.touched.firstName && !!guestFormik.errors.firstName}
-                      helperText={guestFormik.touched.firstName && guestFormik.errors.firstName}
                       size="small"
-                      required
+                      {...getFormikTextFieldProps(guestFormik, "firstName")}
                     />
                     <TextField
                       label="Last name"
                       name="lastName"
                       fullWidth
-                      value={guestFormik.values.lastName}
-                      onChange={guestFormik.handleChange}
-                      onBlur={guestFormik.handleBlur}
-                      error={guestFormik.touched.lastName && !!guestFormik.errors.lastName}
-                      helperText={guestFormik.touched.lastName && guestFormik.errors.lastName}
                       size="small"
-                      required
+                      {...getFormikTextFieldProps(guestFormik, "lastName")}
                     />
                   </div>
                   <TextField
@@ -248,33 +240,23 @@ const CheckoutPage = () => {
                     name="email"
                     type="email"
                     fullWidth
-                    value={guestFormik.values.email}
-                    onChange={guestFormik.handleChange}
-                    onBlur={guestFormik.handleBlur}
-                    error={guestFormik.touched.email && !!guestFormik.errors.email}
-                    helperText={guestFormik.touched.email && guestFormik.errors.email}
                     size="small"
-                    required
+                    {...getFormikTextFieldProps(guestFormik, "email")}
                   />
                   <TextField
                     label="Mobile Number"
                     name="phone"
                     fullWidth
-                    value={guestFormik.values.phone}
-                    onChange={guestFormik.handleChange}
-                    onBlur={guestFormik.handleBlur}
-                    error={guestFormik.touched.phone && !!guestFormik.errors.phone}
-                    helperText={guestFormik.touched.phone && guestFormik.errors.phone}
                     size="small"
-                    required
+                    {...getFormikTextFieldProps(guestFormik, "phone")}
                   />
                 </form>
-              </Card>
+              </Paper>
             </>
           )}
 
           {/* Shipping Method */}
-          <Card variant="outlined" className="p-6 mb-6">
+          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
             <Typography variant="h6" className="font-semibold mb-4">
               Shipping Method
             </Typography>
@@ -295,10 +277,10 @@ const CheckoutPage = () => {
                 />
               </RadioGroup>
             </FormControl>
-          </Card>
+          </Paper>
 
           {/* Shipping Address */}
-          <Card variant="outlined" className="p-6 mb-6">
+          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
             <Typography variant="h6" className="font-semibold mb-4">
               {isAuthenticated ? "Delivery Address" : "Shipping Details"}
             </Typography>
@@ -307,20 +289,23 @@ const CheckoutPage = () => {
               addressesLoading ? (
                 <Skeleton variant="rectangular" height={100} />
               ) : addresses.length > 0 ? (
-                <FormControl fullWidth>
-                  <InputLabel>Select Address</InputLabel>
-                  <Select
-                    value={selectedAddressId}
-                    onChange={(e) => setSelectedAddressId(e.target.value)}
+                <div className="flex flex-col gap-2">
+                  <TextField
                     label="Select Address"
-                  >
+                    name="selectedAddressId"
+                    fullWidth
+                    value={selectedAddressId}
+                    onChange={(e) => setSelectedAddressId(e.target.value)} size="small"
+                    select>
                     {addresses.map((address) => (
                       <MenuItem key={address.id} value={address.id}>
                         {address.line1}, {address.city}, {address.state}
                         {address.isDefault && " (Default)"}
                       </MenuItem>
                     ))}
-                  </Select>
+                  </TextField>
+
+
                   <Button
                     variant="outlined"
                     size="small"
@@ -329,7 +314,8 @@ const CheckoutPage = () => {
                   >
                     Add New Address
                   </Button>
-                </FormControl>
+                </div>
+
               ) : (
                 <div>
                   <Alert severity="warning" className="mb-4">
@@ -349,20 +335,14 @@ const CheckoutPage = () => {
                   label="Address"
                   name="addressLine1"
                   fullWidth
-                  value={guestFormik.values.addressLine1}
-                  onChange={guestFormik.handleChange}
-                  onBlur={guestFormik.handleBlur}
-                  error={guestFormik.touched.addressLine1 && !!guestFormik.errors.addressLine1}
-                  helperText={guestFormik.touched.addressLine1 && guestFormik.errors.addressLine1}
+                  {...getFormikTextFieldProps(guestFormik, "addressLine1")}
                   size="small"
-                  required
                 />
                 <TextField
                   label="Apartment, suite, etc"
                   name="addressLine2"
                   fullWidth
-                  value={guestFormik.values.addressLine2}
-                  onChange={guestFormik.handleChange}
+                  {...getFormikTextFieldProps(guestFormik, "addressLine2")}
                   size="small"
                 />
                 <div className="grid grid-cols-2 gap-4">
@@ -370,25 +350,15 @@ const CheckoutPage = () => {
                     label="City"
                     name="city"
                     fullWidth
-                    value={guestFormik.values.city}
-                    onChange={guestFormik.handleChange}
-                    onBlur={guestFormik.handleBlur}
-                    error={guestFormik.touched.city && !!guestFormik.errors.city}
-                    helperText={guestFormik.touched.city && guestFormik.errors.city}
+                    {...getFormikTextFieldProps(guestFormik, "city")}
                     size="small"
-                    required
                   />
                   <TextField
                     label="State/Region"
                     name="state"
                     fullWidth
-                    value={guestFormik.values.state}
-                    onChange={guestFormik.handleChange}
-                    onBlur={guestFormik.handleBlur}
-                    error={guestFormik.touched.state && !!guestFormik.errors.state}
-                    helperText={guestFormik.touched.state && guestFormik.errors.state}
+                    {...getFormikTextFieldProps(guestFormik, "state")}
                     size="small"
-                    required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -396,29 +366,23 @@ const CheckoutPage = () => {
                     label="Postal Code"
                     name="postalCode"
                     fullWidth
-                    value={guestFormik.values.postalCode}
-                    onChange={guestFormik.handleChange}
+                    {...getFormikTextFieldProps(guestFormik, "postalCode")}
                     size="small"
                   />
                   <TextField
                     label="Country"
                     name="country"
                     fullWidth
-                    value={guestFormik.values.country}
-                    onChange={guestFormik.handleChange}
-                    onBlur={guestFormik.handleBlur}
-                    error={guestFormik.touched.country && !!guestFormik.errors.country}
-                    helperText={guestFormik.touched.country && guestFormik.errors.country}
+                    {...getFormikTextFieldProps(guestFormik, "country")}
                     size="small"
-                    required
                   />
                 </div>
               </div>
             )}
-          </Card>
+          </Paper>
 
           {/* Order Notes */}
-          <Card variant="outlined" className="p-6 mb-6">
+          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
             <Typography variant="h6" className="font-semibold mb-4">
               Order Notes (Optional)
             </Typography>
@@ -432,10 +396,10 @@ const CheckoutPage = () => {
               placeholder="Any special instructions for delivery..."
               size="small"
             />
-          </Card>
+          </Paper>
 
           {/* Recurring Order Option */}
-          <Card variant="outlined" className="p-6 mb-6">
+          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
             <FormControlLabel
               control={
                 <Checkbox
@@ -446,26 +410,24 @@ const CheckoutPage = () => {
               label="Make this a recurring order"
             />
             {isRecurring && (
-              <FormControl fullWidth className="mt-4">
-                <InputLabel>Frequency</InputLabel>
-                <Select
-                  value={recurringFrequency}
-                  onChange={(e) =>
-                    setRecurringFrequency(e.target.value as OrderRecurringFrequency)
-                  }
-                  label="Frequency"
-                >
-                  <MenuItem value={OrderRecurringFrequency.WEEKLY}>Weekly</MenuItem>
-                  <MenuItem value={OrderRecurringFrequency.MONTHLY}>Monthly</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                label="Frequency"
+                value={recurringFrequency}
+                onChange={(e) => setRecurringFrequency(e.target.value as OrderRecurringFrequency)}
+                fullWidth
+                size="small"
+                select
+              >
+                <MenuItem value={OrderRecurringFrequency.WEEKLY}>Weekly</MenuItem>
+                <MenuItem value={OrderRecurringFrequency.MONTHLY}>Monthly</MenuItem>
+              </TextField>
             )}
-          </Card>
+          </Paper>
         </div>
 
         {/* Order Summary */}
         <div className="sm:w-[400px] w-full">
-          <Card variant="outlined" className="flex flex-col gap-2 p-4 bg-white! sticky top-4">
+          <Paper variant="outlined" className="flex flex-col gap-2 p-4 bg-white! sticky top-4">
             <Typography variant="h6" className="font-semibold!">
               Order Summary
             </Typography>
@@ -480,7 +442,7 @@ const CheckoutPage = () => {
                     : "/assets/dummy-product.png";
 
                 return (
-                  <div key={item.id} className="flex items-start gap-3 pb-3 border-b">
+                  <div key={item.id} className="flex items-start gap-3 pb-3">
                     <div className="w-[50px] h-[50px] rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                       <Image
                         src={productImage}
@@ -506,7 +468,9 @@ const CheckoutPage = () => {
               })}
             </div>
 
-            <div className="flex flex-col gap-2 mt-4 pt-4 border-t">
+            <Divider className="my-4" />
+
+            <div className="flex flex-col gap-2 mt-4 pt-4">
               <div className="flex flex-row justify-between">
                 <Typography>Subtotal</Typography>
                 <Typography variant="body1" className="font-semibold!">
@@ -541,7 +505,7 @@ const CheckoutPage = () => {
             >
               {isCreatingOrder ? "Processing..." : "Place Order"}
             </Button>
-          </Card>
+          </Paper>
         </div>
       </div>
     </Shell>

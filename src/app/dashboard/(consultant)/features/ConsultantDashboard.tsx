@@ -1,31 +1,32 @@
 "use client";
 
 import useAuthUser from "@/hooks/use-auth";
-import { Button, Typography, Paper, Avatar, Chip, Box, Skeleton, Icon } from "@mui/material";
-import React from "react";
+import { Button, Typography, Paper, Skeleton } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Icon as Iconify } from "@iconify/react";
-import { Calendar, ClockCircle, Global } from "@solar-icons/react";
-import { format } from "date-fns";
-import { useGetConsultantSessionsQuery, useGetConsultantStatsQuery, Session } from "@/apis/session-api";
+
+import { useGetConsultantSessionsQuery, useGetConsultantStatsQuery } from "@/apis/session-api";
 import BookingCard from "../../bookings/features/BookingCard";
+import CalendarIntegrationComponent from "../../calendar/features/CalendarIntegration";
+import { SessionStatus } from "@/apis/session-api";
 
 const ConsultantDashboard = () => {
   const authUser = useAuthUser();
   const router = useRouter();
-  
+
   // Get upcoming sessions
   const { data: sessionsData, isLoading: sessionsLoading } = useGetConsultantSessionsQuery({
-    params: { page: 1, limit: 5, state: "upcoming" },
+    params: { page: 1, limit: 1, state: SessionStatus.UPCOMING },
   });
 
   // Get stats - using dummy consultantId for now
-  const consultantId = "consultant-123"; // This should come from consultant profile
+  const consultantId = authUser?.user?.activeProfile?.userProfileConsultant || "";
   const { data: statsData, isLoading: statsLoading } = useGetConsultantStatsQuery({
     path: { consultantId },
   }, { skip: !consultantId });
 
   const upcomingSessions = sessionsData?.data?.data || [];
+
   const stats = statsData?.data || {
     totalSessions: 0,
     upcomingSessions: 0,
@@ -63,7 +64,7 @@ const ConsultantDashboard = () => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Paper variant="outlined" className="p-4 bg-white!">
             <div className="flex items-center justify-between">
               <div>
@@ -71,26 +72,14 @@ const ConsultantDashboard = () => {
                   Total Sessions
                 </Typography>
                 <Typography variant="h4" className="font-semibold">
-                  {stats.totalSessions}
+                  {stats.totalSessions || 0}
                 </Typography>
               </div>
               <Iconify icon="solar:calendar-mark-outline" fontSize={32} className="text-blue-500" />
             </div>
           </Paper>
 
-          <Paper variant="outlined" className="p-4 bg-white!">
-            <div className="flex items-center justify-between">
-              <div>
-                <Typography variant="body2" color="text.secondary">
-                  Upcoming
-                </Typography>
-                <Typography variant="h4" className="font-semibold text-blue-600">
-                  {stats.upcomingSessions}
-                </Typography>
-              </div>
-              <Iconify icon="solar:calendar-add-outline" fontSize={32} className="text-blue-500" />
-            </div>
-          </Paper>
+
 
           <Paper variant="outlined" className="p-4 bg-white!">
             <div className="flex items-center justify-between">
@@ -99,7 +88,7 @@ const ConsultantDashboard = () => {
                   Pending
                 </Typography>
                 <Typography variant="h4" className="font-semibold text-orange-600">
-                  {stats.pendingSessions}
+                  {stats.pendingSessions || 0}
                 </Typography>
               </div>
               <Iconify icon="solar:clock-circle-outline" fontSize={32} className="text-orange-500" />
@@ -113,7 +102,7 @@ const ConsultantDashboard = () => {
                   Completed
                 </Typography>
                 <Typography variant="h4" className="font-semibold text-green-600">
-                  {stats.completedSessions}
+                  {stats.completedSessions || 0}
                 </Typography>
               </div>
               <Iconify icon="solar:check-circle-outline" fontSize={32} className="text-green-500" />
@@ -122,132 +111,32 @@ const ConsultantDashboard = () => {
         </div>
       )}
 
-      {/* Next Session */}
-      {sessionsLoading ? (
-        <Skeleton variant="rectangular" height={200} />
-      ) : nextSession ? (
-        <Paper variant="outlined" className="p-6 bg-white!">
+      {/* Recent Sessions */}
+      {nextSession && (
+        <div>
           <div className="flex items-center justify-between mb-4">
             <Typography variant="h6" className="font-semibold">
-              Next Session
+              Upcoming Sessions
             </Typography>
-            <Chip
-              label={nextSession.status}
-              color={nextSession.status === "PENDING" ? "warning" : "info"}
-              variant="soft"
-              size="small"
-            />
-          </div>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex items-center gap-4">
-              <Avatar
-                src={nextSession.client?.userProfile?.user?.avatar || undefined}
-                sx={{ width: 64, height: 64 }}
-              >
-                {nextSession.client?.userProfile?.user?.firstName?.[0]}
-                {nextSession.client?.userProfile?.user?.lastName?.[0]}
-              </Avatar>
-              <div className="flex flex-col">
-                <Typography variant="h6" className="font-semibold">
-                  {nextSession.client?.userProfile?.user?.firstName}{" "}
-                  {nextSession.client?.userProfile?.user?.lastName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {nextSession.sessionType} Session
-                </Typography>
-              </div>
-            </div>
-            <div className="flex items-center gap-6 flex-wrap">
-              <div className="flex items-center gap-2">
-                <Icon fontSize="small">
-                  <Calendar />
-                </Icon>
-                <div>
-                  <Typography variant="body2" color="text.secondary">
-                    Date
-                  </Typography>
-                  <Typography className="font-semibold">
-                    {format(new Date(nextSession.scheduledDate), "dd MMM, yyyy")}
-                  </Typography>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Icon fontSize="small">
-                  <ClockCircle />
-                </Icon>
-                <div>
-                  <Typography variant="body2" color="text.secondary">
-                    Time
-                  </Typography>
-                  <Typography className="font-semibold">
-                    {format(new Date(nextSession.scheduledDate), "h:mm a")}
-                  </Typography>
-                </div>
-              </div>
-              {nextSession.clientTimezone && (
-                <div className="flex items-center gap-2">
-                  <Icon fontSize="small">
-                    <Global />
-                  </Icon>
-                  <div>
-                    <Typography variant="body2" color="text.secondary">
-                      Timezone
-                    </Typography>
-                    <Typography className="font-semibold">
-                      {nextSession.clientTimezone}
-                    </Typography>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex-1" />
-            <div className="flex gap-2">
-              {nextSession.meetingUrl && (
-                <Button variant="contained" href={nextSession.meetingUrl} target="_blank">
-                  Join Session
-                </Button>
-              )}
-              <Button variant="outlined" onClick={() => router.push("/dashboard/bookings")}>
-                View All
-              </Button>
-            </div>
-          </div>
-        </Paper>
-      ) : (
-        <Paper variant="outlined" className="p-6 text-center">
-          <Iconify icon="solar:calendar-mark-outline" fontSize={64} className="text-gray-400 mb-4" />
-          <Typography variant="h6" className="mb-2">
-            No upcoming sessions
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Your next session will appear here
-          </Typography>
-        </Paper>
-      )}
 
-      {/* Recent Sessions */}
-      {upcomingSessions.length > 1 && (
-        <div>
-          <Typography variant="h6" className="font-semibold mb-4">
-            Upcoming Sessions
-          </Typography>
+            <Button variant="outlined" onClick={() => router.push("/dashboard/bookings")}>
+              View All
+            </Button>
+          </div>
           <div className="space-y-4">
-            {upcomingSessions.slice(1, 4).map((session) => (
-              <BookingCard
-                key={session.id}
-                session={{
-                  name: `${session.client?.userProfile?.user?.firstName || ""} ${session.client?.userProfile?.user?.lastName || ""}`,
-                  avatar: session.client?.userProfile?.user?.avatar || "",
-                  title: `${session.sessionType} Session`,
-                  dateTime: session.scheduledDate,
-                  timezone: session.clientTimezone || "Africa/Lagos",
-                  sessionLink: session.meetingUrl || undefined,
-                }}
-              />
-            ))}
+            <BookingCard
+              key={nextSession?.id}
+              isConsultant
+              status={SessionStatus.UPCOMING}
+              session={{
+                ...nextSession
+              }}
+            />
           </div>
         </div>
       )}
+
+      <CalendarIntegrationComponent />
     </div>
   );
 };

@@ -44,6 +44,8 @@ export interface User {
   activeProfile?: {
     id: string;
     type: UserProfileType;
+    userProfileClient?: string;
+    userProfileConsultant?: string;
   };
 }
 
@@ -66,8 +68,4 @@ export type UpdateUserProfileInfoRequest = {
   email: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  supportLevelId?: number;
-  contractRole?: string;
-  orgName?: string;
 };

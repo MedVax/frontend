@@ -121,7 +121,7 @@ const Consultants = () => {
           {pagination && pagination.totalRecords > limit && (
             <Box className="flex justify-center mt-6">
               <Pagination
-                count={pagination.pageCount}
+                count={pagination.pages}
                 page={page}
                 onChange={(_, newPage) => setPage(newPage)}
                 color="primary"
@@ -227,23 +227,21 @@ const AssignConsultantDialog = ({
 }: AssignConsultantDialogProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
-  const [assignConsultant, { isLoading }] = useAssignConsultantMutation();
+  console.log({ authUser });
+  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient || "";
+  const [assignConsultantMutation, { isLoading }] = useAssignConsultantMutation();
   const { data: consultantData } = useGetConsultantByIdQuery(
     { path: { id: consultantId } },
     { skip: !consultantId }
   );
 
+
   const consultant = consultantData?.data;
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
 
   const handleAssign = async () => {
-    if (!clientProfileId) {
-      enqueueSnackbar("Client profile not found", { variant: "error" });
-      return;
-    }
 
     try {
-      await assignConsultant({
+      await assignConsultantMutation({
         data: {
           clientId: clientProfileId,
           consultantId,
@@ -252,8 +250,8 @@ const AssignConsultantDialog = ({
       enqueueSnackbar("Consultant assigned successfully", { variant: "success" });
       onClose();
       // Optionally refresh or redirect
-    } catch (error: any) {
-      enqueueSnackbar(error?.data?.message || "Failed to assign consultant", {
+    } catch (error: unknown) {
+      enqueueSnackbar(error?.data?.defaultMessage || "Failed to assign consultant", {
         variant: "error",
       });
     }
@@ -267,7 +265,7 @@ const AssignConsultantDialog = ({
   const name = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle>Assign Consultant</DialogTitle>
       <DialogContent>
         <DialogContentText className="mb-4">

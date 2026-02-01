@@ -10,7 +10,6 @@ import {
     DialogContentText,
     DialogActions,
     TextField,
-    Chip,
 } from "@mui/material";
 import { Calendar, ClockCircle, Global } from "@solar-icons/react";
 import { format } from "date-fns";
@@ -26,9 +25,11 @@ import { Icon as Iconify } from "@iconify/react";
 
 interface BookingCardProps {
     session: Session;
+    isConsultant?: boolean;
+    status?: SessionStatus;
 }
 
-const BookingCard = ({ session }: BookingCardProps) => {
+const BookingCard = ({ session, isConsultant = false, status }: BookingCardProps) => {
     const { enqueueSnackbar } = useSnackbar();
     const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
     const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
@@ -36,50 +37,19 @@ const BookingCard = ({ session }: BookingCardProps) => {
     const [rescheduleReason, setRescheduleReason] = useState("");
     const [cancelNote, setCancelNote] = useState("");
 
-    const [rescheduleSession, { isLoading: isRescheduling }] = useRescheduleSessionMutation();
+    const [rescheduleSessionMutation, { isLoading: isRescheduling }] = useRescheduleSessionMutation();
     const [cancelSession, { isLoading: isCanceling }] = useCancelSessionMutation();
 
     const consultant = session.consultant;
     const consultantUser = consultant?.userProfile?.user;
-    const name = consultantUser
-        ? `${consultantUser.firstName || ""} ${consultantUser.lastName || ""}`.trim()
-        : "Consultant";
-    const avatar = consultantUser && "avatar" in consultantUser ? consultantUser.avatar : undefined;
-    const title = `${session.sessionType} Session`;
+    const client = session.client;
+    const clientUser = client?.userProfile?.user;
 
-    const getStatusColor = (status: Session["status"]) => {
-        switch (status) {
-            case SessionStatus.COMPLETED:
-                return "success";
-            case SessionStatus.UPCOMING:
-                return "info";
-            case SessionStatus.PENDING:
-            case SessionStatus.PENDING_APPROVAL:
-                return "warning";
-            case SessionStatus.CANCELED:
-            case SessionStatus.DECLINED:
-                return "error";
-            default:
-                return "default";
-        }
-    };
+    const name = isConsultant ? `${clientUser?.firstName || ""} ${clientUser?.lastName || ""}`.trim()
+        : `${consultantUser?.firstName || ""} ${consultantUser?.lastName || ""}`.trim();
+    const avatar = isConsultant ? clientUser?.avatar : consultantUser?.avatar;
+    const title = isConsultant ? `Client` : (consultant as any)?.jobTitle;
 
-    const getStatusLabel = (status: Session["status"]) => {
-        switch (status) {
-            case SessionStatus.PENDING_APPROVAL:
-                return "Pending Approval";
-            case SessionStatus.UPCOMING:
-                return "Upcoming";
-            case SessionStatus.COMPLETED:
-                return "Completed";
-            case SessionStatus.CANCELED:
-                return "Canceled";
-            case SessionStatus.DECLINED:
-                return "Declined";
-            default:
-                return status;
-        }
-    };
 
     const canReschedule =
         session.status === SessionStatus.PENDING ||
@@ -98,7 +68,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
         }
 
         try {
-            await rescheduleSession({
+            await rescheduleSessionMutation({
                 data: {
                     sessionId: session.id,
                     date: new Date(rescheduleDate).toISOString(),
@@ -112,7 +82,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
             setRescheduleReason("");
         } catch (error: unknown) {
             const errorMessage =
-                (error as { data?: { message?: string } })?.data?.message ||
+                (error as { data?: { defaultMessage?: string } })?.data?.defaultMessage ||
                 "Failed to reschedule session";
             enqueueSnackbar(errorMessage, {
                 variant: "error",
@@ -135,7 +105,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
             setCancelNote("");
         } catch (error: unknown) {
             const errorMessage =
-                (error as { data?: { message?: string } })?.data?.message ||
+                (error as { data?: { defaultMessage?: string } })?.data?.defaultMessage ||
                 "Failed to cancel session";
             enqueueSnackbar(errorMessage, {
                 variant: "error",
@@ -143,20 +113,10 @@ const BookingCard = ({ session }: BookingCardProps) => {
         }
     };
 
+
     return (
         <>
             <Paper variant="outlined" className="space-y-4 bg-white! p-4">
-                <div className="flex items-center justify-between mb-4">
-                    <Chip
-                        label={getStatusLabel(session.status)}
-                        color={getStatusColor(session.status)}
-                        variant="soft"
-                        size="small"
-                    />
-                    {session.rescheduled && (
-                        <Chip label="Rescheduled" color="info" variant="outlined" size="small" />
-                    )}
-                </div>
 
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-4">
@@ -164,7 +124,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
                             {consultantUser?.firstName?.[0]}{consultantUser?.lastName?.[0]}
                         </Avatar>
                         <div className="flex flex-col">
-                            <Typography variant="h6" className="font-semibold">
+                            <Typography variant="h6" className="font-semibold capitalize">
                                 {name}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
@@ -177,12 +137,12 @@ const BookingCard = ({ session }: BookingCardProps) => {
                             {
                                 icon: <Calendar />,
                                 title: "Date",
-                                value: format(new Date(session.scheduledDate), "dd MMM, yyyy"),
+                                value: session.scheduledDate ? format(new Date(session.scheduledDate), "dd MMM, yyyy") : "N/A",
                             },
                             {
                                 icon: <ClockCircle />,
                                 title: "Time",
-                                value: format(new Date(session.scheduledDate), "h:mm a"),
+                                value: session.scheduledDate ? format(new Date(session.scheduledDate), "h:mm a") : "N/A",
                             },
                             {
                                 icon: <Global />,
@@ -208,7 +168,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
                             <strong>Note:</strong> {session.note}
                         </Typography>
                     )}
-                    {(canReschedule || canCancel || session.meetingUrl) && (
+                    {((canReschedule || canCancel || session.meetingUrl) && status === SessionStatus.PENDING && !isConsultant) && (
                         <div className="flex gap-2 mt-4 flex-wrap">
                             {canReschedule && (
                                 <Button
@@ -219,17 +179,9 @@ const BookingCard = ({ session }: BookingCardProps) => {
                                     Reschedule
                                 </Button>
                             )}
-                            {canCancel && (
-                                <Button
-                                    color="error"
-                                    variant="outlined"
-                                    onClick={() => setCancelDialogOpen(true)}
-                                >
-                                    Cancel
-                                </Button>
-                            )}
+
                             <div className="flex-1"></div>
-                            {session.meetingUrl && session.status === SessionStatus.UPCOMING && (
+                            {(session.meetingUrl && (status as any) === SessionStatus.UPCOMING) && (
                                 <Button
                                     variant="soft"
                                     href={session.meetingUrl}
@@ -249,7 +201,7 @@ const BookingCard = ({ session }: BookingCardProps) => {
             <Dialog
                 open={rescheduleDialogOpen}
                 onClose={() => setRescheduleDialogOpen(false)}
-                maxWidth="sm"
+                maxWidth="xs"
                 fullWidth
             >
                 <DialogTitle>Reschedule Session</DialogTitle>

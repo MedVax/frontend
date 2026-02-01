@@ -14,6 +14,7 @@ export type PaginationServerResponse<T> = ServerResponse<{
   offset: number;
   limit: number;
   cursor: number;
+  pages: number;
   filteredRecords: number;
   totalRecords: number;
   pageCount: number;

@@ -88,7 +88,7 @@ export const sessionApi = medvaxApi.injectEndpoints({
 
     getClientSessions: builder.query<
       SessionsResponse,
-      QueryRequest<void, { page?: number; limit?: number; state?: string }, void>
+      QueryRequest<void, { skip?: number; take?: number; state?: string; ids?: string[] }, void>
     >({
       query: ({ params, ...config }) => ({
         url: TAG,
@@ -131,10 +131,9 @@ export const sessionApi = medvaxApi.injectEndpoints({
         reason?: string;
       }, void, void>
     >({
-      query: ({ data, ...config }) => ({
+      query: ({ ...config }) => ({
         url: `${TAG}/reschedule`,
         method: "POST",
-        body: data,
         ...config,
       }),
       invalidatesTags: ["SESSION"],
@@ -149,13 +148,65 @@ export const sessionApi = medvaxApi.injectEndpoints({
         note?: string;
       }, void, void>
     >({
-      query: ({ data, ...config }) => ({
+      query: ({ ...config }) => ({
         url: `${TAG}/cancel`,
         method: "POST",
-        body: data,
         ...config,
       }),
       invalidatesTags: ["SESSION"],
+    }),
+
+    scheduleSessions: builder.mutation<
+      ServerResponse<{
+        sessions: Session[] | null;
+        paymentLink: string | null;
+      }>,
+      QueryRequest<{
+        consultantId: string;
+        clientId: string;
+        dates: string[];
+        sessionType: SessionType;
+        clientTimezone: string;
+        redirectUrl?: string;
+        applyGift?: boolean;
+        paidBy: string;
+        hmoId?: string;
+        hmoNumber?: string;
+        couponId?: string;
+        subscriptionId?: string;
+        note?: string;
+        currencyId?: number;
+      }, void, void>
+    >({
+      query: ({ ...config }) => ({
+        url: `${TAG}/schedule`,
+        method: "POST",
+        ...config,
+      }),
+      invalidatesTags: ["SESSION"],
+    }),
+
+    updateSessionNote: builder.mutation<
+      ServerResponse<Session>,
+      QueryRequest<{ note: string }, void, { id: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.id}/note`,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: ["SESSION"],
+    }),
+
+    verifySessionPayment: builder.mutation<
+      ServerResponse<any>,
+      QueryRequest<void, void, { reference: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/verify-payment/${path?.reference}`,
+        method: "POST",
+        ...config,
+      }),
     }),
   }),
 });
@@ -167,5 +218,7 @@ export const {
   useUpdateSessionStatusMutation,
   useRescheduleSessionMutation,
   useCancelSessionMutation,
+  useScheduleSessionsMutation,
+  useUpdateSessionNoteMutation,
 } = sessionApi;
 

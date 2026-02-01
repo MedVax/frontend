@@ -10,13 +10,19 @@ import {
   Typography,
   Skeleton,
   Alert,
+  TextField,
+  Box,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import ProductDetailAccreditation from "./ProductDetailAccreditation";
 import ProductDetailInfo from "./ProductDetailInfo";
 import { ProductRelatedItem } from "./ProductRelatedItem";
 import productApi from "@/apis/product-api";
-import { useAddCartItemMutation, useGetCartQuery } from "@/apis/cart-api";
+import {
+  useAddCartItemMutation,
+  useGetCartQuery,
+  useUpdateCartItemMutation,
+} from "@/apis/cart-api";
 import {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
@@ -37,6 +43,8 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
   const isAuthenticated = authUser?.isAuthenticated;
 
   const [addCartItem, { isLoading: isAddingToCart }] = useAddCartItemMutation();
+  const [updateCartItem, { isLoading: isUpdatingCart }] =
+    useUpdateCartItemMutation();
   const { data: cartData } = useGetCartQuery();
 
   // Favorite functionality
@@ -59,14 +67,16 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     return data.data;
   }, [data]);
 
+  // Find the cart item for this product
+  const cartItem = useMemo(() => {
+    if (!product || !cartData?.data?.items) return null;
+    return cartData.data.items.find((item) => item.productId === product.id) || null;
+  }, [product, cartData]);
+
   // Calculate how many of this product are already in the cart
   const cartQuantity = useMemo(() => {
-    if (!product || !cartData?.data?.items) return 0;
-    return (
-      cartData.data.items.find((item) => item.productId === product.id)
-        ?.quantity || 0
-    );
-  }, [product, cartData]);
+    return cartItem?.quantity || 0;
+  }, [cartItem]);
 
   // Calculate available stock (total stock minus what's already in cart)
   const availableStock = useMemo(() => {
@@ -87,7 +97,16 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     const newQuantity = quantity + delta;
     // Use available stock (stockQuantity - cartQuantity) as the max
     const maxQuantity = availableStock || 1;
-    setQuantity(Math.max(1, Math.min(newQuantity, maxQuantity)));
+    const clampedQuantity = Math.max(1, Math.min(newQuantity, maxQuantity));
+    setQuantity(clampedQuantity);
+
+    // Show feedback if user tries to exceed available stock
+    if (newQuantity > maxQuantity && maxQuantity > 0) {
+      enqueueSnackbar(
+        `Only ${maxQuantity} ${maxQuantity === 1 ? "item" : "items"} available`,
+        { variant: "warning" }
+      );
+    }
   };
 
   const handleAddToCart = async () => {
@@ -108,8 +127,7 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
 
     if (quantity > availableStock) {
       enqueueSnackbar(
-        `Only ${availableStock} ${
-          availableStock === 1 ? "item" : "items"
+        `Only ${availableStock} ${availableStock === 1 ? "item" : "items"
         } available (${cartQuantity} already in cart)`,
         { variant: "warning" }
       );
@@ -117,21 +135,44 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     }
 
     try {
-      await addCartItem({
-        data: {
-          productId: product.id,
-          quantity,
-        },
-      }).unwrap();
-      enqueueSnackbar(
-        `${quantity} ${quantity === 1 ? "item" : "items"} added to cart`,
-        { variant: "success" }
-      );
+      // If item is already in cart, update it; otherwise add new item
+      if (cartItem) {
+        const newTotalQuantity = cartQuantity + quantity;
+
+        // Check if the new total exceeds stock
+        if (newTotalQuantity > product.stockQuantity) {
+          enqueueSnackbar(
+            `Cannot add ${quantity} more. Total would exceed available stock of ${product.stockQuantity}`,
+            { variant: "warning" }
+          );
+          return;
+        }
+
+        await updateCartItem({
+          path: { id: cartItem.id },
+          data: { quantity: newTotalQuantity },
+        }).unwrap();
+        enqueueSnackbar(
+          `Cart updated: ${newTotalQuantity} ${newTotalQuantity === 1 ? "item" : "items"} in cart`,
+          { variant: "success" }
+        );
+      } else {
+        await addCartItem({
+          data: {
+            productId: product.id,
+            quantity,
+          },
+        }).unwrap();
+        enqueueSnackbar(
+          `${quantity} ${quantity === 1 ? "item" : "items"} added to cart`,
+          { variant: "success" }
+        );
+      }
       setQuantity(1); // Reset quantity after adding
     } catch (error: unknown) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
-        "Failed to add product to cart";
+        "Failed to update cart";
       enqueueSnackbar(errorMessage, { variant: "error" });
     }
   };
@@ -330,27 +371,55 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
             <Typography variant="subtitle2" className="font-semibold">
               Quantity
             </Typography>
-            <div className="flex items-center gap-2">
+            <Box className="flex items-center gap-2">
               <IconButton
                 color="secondary"
-                variant="soft"
+                variant="outlined"
                 onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1}
+                disabled={quantity <= 1 || product.stockQuantity <= 0}
+                size="small"
+                sx={{
+                  border: "1px solid",
+                  borderColor: "divider",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor: "action.hover",
+                  },
+                  "&:disabled": {
+                    borderColor: "action.disabledBackground",
+                  },
+                }}
               >
-                <Icon icon="mdi:minus" />
+                <Icon icon="mdi:minus" fontSize={20} />
               </IconButton>
               <Typography variant="h6" className="min-w-[2rem] text-center">
                 {quantity}
               </Typography>
               <IconButton
                 color="secondary"
-                variant="soft"
+                variant="outlined"
                 onClick={() => handleQuantityChange(1)}
-                disabled={availableStock <= 0 || quantity >= availableStock}
+                disabled={
+                  product.stockQuantity <= 0 ||
+                  availableStock <= 0 ||
+                  quantity >= availableStock
+                }
+                size="small"
+                sx={{
+                  border: "1px solid",
+                  borderColor: "divider",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor: "action.hover",
+                  },
+                  "&:disabled": {
+                    borderColor: "action.disabledBackground",
+                  },
+                }}
               >
-                <Icon icon="mdi:plus" />
+                <Icon icon="mdi:plus" fontSize={20} />
               </IconButton>
-            </div>
+            </Box>
             {product.stockQuantity > 0 && (
               <Typography variant="caption" color="text.secondary">
                 {availableStock > 0 ? (
@@ -365,6 +434,11 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
                 )}
               </Typography>
             )}
+            {product.stockQuantity <= 0 && (
+              <Typography variant="caption" color="error">
+                This product is currently out of stock
+              </Typography>
+            )}
           </div>
 
           <Typography variant="h2" className="text-2xl font-bold mt-8">
@@ -373,28 +447,34 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
 
           <div className="flex sm:flex-row flex-col py-1 gap-2 mt-8 sticky bottom-0">
             <Button
-              fullWidth
+
               startIcon={<Icon icon="mdi:cart" />}
               variant="contained"
               color="primary"
               onClick={handleAddToCart}
               disabled={
                 isAddingToCart ||
+                isUpdatingCart ||
                 product.stockQuantity <= 0 ||
                 availableStock <= 0 ||
                 quantity > availableStock
               }
+              className="flex-1"
             >
-              {isAddingToCart
-                ? "Adding..."
+              {isAddingToCart || isUpdatingCart
+                ? cartItem
+                  ? "Updating..."
+                  : "Adding..."
                 : availableStock <= 0
-                ? "All Stock in Cart"
-                : "Add to Cart"}
+                  ? "All Stock in Cart"
+                  : cartItem
+                    ? "Update Cart"
+                    : "Add to Cart"}
             </Button>
             <Button
               variant="outlined"
               color="secondary"
-              className="text-nowrap"
+              className="text-nowrap px-2"
               onClick={handleToggleFavorite}
               disabled={isAddingFavorite || isRemovingFavorite}
               startIcon={
@@ -406,8 +486,8 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
               {isAddingFavorite || isRemovingFavorite
                 ? "Loading..."
                 : isFavorite
-                ? "Remove from Favorites"
-                : "Add to Favorites"}
+                  ? "Remove from Favorites"
+                  : "Add to Favorites"}
             </Button>
           </div>
         </div>

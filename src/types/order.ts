@@ -97,6 +97,7 @@ export interface Order {
   orderStatus: OrderStatus;
   prescriptionStatus?: PrescriptionStatus | null;
   paymentReference?: string | null;
+  paymentUrl?: string | null;
   paymentProvider?: string | null;
   notes?: string | null;
   isRecurring: boolean;
@@ -113,4 +114,6 @@ export interface Order {
 
 export type OrderResponse = ServerResponse<Order>;
 export type OrdersResponse = ServerResponse<Order[]>;
+
+export type CreateOrderResponse = ServerResponse<Order>;
 

@@ -7,7 +7,6 @@ import {
   Button,
   Avatar,
   Chip,
-  Box,
   Skeleton,
   Alert,
   Divider,
@@ -21,10 +20,11 @@ import {
   useGetConsultantByIdQuery,
   useAssignConsultantMutation,
 } from "@/apis/consultant-api";
+import { useGetClientProfileByUserQuery } from "@/apis/client-api";
 import { useSnackbar } from "notistack";
 import useAuthUser from "@/hooks/use-auth";
 import Link from "next/link";
-import { Calendar, ClockCircle, Star, Star2, User, Share } from "@solar-icons/react";
+import { Star, Star2 } from "@solar-icons/react";
 import { Icon } from "@mui/material";
 
 const ConsultantDetails = () => {
@@ -32,29 +32,36 @@ const ConsultantDetails = () => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
+
+  console.log({ authUser });
   const consultantId = params?.id as string;
   const isConsultant = authUser?.user?.activeProfile?.type === "CONSULTANT";
-  const isOwnProfile = authUser?.user?.activeProfile?.userProfileConsultant === consultantId;
+  const activeProfileId = authUser?.user?.activeProfile?.id;
+  const isClient = authUser?.user?.activeProfile?.type === "CLIENT";
 
   const { data, isLoading } = useGetConsultantByIdQuery(
     { path: { id: consultantId } },
     { skip: !consultantId }
   );
+  const { data: clientProfileData } = useGetClientProfileByUserQuery(
+    undefined,
+    { skip: !isClient }
+  );
   const [assignConsultant, { isLoading: isAssigning }] = useAssignConsultantMutation();
 
   const consultant = data?.data;
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
+  const clientProfileId = authUser?.user?.activeProfile?.id;
+  const assignedConsultant = clientProfileData?.data?.userProfileConsultant;
+  const hasAssignedConsultant = !!assignedConsultant;
+  const isOwnProfile = isConsultant && activeProfileId === consultantId;
 
   const handleAssign = async () => {
-    if (!clientProfileId) {
-      enqueueSnackbar("Client profile not found", { variant: "error" });
-      return;
-    }
+
 
     try {
       await assignConsultant({
         data: {
-          clientId: clientProfileId,
+          clientId: clientProfileId || "",
           consultantId,
         },
       }).unwrap();
@@ -226,13 +233,25 @@ const ConsultantDetails = () => {
             Share
           </Button>
           {clientProfileId && !isConsultant && (
-            <Button
-              variant="contained"
-              onClick={handleAssign}
-              disabled={isAssigning}
-            >
-              {isAssigning ? "Assigning..." : "Assign Consultant"}
-            </Button>
+            <>
+              <Button
+                variant="contained"
+                component={Link}
+                href={`/consultant/${consultantId}/book`}
+                startIcon={<Iconify icon="solar:calendar-add-outline" fontSize={20} />}
+                disabled={!hasAssignedConsultant}
+                title={!hasAssignedConsultant ? "Please assign a consultant first" : ""}
+              >
+                Book Session
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleAssign}
+                disabled={isAssigning}
+              >
+                {isAssigning ? "Assigning..." : "Assign Consultant"}
+              </Button>
+            </>
           )}
         </div>
       </div>

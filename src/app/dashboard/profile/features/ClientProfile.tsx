@@ -26,12 +26,13 @@ import { useSnackbar } from "notistack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuthUser from "@/hooks/use-auth";
+import { LoadingButton } from "@mui/lab";
 
 const ClientProfile = () => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const { data: userData, isLoading: userLoading } = useGetUserProfileInfoQuery();
-  
+
   const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
   const { data: clientData, isLoading: clientLoading } = useGetClientProfileQuery(
     { path: { id: clientProfileId || "" } },
@@ -51,7 +52,6 @@ const ClientProfile = () => {
     firstName: Yup.string().required("First name is required"),
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: Yup.string().required("Phone number is required"),
     coverName: Yup.string(),
     referral: Yup.string(),
   });
@@ -61,7 +61,6 @@ const ClientProfile = () => {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
       email: user?.email || "",
-      phoneNumber: user?.phoneNumber || "",
       coverName: clientProfile?.coverName || "",
       referral: clientProfile?.referral || "",
       useCoverName: clientProfile?.useCoverName || false,
@@ -74,7 +73,7 @@ const ClientProfile = () => {
         if (user?.id) {
           await updateClientProfile({
             data: {
-              id: String(user.id),
+              id: String(user.activeProfile?.userProfileClient),
               firstName: values.firstName,
               lastName: values.lastName,
               coverName: values.coverName || undefined,
@@ -82,25 +81,25 @@ const ClientProfile = () => {
               useCoverName: values.useCoverName,
             },
           }).unwrap();
-          
+
           // Update email and phone separately via user API
-          await updateUserProfile({
-            data: {
-              userId: user.id,
-              email: values.email,
-              phoneNumber: values.phoneNumber,
-            },
-          }).unwrap();
+          // await updateUserProfile({
+          //   data: {
+          //     userId: user.id,
+          //     email: values.email,
+          //   },
+          // }).unwrap();
         }
 
         enqueueSnackbar("Profile updated successfully", { variant: "success" });
       } catch (error: unknown) {
-        const errorMessage =
-          (error as { data?: { message?: string } })?.data?.message ||
-          "Failed to update profile";
-        enqueueSnackbar(errorMessage, {
-          variant: "error",
-        });
+        const err = error as { defaultUserMessage?: string; message?: string };
+        enqueueSnackbar(
+          err?.defaultUserMessage || err?.message || "An error occurred",
+          {
+            variant: "error",
+          }
+        );
       }
     },
   });
@@ -144,8 +143,8 @@ const ClientProfile = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <Typography variant="h4" className="font-semibold">
+    <div className="space-y-10">
+      <Typography variant="h5" className="font-semibold">
         My Profile
       </Typography>
 
@@ -228,6 +227,7 @@ const ClientProfile = () => {
             label="Email"
             name="email"
             type="email"
+            disabled
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -235,16 +235,7 @@ const ClientProfile = () => {
             helperText={formik.touched.email && formik.errors.email}
           />
 
-          <TextField
-            fullWidth
-            label="Phone Number"
-            name="phoneNumber"
-            value={formik.values.phoneNumber}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
-            helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
-          />
+
 
           <Divider className="my-4" />
 
@@ -284,13 +275,14 @@ const ClientProfile = () => {
             label="Use cover name instead of real name"
           />
 
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             startIcon={<Iconify icon="solar:check-circle-linear" fontSize={20} />}
+            loading={formik.isSubmitting}
           >
             Save Changes
-          </Button>
+          </LoadingButton>
         </form>
       </Paper>
     </div>

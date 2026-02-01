@@ -1,6 +1,7 @@
+"use client";
 import { IconButton, type IconButtonProps, Tooltip } from "@mui/material";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useRouter } from "next/router"; // Usage: Page router
+import { useRouter } from "next/navigation";
 
 /**
  *

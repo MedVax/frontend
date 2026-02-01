@@ -1,6 +1,6 @@
 import { medvaxApi } from "configs/store-query";
-import { QueryRequest, ServerResponse, PaginationServerResponse } from "types/global";
-import { OrderResponse, OrdersResponse, OrderRecurringFrequency } from "types/order";
+import { QueryRequest, PaginationServerResponse } from "types/global";
+import { OrderResponse, OrdersResponse, OrderRecurringFrequency, CreateOrderResponse, OrderStatus, PaymentStatus, PrescriptionStatus } from "types/order";
 import * as RtkqTag from "constants/data-tag";
 
 const TAG = "/orders";
@@ -28,12 +28,6 @@ export interface CreateOrderRequest {
   recurringFrequency?: OrderRecurringFrequency;
 }
 
-export interface CreateOrderResponse {
-  order: any;
-  paymentLink?: string;
-  recurringOrder?: any;
-}
-
 export type PaginatedOrdersResponse = PaginationServerResponse<OrdersResponse["data"]>;
 
 export const orderApi = medvaxApi.injectEndpoints({
@@ -53,30 +47,21 @@ export const orderApi = medvaxApi.injectEndpoints({
 
     getOrders: builder.query<
       PaginatedOrdersResponse,
-      QueryRequest<void, { 
-        page?: number; 
-        limit?: number; 
-        status?: string; 
-        paymentStatus?: string;
+      QueryRequest<void, {
+        page?: number;
+        limit?: number;
+        isRecurring?: boolean;
+        orderStatus?: OrderStatus[];
+        paymentStatus?: PaymentStatus[];
+        isRecurringActive?: boolean;
+        prescriptionStatus?: PrescriptionStatus[];
         skip?: number;
         take?: number;
       }, void>
     >({
-      query: ({ params, ...config }) => {
-        const queryParams: any = {};
-        if (params?.page && params?.limit) {
-          queryParams.skip = (params.page - 1) * params.limit;
-          queryParams.take = params.limit;
-        } else if (params?.skip !== undefined && params?.take !== undefined) {
-          queryParams.skip = params.skip;
-          queryParams.take = params.take;
-        }
-        if (params?.status) queryParams.status = params.status;
-        if (params?.paymentStatus) queryParams.paymentStatus = params.paymentStatus;
-        
+      query: ({ ...config }) => {
         return {
           url: TAG,
-          params: queryParams,
           ...config,
         };
       },
@@ -84,7 +69,7 @@ export const orderApi = medvaxApi.injectEndpoints({
     }),
 
     createOrder: builder.mutation<
-      ServerResponse<CreateOrderResponse>,
+      CreateOrderResponse,
       QueryRequest<CreateOrderRequest, void, void>
     >({
       query: ({ ...config }) => ({
@@ -125,10 +110,9 @@ export const orderApi = medvaxApi.injectEndpoints({
       OrderResponse,
       QueryRequest<{ isRecurring: boolean; recurringFrequency?: OrderRecurringFrequency }, void, { id: string }>
     >({
-      query: ({ path, data, ...config }) => ({
+      query: ({ path, ...config }) => ({
         url: `${TAG}/${path?.id}/recurring`,
         method: "PATCH",
-        body: data,
         ...config,
       }),
       invalidatesTags: (result, error, { path }) => {

@@ -5,10 +5,8 @@ import {
   Paper,
   Typography,
   Button,
-  TextField,
   Alert,
   Divider,
-  Box,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react";
 import { useUserChangePasswordMutation } from "@/apis/user-api";
@@ -16,6 +14,8 @@ import { useSnackbar } from "notistack";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useAuthUser from "@/hooks/use-auth";
+import PasswordTextField from "@/libs/mui/password-textfield";
+import { getFormikTextFieldProps } from "@/utils/formik";
 
 const Security = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -62,8 +62,8 @@ const Security = () => {
   });
 
   return (
-    <div className="space-y-6">
-      <Typography variant="h4" className="font-semibold">
+    <div className="space-y-10">
+      <Typography variant="h5" className="font-semibold">
         Security Settings
       </Typography>
 
@@ -83,40 +83,28 @@ const Security = () => {
         )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-4">
-          <TextField
+          <PasswordTextField
             fullWidth
             type="password"
             label="Current Password"
             name="oldPassword"
-            value={formik.values.oldPassword}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.oldPassword && !!formik.errors.oldPassword}
-            helperText={formik.touched.oldPassword && formik.errors.oldPassword}
+            {...getFormikTextFieldProps(formik, "oldPassword")}
           />
 
-          <TextField
+          <PasswordTextField
             fullWidth
             type="password"
             label="New Password"
             name="newPassword"
-            value={formik.values.newPassword}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.newPassword && !!formik.errors.newPassword}
-            helperText={formik.touched.newPassword && formik.errors.newPassword}
+            {...getFormikTextFieldProps(formik, "newPassword")}
           />
 
-          <TextField
+          <PasswordTextField
             fullWidth
             type="password"
             label="Confirm New Password"
             name="confirmPassword"
-            value={formik.values.confirmPassword}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.confirmPassword && !!formik.errors.confirmPassword}
-            helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+            {...getFormikTextFieldProps(formik, "confirmPassword")}
           />
 
           <Button
@@ -130,7 +118,7 @@ const Security = () => {
         </form>
       </Paper>
 
-      <Paper variant="outlined" className="p-6 bg-white!">
+      {/* <Paper variant="outlined" className="p-6 bg-white!">
         <div className="flex items-center gap-3 mb-4">
           <Iconify icon="solar:shield-check-linear" fontSize={24} />
           <Typography variant="h6" className="font-semibold">
@@ -144,9 +132,9 @@ const Security = () => {
         <Button variant="outlined" disabled>
           Coming Soon
         </Button>
-      </Paper>
+      </Paper> */}
 
-      <Paper variant="outlined" className="p-6 bg-white!">
+      {/* <Paper variant="outlined" className="p-6 bg-white!">
         <div className="flex items-center gap-3 mb-4">
           <Iconify icon="solar:logout-2-linear" fontSize={24} />
           <Typography variant="h6" className="font-semibold">
@@ -160,7 +148,7 @@ const Security = () => {
         <Button variant="outlined" disabled>
           View Active Sessions
         </Button>
-      </Paper>
+      </Paper> */}
     </div>
   );
 };

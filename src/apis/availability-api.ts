@@ -1,47 +1,18 @@
 import { medvaxApi } from "configs/store-query";
 import { QueryRequest, ServerResponse } from "types/global";
 import * as RtkqTag from "constants/data-tag";
+import {
+  TimeInterval,
+  WeeklyAvailability,
+  CustomAvailabilityItem,
+  UpdateAvailabilityRequest,
+  AvailabilityResponse,
+  AvailabilityResponseData,
+  DayAvailability,
+  DayAvailabilityResponse,
+} from "types/availability";
 
 const TAG = "/sessions";
-
-export interface TimeInterval {
-  start: number; // Hour (0-23)
-  end: number; // Hour (0-23)
-}
-
-export interface WeeklyAvailability {
-  monday?: TimeInterval[];
-  tuesday?: TimeInterval[];
-  wednesday?: TimeInterval[];
-  thursday?: TimeInterval[];
-  friday?: TimeInterval[];
-  saturday?: TimeInterval[];
-  sunday?: TimeInterval[];
-}
-
-export interface CustomAvailabilityItem {
-  id?: string;
-  date: string; // ISO date string
-  intervals: TimeInterval[];
-}
-
-export interface UpdateAvailabilityRequest {
-  timezone: string;
-  weekly?: WeeklyAvailability;
-  custom?: CustomAvailabilityItem[];
-}
-
-export interface AvailabilityResponse {
-  timezone: string;
-  weekly: Record<string, TimeInterval[]>;
-  custom: Array<{
-    id: string;
-    date: string;
-    intervals: TimeInterval[];
-  }>;
-}
-
-export type AvailabilityResponseData = ServerResponse<AvailabilityResponse>;
 
 export const availabilityApi = medvaxApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -60,14 +31,29 @@ export const availabilityApi = medvaxApi.injectEndpoints({
           ...config,
         };
       },
-      providesTags: ["AVAILABILITY"],
+      providesTags: [RtkqTag.AVAILABILITY],
+    }),
+
+    getConsultantAvailabilitySlots: builder.query<
+      DayAvailabilityResponse,
+      QueryRequest<void, { consultantId: string; date?: string; buffer?: number }, void>
+    >({
+      query: ({ params, ...config }) => ({
+        url: `${TAG}/consultants/${params?.consultantId}/availability`,
+        params: {
+          ...(params?.date && { date: params.date }),
+          ...(params?.buffer && { buffer: params.buffer }),
+        },
+        ...config,
+      }),
+      providesTags: [RtkqTag.AVAILABILITY],
     }),
 
     updateAvailability: builder.mutation<
       ServerResponse<{ success: boolean }>,
       QueryRequest<UpdateAvailabilityRequest, { consultantId?: string }, void>
     >({
-      query: ({ params, data, ...config }) => {
+      query: ({ params, ...config }) => {
         const consultantId = params?.consultantId;
         const url = consultantId
           ? `${TAG}/consultants/${consultantId}/availability`
@@ -75,17 +61,26 @@ export const availabilityApi = medvaxApi.injectEndpoints({
         return {
           url,
           method: "PATCH",
-          body: data,
           ...config,
         };
       },
-      invalidatesTags: ["AVAILABILITY"],
+      invalidatesTags: [RtkqTag.AVAILABILITY],
     }),
   }),
 });
 
 export const {
   useGetAvailabilityQuery,
+  useGetConsultantAvailabilitySlotsQuery,
   useUpdateAvailabilityMutation,
 } = availabilityApi;
 
+// Re-export types for convenience
+export type {
+  TimeInterval,
+  WeeklyAvailability,
+  CustomAvailabilityItem,
+  UpdateAvailabilityRequest,
+  AvailabilityResponse,
+  DayAvailability,
+};

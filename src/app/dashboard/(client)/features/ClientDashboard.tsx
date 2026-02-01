@@ -6,29 +6,34 @@ import { Calendar, ClockCircle, Global } from "@solar-icons/react";
 import { format } from "date-fns";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { useGetClientSessionsQuery } from "@/apis/session-api";
-import { useGetClientProfileQuery } from "@/apis/client-api";
+import { SessionStatus, useGetClientSessionsQuery } from "@/apis/session-api";
+import { useGetClientProfileByUserQuery } from "@/apis/client-api";
 import { Icon as Iconify } from "@iconify/react";
 import Link from "next/link";
+import CalendarIntegrationComponent from "./CalendarIntegration";
 
 const ClientDashboard = () => {
   const authUser = useAuthUser();
   const router = useRouter();
-  
+
   // Get client profile with consultant info
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
-  const { data: profileData, isLoading: profileLoading } = useGetClientProfileQuery(
-    { path: { id: clientProfileId || "" } },
-    { skip: !clientProfileId }
+  const isClient = authUser?.user?.activeProfile?.type === "CLIENT";
+  const { data: profileData, isLoading: profileLoading } = useGetClientProfileByUserQuery(
+    {
+      path: { clientProfileId: authUser?.user?.activeProfile?.id as string },
+    },
+    { skip: !isClient }
   );
-  
+
   // Get upcoming sessions
   const { data: sessionsData, isLoading: sessionsLoading } = useGetClientSessionsQuery({
-    params: { page: 1, limit: 1, state: "upcoming" },
+    params: { take: 1, skip: 0, state: SessionStatus.UPCOMING },
   });
 
   const clientProfile = profileData?.data;
   const consultant = clientProfile?.userProfileConsultant;
+  const hasAssignedConsultant = !!consultant;
+  const consultantId = consultant?.id;
   const upcomingSessions = sessionsData?.data?.data || [];
   const nextSession = upcomingSessions[0];
 
@@ -50,9 +55,15 @@ const ClientDashboard = () => {
           </Typography>
         </div>
 
-        <Button 
+        <Button
           className="bg-black text-white"
-          onClick={() => router.push("/dashboard/bookings")}
+          disabled={!hasAssignedConsultant}
+          title={!hasAssignedConsultant ? "Please assign a consultant first" : ""}
+          onClick={() => {
+            if (hasAssignedConsultant && consultantId) {
+              router.push(`/consultant/${consultantId}/book`);
+            }
+          }}
         >
           Book new session
         </Button>
@@ -63,16 +74,18 @@ const ClientDashboard = () => {
         {profileLoading ? (
           <Skeleton variant="rectangular" width={300} height={300} />
         ) : consultant ? (
-          <Paper variant="outlined" className="space-y-4 bg-white! p-4 md:w-[300px] w-full">
+          <Paper variant="outlined" className="space-y-4 flex flex-col bg-white! p-4 md:w-[300px] w-full">
             <div className="flex items-center gap-4">
               <Avatar src={consultantAvatar || undefined} sx={{ width: 56, height: 56 }}>
                 {nextSession?.consultant?.userProfile?.user?.firstName?.[0]}
                 {nextSession?.consultant?.userProfile?.user?.lastName?.[0]}
               </Avatar>
               <div className="flex flex-col">
-                <Typography variant="h6" className="font-semibold">
-                  {consultantName}
-                </Typography>
+                <Link href={`/consultants/${consultantId}`}>
+                  <Typography variant="h6" className="font-semibold">
+                    {consultantName}
+                  </Typography>
+                </Link>
                 {consultant?.jobTitle && (
                   <Typography variant="body2" color="text.secondary">
                     {consultant.jobTitle}
@@ -89,22 +102,36 @@ const ClientDashboard = () => {
               </Typography>
             )}
 
-            <Button 
-              variant="soft" 
-              fullWidth
-              component={Link}
-              href="/dashboard/consultants"
-            >
-              Change Consultant
-            </Button>
+            <div className="flex-1"></div>
+
+            <div className="flex flex-col gap-2">
+              <Button
+                variant="soft"
+                fullWidth
+                component={Link}
+                href="/dashboard/consultants"
+              >
+                Change Consultant
+              </Button>
+              {/* <Button
+                variant="outlined"
+                fullWidth
+                component={Link}
+                href={`/consultants/${consultantId}`}
+              >
+                View Consultant
+              </Button> */}
+
+            </div>
+
           </Paper>
         ) : (
           <Paper variant="outlined" className="space-y-4 bg-white! p-4 md:w-[300px] w-full">
             <Alert severity="info" className="mb-4">
-              You don't have a consultant assigned yet.
+              You don&apos;t have a consultant assigned yet.
             </Alert>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               fullWidth
               component={Link}
               href="/dashboard/consultants"
@@ -138,7 +165,7 @@ const ClientDashboard = () => {
                     {nextSession.consultant?.userProfile?.user?.lastName}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {nextSession.sessionType} Session
+                    {(nextSession.consultant as any)?.jobTitle}
                   </Typography>
                 </div>
               </div>
@@ -199,17 +226,30 @@ const ClientDashboard = () => {
             </Typography>
             <Divider />
             <Box className="text-center py-8">
-              <Iconify icon="solar:calendar-mark-outline" fontSize={64} className="text-gray-400 mb-4" />
+              <Iconify icon="solar:calendar-mark-outline" fontSize={64} className="text-gray-400 mb-4 mx-auto" />
               <Typography variant="body1" color="text.secondary" className="mb-4">
                 No upcoming sessions
               </Typography>
-              <Button variant="contained" onClick={() => router.push("/dashboard/bookings")}>
+              <Button
+                variant="contained"
+                disabled={!hasAssignedConsultant}
+                className="disabled:opacity-50 disabled:cursor-not-allowed"
+                title={!hasAssignedConsultant ? "Please assign a consultant first" : ""}
+                onClick={() => {
+                  if (hasAssignedConsultant && consultantId) {
+                    router.push(`/consultant/${consultantId}/book`);
+                  }
+                }}
+              >
                 Book a Session
               </Button>
             </Box>
           </Paper>
         )}
       </div>
+
+      {/* Calendar Integration Section */}
+      <CalendarIntegrationComponent />
     </div>
   );
 };

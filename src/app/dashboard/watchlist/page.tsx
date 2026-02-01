@@ -55,9 +55,9 @@ const Watchlist = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div>
-        <Typography variant="h4" className="font-semibold">
+        <Typography variant="h5" className="font-semibold">
           My Watchlist
         </Typography>
         <Typography variant="body2" color="text.secondary" className="mt-2">
@@ -67,7 +67,7 @@ const Watchlist = () => {
 
       {favorites.length === 0 ? (
         <Paper variant="outlined" className="p-8 text-center bg-white!">
-          <Iconify icon="solar:heart-angle-outline" fontSize={64} className="text-gray-400 mb-4" />
+          <Iconify icon="solar:heart-angle-outline" fontSize={64} className="text-gray-400 mb-4 mx-auto" />
           <Typography variant="h6" className="mb-2">
             Your watchlist is empty
           </Typography>

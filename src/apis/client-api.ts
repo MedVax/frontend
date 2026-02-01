@@ -64,22 +64,23 @@ export const clientApi = medvaxApi.injectEndpoints({
       providesTags: [RtkqTag.USER],
     }),
 
-    getClientProfileByUser: builder.query<ClientProfileResponse, void>({
-      query: () => ({
-        url: `${TAG}/profile`,
-        method: "GET",
+    getClientProfileByUser: builder.query<ClientProfileResponse, QueryRequest<void, void, { clientProfileId: string }>>({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.clientProfileId}`,
+        ...config,
       }),
-      providesTags: [RtkqTag.USER],
+      providesTags: (result, error, { path }) => {
+        return [{ type: RtkqTag.USER, id: path?.clientProfileId }];
+      },
     }),
 
     updateClientProfile: builder.mutation<
       ClientProfileResponse,
       QueryRequest<UpdateClientRequest, void, void>
     >({
-      query: ({ data, ...config }) => ({
+      query: ({ ...config }) => ({
         url: TAG,
         method: "PUT",
-        body: data,
         ...config,
       }),
       invalidatesTags: [RtkqTag.USER],

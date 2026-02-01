@@ -17,19 +17,21 @@ import {
   Select,
   MenuItem,
   Chip,
+  TextField,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/ui";
 import {
+  orderApi,
   useGetOrderByIdQuery,
   useSetOrderRecurringMutation,
-  OrderRecurringFrequency,
 } from "@/apis/order-api";
 import { useSnackbar } from "notistack";
 import { format } from "date-fns";
 import Currency from "@/enums/currency";
+import { OrderRecurringFrequency } from "@/types/order";
 
 const CheckoutSuccess = () => {
   const searchParams = useSearchParams();
@@ -47,15 +49,26 @@ const CheckoutSuccess = () => {
   );
   const [setRecurring, { isLoading: isSettingRecurring }] = useSetOrderRecurringMutation();
 
+  const [verifyPaymentMutation, verifyPaymentMutationResult] = orderApi.useVerifyPaymentMutation();
+
   const order = data?.data;
 
-  // If reference is provided, verify payment
-  useEffect(() => {
+  const manuallyVerifyPayment = async () => {
     const reference = searchParams.get("reference");
-    if (reference && orderId) {
-      // Payment verification would happen via webhook, but we can show success
+
+    if (!reference) return;
+    try {
+      await verifyPaymentMutation({ path: { reference } }).unwrap();
+    } catch (error: any) {
+      enqueueSnackbar(error?.defaultUserMessage || error?.message || "Failed to verify payment", {
+        variant: "error",
+      });
     }
-  }, [searchParams, orderId]);
+  };
+
+  useEffect(() => {
+    manuallyVerifyPayment();
+  }, [searchParams]);
 
   const formatPrice = (amount: number, currencyCode: string = "NGN") => {
     const currencyObj = Currency[currencyCode as keyof typeof Currency] || Currency.NGN;
@@ -84,13 +97,26 @@ const CheckoutSuccess = () => {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || verifyPaymentMutationResult.isLoading) {
     return (
       <Shell component="section" className="my-20">
         <Box className="text-center py-12">
-          <Iconify icon="solar:refresh-circle-bold-duotone" fontSize={64} className="animate-spin mb-4" />
+          <Iconify icon="mdi:loading" fontSize={64} className="animate-spin mb-4 mx-auto" />
           <Typography variant="h6">Loading order details...</Typography>
         </Box>
+      </Shell>
+    );
+  }
+
+  if (verifyPaymentMutationResult.isError) {
+    return (
+      <Shell component="section" className="my-20">
+        <Alert severity="error" className="mb-4">
+          Failed to verify payment. Please try again.
+        </Alert>
+        <Button variant="contained" onClick={() => router.refresh()}>
+          Refresh Page
+        </Button>
       </Shell>
     );
   }
@@ -181,9 +207,9 @@ const CheckoutSuccess = () => {
         </Paper>
 
         {/* Recurring Order Option */}
-        {!order.isRecurring && order.paymentStatus === "PAID" && (
+        {/* {!order.isRecurring && order.paymentStatus === "PAID" && (
           <Paper variant="outlined" className="p-6 mb-6 bg-blue-50 border-blue-200">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4 justify-center">
               <Iconify icon="solar:refresh-linear" fontSize={24} className="text-blue-600" />
               <Typography variant="h6" className="font-semibold text-blue-900">
                 Make this order recurring?
@@ -201,7 +227,7 @@ const CheckoutSuccess = () => {
               Set as Recurring Order
             </Button>
           </Paper>
-        )}
+        )} */}
 
         {/* Action Buttons */}
         <div className="flex gap-4 justify-center flex-wrap">
@@ -224,10 +250,10 @@ const CheckoutSuccess = () => {
         </div>
 
         {/* Recurring Order Dialog */}
-        <Dialog
+        {/* <Dialog
           open={recurringDialogOpen}
           onClose={() => setRecurringDialogOpen(false)}
-          maxWidth="sm"
+          maxWidth="xs"
           fullWidth
         >
           <DialogTitle>Set Order as Recurring</DialogTitle>
@@ -235,19 +261,18 @@ const CheckoutSuccess = () => {
             <DialogContentText className="mb-4">
               Choose how often you want this order to be automatically placed.
             </DialogContentText>
-            <FormControl fullWidth>
-              <InputLabel>Frequency</InputLabel>
-              <Select
-                value={recurringFrequency}
-                onChange={(e) =>
-                  setRecurringFrequency(e.target.value as OrderRecurringFrequency)
-                }
-                label="Frequency"
-              >
-                <MenuItem value={OrderRecurringFrequency.WEEKLY}>Weekly</MenuItem>
-                <MenuItem value={OrderRecurringFrequency.MONTHLY}>Monthly</MenuItem>
-              </Select>
-            </FormControl>
+            <TextField
+              label="Frequency"
+              value={recurringFrequency}
+              onChange={(e) => setRecurringFrequency(e.target.value as OrderRecurringFrequency)}
+              fullWidth
+              select
+              size="small"
+            >
+              <MenuItem value={OrderRecurringFrequency.WEEKLY}>Weekly</MenuItem>
+              <MenuItem value={OrderRecurringFrequency.MONTHLY}>Monthly</MenuItem>
+            </TextField>
+
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setRecurringDialogOpen(false)} disabled={isSettingRecurring}>
@@ -257,11 +282,12 @@ const CheckoutSuccess = () => {
               onClick={handleSetRecurring}
               variant="contained"
               disabled={isSettingRecurring}
+              startIcon={<Iconify icon="solar:refresh-linear" fontSize={20} />}
             >
               {isSettingRecurring ? "Setting..." : "Set Recurring"}
             </Button>
           </DialogActions>
-        </Dialog>
+        </Dialog> */}
       </div>
     </Shell>
   );

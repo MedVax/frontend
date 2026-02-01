@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { Icon as Iconify } from "@iconify/react";
 import { useGetOrdersQuery } from "@/apis/order-api";
-import { Order, OrderItem } from "@/types/order";
+import { Order, OrderItem, OrderStatus, PaymentStatus, PrescriptionStatus } from "@/types/order";
 import currency from "currency.js";
 
 const Orders = () => {
@@ -32,9 +32,9 @@ const Orders = () => {
     };
 
     const tabs = [
-        { title: "Ongoing/Delivered", status: undefined, paymentStatus: undefined },
-        { title: "Cancelled/Returned", status: "CANCELED", paymentStatus: undefined },
-        { title: "Recurring", isRecurring: true },
+        { title: "Ongoing/Delivered", paymentStatus: [PaymentStatus.PAID] },
+        { title: "Cancelled/Returned", orderStatus: [OrderStatus.CANCELED, OrderStatus.FAILED_PAYMENT, OrderStatus.FAILED_PAYMENT] },
+        { title: "Recurring", isRecurring: true, isRecurringActive: true },
     ];
 
     const currentTab = tabs[value];
@@ -48,9 +48,10 @@ const Orders = () => {
             </Tabs>
             <div className="mt-10">
                 <OrdersList
-                    status={currentTab.status}
-                    paymentStatus={currentTab.paymentStatus}
+                    orderStatus={currentTab.orderStatus}
+                    paymentStatus={currentTab?.paymentStatus}
                     isRecurring={currentTab.isRecurring}
+                    isRecurringActive={currentTab.isRecurringActive}
                     page={page}
                     limit={limit}
                     onPageChange={setPage}
@@ -61,45 +62,46 @@ const Orders = () => {
 };
 
 interface OrdersListProps {
-    status?: string;
-    paymentStatus?: string;
+    orderStatus?: OrderStatus[];
+    paymentStatus?: PaymentStatus[];
     isRecurring?: boolean;
+    isRecurringActive?: boolean;
+    prescriptionStatus?: PrescriptionStatus[];
     page: number;
     limit: number;
     onPageChange: (page: number) => void;
 }
 
 const OrdersList = ({
-    status,
+    orderStatus,
     paymentStatus,
     isRecurring,
+    isRecurringActive,
+    prescriptionStatus,
     page,
     limit,
     onPageChange,
 }: OrdersListProps) => {
     const skip = (page - 1) * limit;
 
-    const { data, isLoading, error } = useGetOrdersQuery({
+    const { data, isFetching, error } = useGetOrdersQuery({
         params: {
             skip,
             take: limit,
-            status,
-            paymentStatus,
+            ...(isRecurring ? { isRecurring: true } : {}),
+            ...(orderStatus ? { orderStatus } : {}),
+            ...(paymentStatus ? { paymentStatus } : {}),
+            ...(isRecurringActive ? { isRecurringActive: true } : {}),
+            ...(prescriptionStatus ? { prescriptionStatus } : {}),
         },
     });
 
-    const orders = useMemo(() => {
-        if (!data?.data?.data) return [];
-        let filtered = data.data.data;
-        if (isRecurring) {
-            filtered = filtered.filter((order) => order.isRecurring && order.isRecurringActive);
-        }
-        return filtered;
-    }, [data, isRecurring]);
+
+    const orders = data?.data?.data ?? []
 
     const pagination = data?.data;
 
-    if (isLoading) {
+    if (isFetching) {
         return (
             <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
@@ -120,7 +122,7 @@ const OrdersList = ({
     if (orders.length === 0) {
         return (
             <Paper variant="outlined" className="p-8 text-center bg-white!">
-                <Iconify icon="solar:box-broken" fontSize={64} className="text-gray-400 mb-4" />
+                <Iconify icon="solar:box-broken" fontSize={64} className="text-gray-400 mb-4 mx-auto" />
                 <Typography variant="h6" className="mb-2">
                     No orders found
                 </Typography>
@@ -142,7 +144,7 @@ const OrdersList = ({
             {pagination && pagination.totalRecords > limit && (
                 <Box className="flex justify-center mt-6">
                     <Pagination
-                        count={pagination.pageCount}
+                        count={pagination.pages}
                         page={page}
                         onChange={(_, newPage) => onPageChange(newPage)}
                         color="primary"
@@ -167,12 +169,12 @@ const OrderCard = ({ order }: OrderCardProps) => {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case "DELIVERED":
-            case "COMPLETED":
+            case OrderStatus.DELIVERED:
+            case OrderStatus.COMPLETED:
                 return "success";
-            case "CANCELED":
+            case OrderStatus.CANCELED:
                 return "error";
-            case "PENDING":
+            case OrderStatus.PENDING:
                 return "warning";
             default:
                 return "info";

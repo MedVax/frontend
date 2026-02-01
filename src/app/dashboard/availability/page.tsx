@@ -21,10 +21,12 @@ import { Icon as Iconify } from "@iconify/react";
 import {
   useGetAvailabilityQuery,
   useUpdateAvailabilityMutation,
+} from "@/apis/availability-api";
+import {
   TimeInterval,
   WeeklyAvailability,
   CustomAvailabilityItem,
-} from "@/apis/availability-api";
+} from "@/types/availability";
 import { useSnackbar } from "notistack";
 import { format, addDays, startOfWeek } from "date-fns";
 

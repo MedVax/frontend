@@ -26,6 +26,8 @@ function LoadingContent(props) {
     Error,
     ErrorProps,
     renderError,
+    empty,
+    renderEmpty,
     onRetry,
     blocking,
     Blocking,
@@ -41,7 +43,7 @@ function LoadingContent(props) {
     dataRef.current.onMount?.();
   }, [dataRef]);
 
-  if (!loading && !error) {
+  if (!loading && !error && !empty) {
     return typeof children === "function" ? children() : children;
   }
 
@@ -57,6 +59,7 @@ function LoadingContent(props) {
     >
       {blocking ? renderBlocking?.(props) : null}
       {error ? renderError?.(props) : renderLoading?.(props)}
+      {empty ? renderEmpty?.(props) : null}
     </div>
   );
 }

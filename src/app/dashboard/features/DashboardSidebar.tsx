@@ -72,7 +72,7 @@ const SideBar = () => {
       <Breadcrumbs separator="›" aria-label="breadcrumb">
         {breadcrumbs}
       </Breadcrumbs>
-      <Typography variant="h5" className="font-semibold mt-2">
+      <Typography variant="h5" className="font-semibold mt-2" noWrap>
         Dashboard
       </Typography>
       <List className="flex-1 min-h-0 overflow-y-auto scrollbar-hidden space-y-3 mt-10">
@@ -86,11 +86,7 @@ const SideBar = () => {
             return !isConsultant;
           }
           return true;
-        }).map(({ icon, activeIcon, clientOnly, ...linkProps }, index) => {
-          function children(renderProps: any): React.ReactNode {
-            throw new Error("Function not implemented.");
-          }
-
+        }).map(({ icon, ...linkProps }, index) => {
           return (
             <Link
               key={index}
@@ -106,7 +102,7 @@ const SideBar = () => {
               <div
                 className={clsx("rounded-lg flex justify-center items-center")}
               >
-                <Iconify className="text-xl" icon={icon} />
+                {icon && <Iconify className="text-xl" icon={icon} />}
               </div>
               <Typography component="span" className="font-medium">
                 {linkProps.children}
@@ -131,6 +127,11 @@ const NAV_LINKS = [
     children: "Bookings",
     href: "/dashboard/bookings",
     icon: "solar:calendar-outline",
+  },
+  {
+    children: "Availability",
+    href: "/dashboard/availability",
+    icon: "solar:calendar-mark-outline",
   },
   {
     children: "My Orders",
@@ -163,9 +164,5 @@ const NAV_LINKS = [
     href: "/dashboard/profile",
     icon: "solar:user-outline",
   },
-  {
-    children: "Availability",
-    href: "/dashboard/availability",
-    icon: "solar:calendar-mark-outline",
-  },
+
 ] as ({ icon?: string; activeIcon?: string; children: string; clientOnly?: boolean } & LinkProps)[];

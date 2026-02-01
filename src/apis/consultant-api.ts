@@ -97,10 +97,9 @@ export const consultantApi = medvaxApi.injectEndpoints({
       ConsultantResponse,
       QueryRequest<UpdateConsultantRequest, void, void>
     >({
-      query: ({ data, ...config }) => ({
+      query: ({  ...config }) => ({
         url: TAG,
         method: "PUT",
-        body: data,
         ...config,
       }),
       invalidatesTags: [RtkqTag.USER],
@@ -110,10 +109,9 @@ export const consultantApi = medvaxApi.injectEndpoints({
       ServerResponse<any>,
       QueryRequest<AssignConsultantRequest, void, void>
     >({
-      query: ({ data, ...config }) => ({
+      query: ({ ...config }) => ({
         url: "/clients/assign-consultant",
         method: "PATCH",
-        body: data,
         ...config,
       }),
       invalidatesTags: [RtkqTag.USER],

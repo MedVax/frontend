@@ -153,9 +153,9 @@ const Addresses = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex items-center justify-between">
-        <Typography variant="h4" className="font-semibold">
+        <Typography variant="h5" className="font-semibold">
           My Addresses
         </Typography>
         <Button
@@ -169,7 +169,7 @@ const Addresses = () => {
 
       {addresses.length === 0 ? (
         <Paper variant="outlined" className="p-8 text-center bg-white!">
-          <Iconify icon="solar:map-point-linear" fontSize={64} className="text-gray-400 mb-4" />
+          <Iconify icon="solar:map-point-linear" fontSize={64} className="text-gray-400 mb-4 mx-auto" />
           <Typography variant="h6" className="mb-2">
             No addresses yet
           </Typography>
