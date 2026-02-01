@@ -26,7 +26,7 @@ const Watchlist = () => {
   const [removeFavorite] = useRemoveFavoriteMutation();
 
   const favorites = data?.data?.data || [];
-  const total = data?.data?.meta?.total || 0;
+  const total = data?.data?.totalRecords || 0;
 
   const handleRemoveFavorite = async (productId: string) => {
     try {
@@ -45,7 +45,7 @@ const Watchlist = () => {
         <Skeleton variant="rectangular" height={60} />
         <Grid container spacing={3}>
           {[...Array(8)].map((_, i) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={i}>
               <Skeleton variant="rectangular" height={300} />
             </Grid>
           ))}
@@ -89,7 +89,7 @@ const Watchlist = () => {
             }).format(product.price / 100);
 
             return (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={favorite.id}>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={favorite.id}>
                 <Paper variant="outlined" className="p-4 relative group bg-white!">
                   <IconButton
                     className="absolute top-2 right-2 z-10 bg-white shadow-md"

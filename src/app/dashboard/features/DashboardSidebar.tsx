@@ -168,4 +168,4 @@ const NAV_LINKS = [
     href: "/dashboard/availability",
     icon: "solar:calendar-mark-outline",
   },
-] as ({ icon?: string; activeIcon?: string; children: string; clientOnly?: boolean } & LinkProps)[];
+] as ({ icon: string; activeIcon?: string; children: string; clientOnly?: boolean } & LinkProps)[];

@@ -33,7 +33,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-12 px-4">
         <div className="max-w-6xl mx-auto space-y-6">
           <Skeleton variant="rectangular" height={300} className="rounded-xl" />
           <Skeleton variant="rectangular" height={400} className="rounded-xl" />
@@ -44,7 +44,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
 
   if (error || !consultant) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-12 px-4 flex items-center justify-center">
         <Alert severity="error" className="max-w-md">
           Consultant profile not found.{" "}
           <Link href="/" className="underline">
@@ -153,9 +153,9 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary-main to-primary-dark text-white py-16">
+      <div className="bg-linear-to-r from-primary-main to-primary-dark text-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <Avatar
@@ -214,7 +214,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
         {/* Quick Info Cards */}
         <Grid container spacing={3}>
           {rate && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Paper
                 variant="outlined"
                 className="p-6 bg-white! text-center hover:shadow-lg transition-shadow"
@@ -229,7 +229,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
             </Grid>
           )}
           {yearsOfExperience && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Paper
                 variant="outlined"
                 className="p-6 bg-white! text-center hover:shadow-lg transition-shadow"
@@ -244,7 +244,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
             </Grid>
           )}
           {rating && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Paper
                 variant="outlined"
                 className="p-6 bg-white! text-center hover:shadow-lg transition-shadow"
@@ -262,7 +262,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
             </Grid>
           )}
           {expertise.length > 0 && (
-            <Grid item xs={12} sm={6} md={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <Paper
                 variant="outlined"
                 className="p-6 bg-white! text-center hover:shadow-lg transition-shadow"
@@ -328,7 +328,7 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
             {/* Book Session Card */}
             <Paper
               variant="outlined"
-              className="p-6 bg-gradient-to-br from-primary-main to-primary-dark text-white"
+              className="p-6 bg-linear-to-br from-primary-main to-primary-dark text-white"
             >
               <Typography variant="h6" className="font-bold mb-4 text-white">
                 Book a Session

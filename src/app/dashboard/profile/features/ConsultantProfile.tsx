@@ -33,8 +33,8 @@ const ConsultantProfile = () => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const { data: userData, isLoading: userLoading } = useGetUserProfileInfoQuery();
-  
-  const consultantProfileId = authUser?.user?.activeProfile?.userProfileConsultant;
+
+  const consultantProfileId = authUser?.user?.activeProfile?.id;
   const { data: consultantData, isLoading: consultantLoading } = useGetConsultantProfileQuery(
     { path: { id: consultantProfileId || "" } },
     { skip: !consultantProfileId }

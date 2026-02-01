@@ -11,3 +11,4 @@ export const CATEGORY = "CATEGORY";
 export const BRAND = "BRAND";
 export const FAVORITE = "FAVORITE";
 export const SESSION = "SESSION";
+export const AVAILABILITY = "AVAILABILITY";

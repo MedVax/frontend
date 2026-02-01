@@ -88,9 +88,7 @@ export function ProductBestSelling() {
             >
               <ProductItem
                 product={{
-                  id: product.id,
-                  name: product.name,
-                  description: product.description || "",
+                  ...product,
                   price: new Intl.NumberFormat("en-NG", {
                     style: "currency",
                     currency: product.currency || "NGN",
@@ -99,6 +97,7 @@ export function ProductBestSelling() {
                   isOutOfStock: product.stockQuantity <= 0,
                   favorite: false,
                   isLoading: false,
+                  description: product.description || "",
                 }}
               />
             </div>

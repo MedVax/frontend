@@ -21,7 +21,7 @@ import { Product } from "@/types/product";
 import useAuthUser from "@/hooks/use-auth";
 
 interface ProductItemProps {
-  product: Product & {
+  product: Omit<Product, "price"> & {
     image: string;
     price: string;
     isOutOfStock: boolean;

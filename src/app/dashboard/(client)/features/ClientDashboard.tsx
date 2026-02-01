@@ -14,14 +14,14 @@ import Link from "next/link";
 const ClientDashboard = () => {
   const authUser = useAuthUser();
   const router = useRouter();
-  
+
   // Get client profile with consultant info
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
+  const clientProfileId = authUser?.user?.activeProfile?.id;
   const { data: profileData, isLoading: profileLoading } = useGetClientProfileQuery(
     { path: { id: clientProfileId || "" } },
     { skip: !clientProfileId }
   );
-  
+
   // Get upcoming sessions
   const { data: sessionsData, isLoading: sessionsLoading } = useGetClientSessionsQuery({
     params: { page: 1, limit: 1, state: "upcoming" },
@@ -50,7 +50,7 @@ const ClientDashboard = () => {
           </Typography>
         </div>
 
-        <Button 
+        <Button
           className="bg-black text-white"
           onClick={() => router.push("/dashboard/bookings")}
         >
@@ -89,8 +89,8 @@ const ClientDashboard = () => {
               </Typography>
             )}
 
-            <Button 
-              variant="soft" 
+            <Button
+              variant="soft"
               fullWidth
               component={Link}
               href="/dashboard/consultants"
@@ -103,8 +103,8 @@ const ClientDashboard = () => {
             <Alert severity="info" className="mb-4">
               You don't have a consultant assigned yet.
             </Alert>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               fullWidth
               component={Link}
               href="/dashboard/consultants"

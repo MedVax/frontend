@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     : "Consultant";
   const jobTitle = consultant.jobTitle || "Healthcare Consultant";
   const fullTitle = `${name} - ${jobTitle} | MedVax Consultants`;
-  
+
   const bio = consultant.bio || "";
   const description = bio
     ? `${name} is a ${jobTitle} at MedVax. ${bio.substring(0, 150)}...`
@@ -87,7 +87,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       address: false,
       telephone: false,
     },
-    metadataBase: new URL(BASE_URL),
+    metadataBase: new URL(BASE_URL || "https://medvax.com"),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -154,37 +154,37 @@ export default async function Page({ params }: PageProps) {
   // Generate structured data for SEO
   const structuredData = consultant
     ? {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        name: consultant.userProfile?.user
-          ? `${consultant.userProfile.user.firstName} ${consultant.userProfile.user.lastName}`
-          : "Consultant",
-        jobTitle: consultant.jobTitle || "Healthcare Consultant",
-        description: consultant.bio || "",
-        image: consultant.userProfile?.user?.avatar || "",
-        email: consultant.userProfile?.user?.email || "",
-        ...(consultant.areaOfExpertise && {
-          knowsAbout: consultant.areaOfExpertise,
-        }),
-        ...(consultant.yearsOfExperience && {
-          yearsOfExperience: consultant.yearsOfExperience,
-        }),
-        ...(consultant.rate && {
-          offers: {
-            "@type": "Offer",
-            price: consultant.rate,
-            priceCurrency: "NGN",
-            availability: consultant.hasSetAvailability
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          },
-        }),
-        worksFor: {
-          "@type": "Organization",
-          name: "MedVax",
-          url: BASE_URL || "",
+      "@context": "https://schema.org",
+      "@type": "Person",
+      name: consultant.userProfile?.user
+        ? `${consultant.userProfile.user.firstName} ${consultant.userProfile.user.lastName}`
+        : "Consultant",
+      jobTitle: consultant.jobTitle || "Healthcare Consultant",
+      description: consultant.bio || "",
+      image: consultant.userProfile?.user?.avatar || "",
+      email: consultant.userProfile?.user?.email || "",
+      ...(consultant.areaOfExpertise && {
+        knowsAbout: consultant.areaOfExpertise,
+      }),
+      ...(consultant.yearsOfExperience && {
+        yearsOfExperience: consultant.yearsOfExperience,
+      }),
+      ...(consultant.rate && {
+        offers: {
+          "@type": "Offer",
+          price: consultant.rate,
+          priceCurrency: "NGN",
+          availability: consultant.hasSetAvailability
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
         },
-      }
+      }),
+      worksFor: {
+        "@type": "Organization",
+        name: "MedVax",
+        url: BASE_URL || "",
+      },
+    }
     : null;
 
   return (

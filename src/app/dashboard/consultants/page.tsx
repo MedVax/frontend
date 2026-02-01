@@ -234,7 +234,7 @@ const AssignConsultantDialog = ({
   );
 
   const consultant = consultantData?.data;
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
+  const clientProfileId = authUser?.user?.activeProfile?.id;
 
   const handleAssign = async () => {
     if (!clientProfileId) {

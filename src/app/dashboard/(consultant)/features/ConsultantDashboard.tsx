@@ -13,7 +13,7 @@ import BookingCard from "../../bookings/features/BookingCard";
 const ConsultantDashboard = () => {
   const authUser = useAuthUser();
   const router = useRouter();
-  
+
   // Get upcoming sessions
   const { data: sessionsData, isLoading: sessionsLoading } = useGetConsultantSessionsQuery({
     params: { page: 1, limit: 5, state: "upcoming" },
@@ -233,17 +233,37 @@ const ConsultantDashboard = () => {
           </Typography>
           <div className="space-y-4">
             {upcomingSessions.slice(1, 4).map((session) => (
-              <BookingCard
+              <Paper
                 key={session.id}
-                session={{
-                  name: `${session.client?.userProfile?.user?.firstName || ""} ${session.client?.userProfile?.user?.lastName || ""}`,
-                  avatar: session.client?.userProfile?.user?.avatar || "",
-                  title: `${session.sessionType} Session`,
-                  dateTime: session.scheduledDate,
-                  timezone: session.clientTimezone || "Africa/Lagos",
-                  sessionLink: session.meetingUrl || undefined,
-                }}
-              />
+                variant="outlined"
+                className="p-4 bg-white! flex items-center justify-between"
+              >
+                <div className="flex items-center gap-4">
+                  <Avatar
+                    src={session.client?.userProfile?.user?.avatar || undefined}
+                    sx={{ width: 48, height: 48 }}
+                  >
+                    {session.client?.userProfile?.user?.firstName?.[0]}
+                    {session.client?.userProfile?.user?.lastName?.[0]}
+                  </Avatar>
+                  <div>
+                    <Typography variant="subtitle1" className="font-semibold">
+                      {session.client?.userProfile?.user?.firstName} {session.client?.userProfile?.user?.lastName}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {session.sessionType} Session
+                    </Typography>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <Typography variant="body2" className="font-semibold">
+                    {format(new Date(session.scheduledDate), "dd MMM, yyyy")}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {format(new Date(session.scheduledDate), "h:mm a")}
+                  </Typography>
+                </div>
+              </Paper>
             ))}
           </div>
         </div>

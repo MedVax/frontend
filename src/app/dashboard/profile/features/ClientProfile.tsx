@@ -31,8 +31,8 @@ const ClientProfile = () => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const { data: userData, isLoading: userLoading } = useGetUserProfileInfoQuery();
-  
-  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
+
+  const clientProfileId = authUser?.user?.activeProfile?.id;
   const { data: clientData, isLoading: clientLoading } = useGetClientProfileQuery(
     { path: { id: clientProfileId || "" } },
     { skip: !clientProfileId }
@@ -82,11 +82,13 @@ const ClientProfile = () => {
               useCoverName: values.useCoverName,
             },
           }).unwrap();
-          
+
           // Update email and phone separately via user API
           await updateUserProfile({
             data: {
               userId: user.id,
+              firstName: values.firstName,
+              lastName: values.lastName,
               email: values.email,
               phoneNumber: values.phoneNumber,
             },

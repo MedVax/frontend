@@ -105,6 +105,7 @@ export default function PatientPrescriptionPage() {
             lastName: "",
             mobileNumber: "",
             email: "",
+            patientLocation: "",
             prescriptionFile: null,
             additionalNote: "",
             consent: false,
@@ -114,6 +115,7 @@ export default function PatientPrescriptionPage() {
             lastName: Yup.string().required("Last name is required"),
             mobileNumber: Yup.string().required("Mobile number is required"),
             email: Yup.string().email("Invalid email address"),
+            patientLocation: Yup.string().required("Location is required"),
             prescriptionFile: Yup.mixed().required("Prescription file is required"),
             consent: Yup.boolean().oneOf(
                 [true],
@@ -128,6 +130,7 @@ export default function PatientPrescriptionPage() {
                     patientName: `${values.firstName} ${values.lastName}`,
                     patientPhone: values.mobileNumber,
                     patientEmail: values.email,
+                    patientLocation: values.patientLocation,
                     additionalNote: values.additionalNote,
                 };
 
@@ -223,6 +226,14 @@ export default function PatientPrescriptionPage() {
                             fullWidth
                             disabled={isLoading}
                             placeholder="johndoe@example.com"
+                        />
+
+                        <TextField
+                            {...getFormikTextFieldProps(formik, "patientLocation")}
+                            label="Location / Address"
+                            fullWidth
+                            disabled={isLoading}
+                            placeholder="e.g. 123 Main St, New York"
                         />
 
                         <FileUploadInput

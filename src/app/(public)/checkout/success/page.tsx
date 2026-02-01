@@ -25,8 +25,8 @@ import { Shell } from "@/components/ui";
 import {
   useGetOrderByIdQuery,
   useSetOrderRecurringMutation,
-  OrderRecurringFrequency,
 } from "@/apis/order-api";
+import { OrderRecurringFrequency } from "@/types/order";
 import { useSnackbar } from "notistack";
 import { format } from "date-fns";
 import Currency from "@/enums/currency";

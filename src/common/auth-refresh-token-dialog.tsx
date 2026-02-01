@@ -27,7 +27,7 @@ export default function AuthRefreshTokenDialog(
 
   const { logout } = useLogout();
   const [counter, setCounter] = useState(
-    differenceInSeconds(new Date(user.expiresIn), new Date())
+    differenceInSeconds(new Date(user?.expiresIn || new Date()), new Date())
   );
   const { refreshToken } = useAuthUser();
   const { enqueueSnackbar } = useSnackbar();
