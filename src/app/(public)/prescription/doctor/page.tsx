@@ -11,8 +11,10 @@ import {
     InputAdornment,
     Breadcrumbs,
     Link as MuiLink,
+    Grid,
+    Paper,
 } from "@mui/material";
-import { useFormik } from "formik";
+import { useFormik, FormikProps } from "formik";
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
@@ -20,17 +22,35 @@ import { Icon } from "@iconify/react";
 import { prescriptionApi, PrescriptionType } from "apis/prescription-api";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
+interface PrescriptionFormValues {
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+    email: string;
+    patientLocation: string;
+    drugName: string;
+    dosage: string;
+    prescriptionFile: File | null;
+    additionalNote: string;
+    prescriberName: string;
+    prescriberEmail: string;
+    prescriberPhone: string;
+    hospitalName: string;
+    prescriberLocation: string;
+    consent: boolean;
+}
+
 const FileUploadInput = ({
     formik,
     name,
     label,
 }: {
-    formik: any;
-    name: string;
+    formik: FormikProps<PrescriptionFormValues>;
+    name: keyof PrescriptionFormValues;
     label: string;
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const file = formik.values[name];
+    const file = formik.values[name] as File | null;
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.currentTarget.files && event.currentTarget.files[0]) {
@@ -83,7 +103,7 @@ const FileUploadInput = ({
                     },
                 }}
                 error={isError}
-                helperText={isError ? formik.errors[name] : "Only pdf, jpg, and jpeg files allowed"}
+                helperText={isError ? (formik.errors[name] as string) : "Only pdf, jpg, and jpeg files allowed"}
             />
         </div>
     );
@@ -97,7 +117,7 @@ export default function DoctorPrescriptionPage() {
     const [createPrescription, { isLoading }] =
         prescriptionApi.useCreatePrescriptionMutation();
 
-    const formik = useFormik({
+    const formik = useFormik<PrescriptionFormValues>({
         initialValues: {
             // Patient Info
             firstName: "",
@@ -179,9 +199,10 @@ export default function DoctorPrescriptionPage() {
                     variant: "success",
                 });
                 formik.resetForm();
-            } catch (error: any) {
+            } catch (error) {
                 console.error("Upload error", error);
-                enqueueSnackbar(error?.data?.message || "Failed to upload prescription", {
+                const errorMessage = (error as any)?.data?.message || "Failed to upload prescription";
+                enqueueSnackbar(errorMessage, {
                     variant: "error",
                 });
             }
@@ -189,182 +210,247 @@ export default function DoctorPrescriptionPage() {
     });
 
     return (
-        <Shell component="main" className="py-20">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
-                <div className="flex flex-col gap-2 max-w-sm">
-                    <Breadcrumbs aria-label="breadcrumb" className="mb-4">
-                        <MuiLink
-                            component="a"
-                            underline="hover"
-                            color="inherit"
-                            href="/"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                router.push("/");
-                            }}
-                        >
-                            Home
-                        </MuiLink>
-                        <Typography color="text.secondary">Upload prescription</Typography>
-                        <Typography color="text.primary">Doctor</Typography>
-                    </Breadcrumbs>
+        <Shell component="main" className="py-12 bg-gray-50/50 min-h-screen">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
+                    <div className="flex flex-col gap-2 max-w-sm">
+                        <Breadcrumbs aria-label="breadcrumb" className="mb-4">
+                            <MuiLink
+                                component="a"
+                                underline="hover"
+                                color="inherit"
+                                href="/"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    router.push("/");
+                                }}
+                            >
+                                Home
+                            </MuiLink>
+                            <Typography color="text.secondary">Upload prescription</Typography>
+                            <Typography color="text.primary">Doctor</Typography>
+                        </Breadcrumbs>
 
-                    <Typography variant="h4" className="font-bold!">
-                        Doctor Prescription Upload
-                    </Typography>
+                        <Typography variant="h4" className="font-bold!">
+                            Doctor Prescription Upload
+                        </Typography>
 
-                    <Typography variant="body1" className="text-gray-600 mb-5">
-                        Start uploading patient prescriptions securely. Ensure all details are accurate and verified.
-                    </Typography>
+                        <Typography variant="body1" className="text-gray-600 mb-5">
+                            Securely upload patient prescriptions. Please ensure all details are accurate and the prescription is authenticated.
+                        </Typography>
+                    </div>
+
+                    <Button
+                        variant="outlined"
+                        onClick={() => router.push("/consultation")}
+                        sx={{
+                            borderRadius: "50px",
+                            textTransform: "none",
+                            color: "text.primary",
+                            borderColor: "grey.300",
+                        }}
+                    >
+                        Book Consultation
+                    </Button>
                 </div>
 
-                <Button
-                    variant="outlined"
-                    onClick={() => router.push("/consultation")}
-                    sx={{
-                        borderRadius: "50px",
-                        textTransform: "none",
-                        color: "text.primary",
-                        borderColor: "grey.300",
-                    }}
-                >
-                    Book Consultation
-                </Button>
-            </div>
-
-            <div className="max-w-md mx-auto">
-                <form onSubmit={formik.handleSubmit} className="mt-6 space-y-6">
-
+                <form onSubmit={formik.handleSubmit} className="space-y-6">
                     {/* Patient Section */}
-                    <div className="space-y-4">
-                        <Typography variant="subtitle1" fontWeight="bold" className="text-gray-800 border-b pb-2">
-                            Patient Details
-                        </Typography>
-                        <div className="flex gap-4">
-                            <TextField
-                                {...getFormikTextFieldProps(formik, "firstName")}
-                                label="First Name"
-                                fullWidth
-                                disabled={isLoading}
-                                placeholder="e.g. John"
-                            />
-                            <TextField
-                                {...getFormikTextFieldProps(formik, "lastName")}
-                                label="Last Name"
-                                fullWidth
-                                disabled={isLoading}
-                                placeholder="e.g. Doe"
-                            />
+                    <Paper variant="outlined" className="p-6 md:p-8 bg-white rounded-xl shadow-sm border-gray-100">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                                <Icon icon="solar:user-id-bold" width={24} />
+                            </div>
+                            <Typography variant="h6" fontWeight="bold">
+                                Patient Details
+                            </Typography>
                         </div>
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "mobileNumber")}
-                            label="Mobile Number"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="Enter Phone Number"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "email")}
-                            label="Email Address (Optional)"
-                            type="email"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="johndoe@example.com"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "patientLocation")}
-                            label="Location / Address"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="e.g. 123 Main St"
-                        />
-                    </div>
+
+                        <Grid container spacing={3}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "firstName")}
+                                    label="First Name"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="e.g. John"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "lastName")}
+                                    label="Last Name"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="e.g. Doe"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "mobileNumber")}
+                                    label="Mobile Number"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="Enter Phone Number"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "email")}
+                                    label="Email Address (Optional)"
+                                    type="email"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="johndoe@example.com"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "patientLocation")}
+                                    label="Location / Address"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="e.g. 123 Main St, Apartment 4B"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Paper>
 
                     {/* Prescription Section */}
-                    <div className="space-y-4">
-                        <Typography variant="subtitle1" fontWeight="bold" className="text-gray-800 border-b pb-2">
-                            Prescription Details
-                        </Typography>
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "drugName")}
-                            label="Drug Name (Optional)"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="e.g. Amoxicillin"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "dosage")}
-                            label="Dosage (Optional)"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="e.g. 500mg"
-                        />
-                        <FileUploadInput
-                            formik={formik}
-                            name="prescriptionFile"
-                            label="Prescription File *"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "additionalNote")}
-                            label="Additional Notes (Optional)"
-                            fullWidth
-                            multiline
-                            rows={3}
-                            disabled={isLoading}
-                            placeholder="Any specific instructions..."
-                        />
-                    </div>
+                    <Paper variant="outlined" className="p-6 md:p-8 bg-white rounded-xl shadow-sm border-gray-100">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                                <Icon icon="solar:document-medicine-bold" width={24} />
+                            </div>
+                            <Typography variant="h6" fontWeight="bold">
+                                Prescription Details
+                            </Typography>
+                        </div>
+
+                        <Grid container spacing={3}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "drugName")}
+                                    label="Drug Name (Optional)"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="e.g. Amoxicillin"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "dosage")}
+                                    label="Dosage (Optional)"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="e.g. 500mg, Twice daily"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <div className="bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 md:p-6 transition-colors hover:bg-gray-100">
+                                    <FileUploadInput
+                                        formik={formik}
+                                        name="prescriptionFile"
+                                        label="Upload Prescription File *"
+                                    />
+                                </div>
+                            </Grid>
+                            <Grid size={{ xs: 12 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "additionalNote")}
+                                    label="Additional Notes / Instructions (Optional)"
+                                    fullWidth
+                                    multiline
+                                    rows={3}
+                                    disabled={isLoading}
+                                    placeholder="Any specific instructions for the pharmacist..."
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Paper>
 
                     {/* Prescriber Section */}
-                    <div className="space-y-4">
-                        <Typography variant="subtitle1" fontWeight="bold" className="text-gray-800 border-b pb-2">
-                            Prescriber Information
+                    <Paper variant="outlined" className="p-6 md:p-8 bg-white rounded-xl shadow-sm border-gray-100">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                                <Icon icon="solar:stethoscope-bold" width={24} />
+                            </div>
+                            <Typography variant="h6" fontWeight="bold">
+                                Prescriber Information
+                            </Typography>
+                        </div>
+
+                        <Grid container spacing={3}>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "prescriberName")}
+                                    label="Prescriber Name"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="Dr. Jane Smith"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 6 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "prescriberEmail")}
+                                    label="Prescriber Email (Optional)"
+                                    type="email"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="doctor@hospital.com"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "prescriberPhone")}
+                                    label="Prescriber Phone (Optional)"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="+234..."
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "hospitalName")}
+                                    label="Hospital / Clinic Name"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="General Hospital"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <TextField
+                                    {...getFormikTextFieldProps(formik, "prescriberLocation")}
+                                    label="Hospital Location"
+                                    fullWidth
+                                    disabled={isLoading}
+                                    placeholder="City, State"
+                                    InputProps={{ sx: { borderRadius: "12px" } }}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Paper>
+
+                    <div className="bg-pink-50 p-4 rounded-xl border border-pink-100 flex items-start gap-3">
+                        <Icon icon="solar:shield-warning-bold" className="text-pink-600 shrink-0 mt-0.5" width={20} />
+                        <Typography variant="caption" className="text-gray-700 leading-snug">
+                            Ensure the uploaded file is a valid prescription. Any falsified documents will result in immediate account suspension and potential legal action.
                         </Typography>
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "prescriberName")}
-                            label="Prescriber Name"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="Dr. Jane Smith"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "prescriberEmail")}
-                            label="Prescriber Email (Optional)"
-                            type="email"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="doctor@hospital.com"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "prescriberPhone")}
-                            label="Prescriber Phone (Optional)"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="Hospital or direct line"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "hospitalName")}
-                            label="Hospital / Clinic Name (Optional)"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="General Hospital"
-                        />
-                        <TextField
-                            {...getFormikTextFieldProps(formik, "prescriberLocation")}
-                            label="Hospital Location (Optional)"
-                            fullWidth
-                            disabled={isLoading}
-                            placeholder="City, State"
-                        />
                     </div>
 
-                    <div className="bg-pink-50/50 p-4 rounded-lg">
-                        <Typography variant="caption" className="text-gray-600">
-                            Ensure the uploaded file is a valid prescription. Any falsified documents will result in account suspension.
-                        </Typography>
-                    </div>
-
-                    <div>
+                    <div className="flex flex-col gap-6 pt-2">
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -372,28 +458,22 @@ export default function DoctorPrescriptionPage() {
                                     checked={formik.values.consent}
                                     onChange={formik.handleChange}
                                     color="primary"
+                                    sx={{ '&.Mui-checked': { color: 'primary.main' } }}
                                 />
                             }
                             label={
-                                <Typography variant="caption" className="text-gray-600">
-                                    I verify that this prescription is authentic and issued by a licensed healthcare professional.
+                                <Typography variant="body2" className="text-gray-600">
+                                    I verify that this prescription is authentic, current, and issued by a licensed healthcare professional.
                                 </Typography>
                             }
-                            className="items-start -ml-2"
-                            sx={{
-                                "& .MuiCheckbox-root": {
-                                    paddingTop: "0px",
-                                },
-                            }}
+                            className="ml-0"
                         />
                         {formik.touched.consent && formik.errors.consent && (
-                            <Typography variant="caption" color="error" className="ml-2 block mt-1">
+                            <Typography variant="caption" color="error" className="ml-8 -mt-4">
                                 {formik.errors.consent}
                             </Typography>
                         )}
-                    </div>
 
-                    <div className="mt-8 flex flex-col items-center gap-4">
                         <Button
                             type="submit"
                             variant="contained"
@@ -401,14 +481,20 @@ export default function DoctorPrescriptionPage() {
                             size="large"
                             disabled={isLoading}
                             sx={{
-                                bgcolor: "#4B5563",
-                                "&:hover": { bgcolor: "#374151" },
-                                borderRadius: "50px",
+                                borderRadius: "12px",
                                 textTransform: "none",
-                                py: 1.5,
+                                py: 2,
+                                fontSize: "1.1rem",
+                                fontWeight: "bold",
+                                bgcolor: "primary.main",
+                                boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
+                                "&:hover": {
+                                    bgcolor: "primary.dark",
+                                    boxShadow: "0 12px 20px rgba(0,0,0,0.15)",
+                                },
                             }}
                         >
-                            {isLoading ? "Uploading..." : "Submit Prescription"}
+                            {isLoading ? "Uploading Prescription..." : "Submit Prescription"}
                         </Button>
                     </div>
                 </form>
