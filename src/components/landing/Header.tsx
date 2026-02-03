@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   Popover,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   AltArrowDown,
   User,
@@ -39,6 +39,8 @@ import { useGetCartQuery } from "@/apis/cart-api";
 import { Icon as Iconify } from "@iconify/react";
 import useSideMenu from "@/hooks/use-side-menu";
 import { usePathname } from "next/navigation";
+import productApi from "@/apis/product-api";
+import useDebouncedState from "@/hooks/use-debounced-state";
 
 const prescriptionMenuItems = [
   { label: "Upload Prescription", href: "/prescription/upload" },
@@ -78,6 +80,11 @@ export function Header() {
       label: "Consultation",
       icon: <></>,
       onClick: () => router.push("/consultation"),
+    },
+    {
+      label: "Blog",
+      icon: <></>,
+      onClick: () => router.push("/blog"),
     },
     {
       label: "Upload Prescription",
@@ -197,19 +204,18 @@ export function Header() {
 
           {/* Category Menu */}
           <div
-            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${
-              isHovered
-                ? "opacity-100 visible translate-y-0"
-                : "opacity-100 invisible -translate-y-2"
-            }`}
+            className={`bg-white shadow-sm shadow-black/4 absolute  w-full transition-all duration-300 ease-in-out ${isHovered
+              ? "opacity-100 visible translate-y-0"
+              : "opacity-100 invisible -translate-y-2"
+              }`}
             {...(isSmallScreen
               ? {}
               : {
-                  onMouseLeave: () => {
-                    setIsHovered(false);
-                    setAnchorEl(null);
-                  },
-                })}
+                onMouseLeave: () => {
+                  setIsHovered(false);
+                  setAnchorEl(null);
+                },
+              })}
           >
             <Container
               maxWidth="xl"
@@ -398,50 +404,139 @@ function MyAccountButton() {
 }
 
 function SearchBar() {
+  const router = useRouter();
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>("");
+  const [deferredSearch] = useDebouncedState(inputValue, {
+    enableReInitialize: true,
+    wait: 300,
+  });
+
+  // Fetch search suggestions when user types
+  const { data: searchResults } = productApi.useGetProductsQuery(
+    {
+      params: {
+        search: deferredSearch || undefined,
+        take: 5, // Limit to 5 suggestions
+        skip: 0,
+      },
+    },
+    {
+      skip: !deferredSearch || deferredSearch.length < 2, // Only search if at least 2 characters
+    }
+  );
+
+  const suggestions = searchResults?.data?.data || [];
+
+  const handleSearch = useCallback(
+    (searchQuery: string) => {
+      if (!searchQuery.trim()) return;
+
+      // Redirect to products page with search query
+      const params = new URLSearchParams();
+      params.set("search", searchQuery.trim());
+      router.push(`/products?${params.toString()}`);
+    },
+    [router]
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      handleSearch(searchValue || inputValue);
+    },
+    [handleSearch, searchValue, inputValue]
+  );
+
   return (
-    <Autocomplete
-      disablePortal
-      id="search-medication"
-      sx={{
-        "& .MuiInputBase-root": {
-          paddingRight: "0 !important",
-        },
-      }}
-      className="max-w-[420px]"
-      options={[
-        { label: "Medication 1", value: "medication-1" },
-        { label: "Medication 2", value: "medication-2" },
-        { label: "Medication 3", value: "medication-3" },
-      ]}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Search medication"
-          variant="outlined"
-          size="small"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "99px",
-            },
-          }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Magnifer size={18} />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Button variant="contained" className="z-10">
-                    Search
-                  </Button>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-      )}
-    />
+    <form onSubmit={handleSubmit} className="max-w-[420px] w-full">
+      <Autocomplete
+        disablePortal
+        id="search-medication"
+        freeSolo
+        inputValue={inputValue}
+        onInputChange={(_, newInputValue) => {
+          setInputValue(newInputValue);
+        }}
+        value={searchValue}
+        onChange={(_, newValue) => {
+          if (typeof newValue === "string") {
+            setSearchValue(newValue);
+            handleSearch(newValue);
+          } else if (newValue) {
+            setSearchValue(newValue.name);
+            handleSearch(newValue.name);
+          }
+        }}
+        options={suggestions}
+        getOptionLabel={(option) => {
+          if (typeof option === "string") return option;
+          return option.name || "";
+        }}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id}>
+            <div className="flex items-center gap-2 w-full">
+              {option.images && option.images.length > 0 && (
+                <img
+                  src={option.images[0]}
+                  alt={option.name}
+                  className="w-10 h-10 object-cover rounded"
+                />
+              )}
+              <div className="flex-1">
+                <Typography variant="body2" className="font-medium">
+                  {option.name}
+                </Typography>
+                {option.brand && (
+                  <Typography variant="caption" color="text.secondary">
+                    {option.brand.name}
+                  </Typography>
+                )}
+              </div>
+            </div>
+          </li>
+        )}
+        sx={{
+          "& .MuiInputBase-root": {
+            paddingRight: "0 !important",
+          },
+        }}
+        className="w-full"
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search medication"
+            variant="outlined"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "99px",
+              },
+            }}
+            slotProps={{
+              input: {
+                ...params.inputProps,
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Magnifer size={18} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      className="z-10"
+                    >
+                      Search
+                    </Button>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        )}
+      />
+    </form>
   );
 }

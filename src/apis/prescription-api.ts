@@ -73,16 +73,33 @@ export const prescriptionApi = medvaxApi.injectEndpoints({
   endpoints: (builder) => ({
     getPrescriptions: builder.query<
       PrescriptionsResponse,
-      QueryRequest<void, { skip?: number; take?: number }, void>
+      QueryRequest<void, { skip?: number; take?: number; userId?: string; status?: PrescriptionStatus | PrescriptionStatus[]; prescriberType?: PrescriptionType; search?: string }, void>
     >({
-      query: ({ params, ...config }) => ({
-        url: TAG,
-        params: {
+      query: ({ params, ...config }) => {
+        const queryParams: Record<string, any> = {
           skip: params?.skip || 0,
           take: params?.take || 20,
-        },
-        ...config,
-      }),
+        };
+        
+        if (params?.userId) {
+          queryParams.userId = params.userId;
+        }
+        if (params?.status) {
+          queryParams.status = params.status;
+        }
+        if (params?.prescriberType) {
+          queryParams.prescriberType = params.prescriberType;
+        }
+        if (params?.search) {
+          queryParams.search = params.search;
+        }
+
+        return {
+          url: TAG,
+          params: queryParams,
+          ...config,
+        };
+      },
       providesTags: ["PRESCRIPTION"],
     }),
 

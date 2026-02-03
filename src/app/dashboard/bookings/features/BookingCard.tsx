@@ -22,6 +22,7 @@ import {
 } from "@/apis/session-api";
 import { useSnackbar } from "notistack";
 import { Icon as Iconify } from "@iconify/react";
+import Link from "next/link";
 
 interface BookingCardProps {
     session: Session;
@@ -168,32 +169,43 @@ const BookingCard = ({ session, isConsultant = false, status }: BookingCardProps
                             <strong>Note:</strong> {session.note}
                         </Typography>
                     )}
-                    {((canReschedule || canCancel || session.meetingUrl) && status === SessionStatus.PENDING && !isConsultant) && (
-                        <div className="flex gap-2 mt-4 flex-wrap">
-                            {canReschedule && (
-                                <Button
-                                    color="secondary"
-                                    variant="soft"
-                                    onClick={() => setRescheduleDialogOpen(true)}
-                                >
-                                    Reschedule
-                                </Button>
-                            )}
-
-                            <div className="flex-1"></div>
-                            {(session.meetingUrl && (status as any) === SessionStatus.UPCOMING) && (
-                                <Button
-                                    variant="soft"
-                                    href={session.meetingUrl}
-                                    target="_blank"
-                                    component="a"
-                                    startIcon={<Iconify icon="solar:videocamera-record-linear" fontSize={20} />}
-                                >
-                                    Join Session
-                                </Button>
+                    <div className="flex gap-2 mt-4 flex-wrap items-center justify-between">
+                        <Button
+                            component={Link}
+                            href={`/dashboard/sessions/${session.id}`}
+                            variant="outlined"
+                            size="small"
+                            startIcon={<Iconify icon="solar:eye-linear" fontSize={18} />}
+                        >
+                            View Details
+                        </Button>
+                        <div className="flex gap-2">
+                            {((canReschedule || canCancel || session.meetingUrl) && status === SessionStatus.PENDING && !isConsultant) && (
+                                <>
+                                    {canReschedule && (
+                                        <Button
+                                            color="secondary"
+                                            variant="soft"
+                                            onClick={() => setRescheduleDialogOpen(true)}
+                                        >
+                                            Reschedule
+                                        </Button>
+                                    )}
+                                    {(session.meetingUrl && (status as any) === SessionStatus.UPCOMING) && (
+                                        <Button
+                                            variant="soft"
+                                            href={session.meetingUrl}
+                                            target="_blank"
+                                            component="a"
+                                            startIcon={<Iconify icon="solar:videocamera-record-linear" fontSize={20} />}
+                                        >
+                                            Join Session
+                                        </Button>
+                                    )}
+                                </>
                             )}
                         </div>
-                    )}
+                    </div>
                 </div>
             </Paper>
 

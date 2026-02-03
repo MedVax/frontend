@@ -32,6 +32,8 @@ export interface Session {
   meetingUrl?: string | null;
   clientTimezone?: string | null;
   note?: string | null;
+  prescriptionNote?: string | null;
+  sessionNote?: string | null;
   rescheduled: boolean;
   client?: {
     id: string;
@@ -198,6 +200,52 @@ export const sessionApi = medvaxApi.injectEndpoints({
       invalidatesTags: ["SESSION"],
     }),
 
+    getSessionById: builder.query<
+      ServerResponse<Session>,
+      QueryRequest<void, void, { id: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.id}`,
+        ...config,
+      }),
+      providesTags: ["SESSION"],
+    }),
+
+    getSessionMeetingToken: builder.query<
+      ServerResponse<{ token: string }>,
+      QueryRequest<void, void, { id: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.id}/meeting-token`,
+        ...config,
+      }),
+      providesTags: ["SESSION"],
+    }),
+
+    updatePrescriptionNote: builder.mutation<
+      ServerResponse<Session>,
+      QueryRequest<{ prescriptionNote: string }, void, { id: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.id}/prescription-note`,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: ["SESSION"],
+    }),
+
+    updateSessionNoteReport: builder.mutation<
+      ServerResponse<Session>,
+      QueryRequest<{ sessionNote: string }, void, { id: string }>
+    >({
+      query: ({ path, ...config }) => ({
+        url: `${TAG}/${path?.id}/session-note`,
+        method: "PATCH",
+        ...config,
+      }),
+      invalidatesTags: ["SESSION"],
+    }),
+
     verifySessionPayment: builder.mutation<
       ServerResponse<any>,
       QueryRequest<void, void, { reference: string }>
@@ -220,5 +268,9 @@ export const {
   useCancelSessionMutation,
   useScheduleSessionsMutation,
   useUpdateSessionNoteMutation,
+  useGetSessionByIdQuery,
+  useGetSessionMeetingTokenQuery,
+  useUpdatePrescriptionNoteMutation,
+  useUpdateSessionNoteReportMutation,
 } = sessionApi;
 
