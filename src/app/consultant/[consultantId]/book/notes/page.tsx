@@ -51,14 +51,12 @@ const SessionNotesPage = () => {
     params: { state: SessionStatus.UPCOMING, ids: sessionIdsParam?.split(",") },
   });
 
+
   const sessions = sessionsData?.data?.data || [];
+  const allSessionIds = sessionIdsParam?.split(",");
 
   // Filter sessions if sessionIds provided
-  const filteredSessions = sessionIdsParam
-    ? sessions.filter((session) =>
-      sessionIdsParam?.split(",").includes(session.id)
-    )
-    : sessions;
+  const filteredSessions = sessions
 
   // Set first session as selected by default
   useEffect(() => {
@@ -69,10 +67,12 @@ const SessionNotesPage = () => {
 
   const selectedSession = filteredSessions.find((s) => s.id === selectedSessionId);
 
+  console.log({ allSessionIds })
+
   const formik = useFormik({
     initialValues: {
-      note: sessionIdsParam ? [
-        ...(sessionIdsParam?.split(",")?.map((id: string) => ({
+      note: allSessionIds ? [
+        ...(allSessionIds?.map((id: string) => ({
           sessionId: id,
           note: "I'll like to discuss about my health concerns on" //sample note for the consultation
         }))),
