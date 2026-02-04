@@ -180,9 +180,9 @@ const BookingCard = ({ session, isConsultant = false, status }: BookingCardProps
                             View Details
                         </Button>
                         <div className="flex gap-2">
-                            {((canReschedule || canCancel || session.meetingUrl) && status === SessionStatus.PENDING && !isConsultant) && (
-                                <>
-                                    {canReschedule && (
+                            <>
+                                <div>
+                                    {/* {canReschedule && status === SessionStatus.PENDING && !isConsultant && (
                                         <Button
                                             color="secondary"
                                             variant="soft"
@@ -190,20 +190,21 @@ const BookingCard = ({ session, isConsultant = false, status }: BookingCardProps
                                         >
                                             Reschedule
                                         </Button>
-                                    )}
-                                    {(session.meetingUrl && (status as any) === SessionStatus.UPCOMING) && (
-                                        <Button
-                                            variant="soft"
-                                            href={session.meetingUrl}
-                                            target="_blank"
-                                            component="a"
-                                            startIcon={<Iconify icon="solar:videocamera-record-linear" fontSize={20} />}
-                                        >
-                                            Join Session
-                                        </Button>
-                                    )}
-                                </>
-                            )}
+                                    )} */}
+                                </div>
+
+                                {(session.meetingUrl && (status as any) === SessionStatus.UPCOMING) && (
+                                    <Button
+                                        variant="soft"
+                                        href={session.meetingUrl}
+                                        target="_blank"
+                                        component="a"
+                                        startIcon={<Iconify icon="solar:videocamera-record-linear" fontSize={20} />}
+                                    >
+                                        Join Session
+                                    </Button>
+                                )}
+                            </>
                         </div>
                     </div>
                 </div>

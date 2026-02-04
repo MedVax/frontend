@@ -114,7 +114,7 @@ const ConsultantBookingsList = ({
   return (
     <div className="space-y-4">
       {sessions.map((session) => (
-        <BookingCard key={session.id} session={session} status={state as SessionStatus} />
+        <BookingCard key={session.id} session={session} status={state as SessionStatus} isConsultant={true} />
       ))}
 
       {pagination && pagination.totalRecords > limit && state !== SessionStatus.UPCOMING && (

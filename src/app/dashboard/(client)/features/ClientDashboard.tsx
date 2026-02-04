@@ -202,9 +202,7 @@ const ClientDashboard = () => {
               </div>
 
               <div className="flex gap-2 mt-4">
-                <Button color="secondary" variant="soft" onClick={() => router.push("/dashboard/bookings")}>
-                  Reschedule
-                </Button>
+
                 <div className="flex-1"></div>
                 {nextSession.meetingUrl && (
                   <Button
@@ -212,6 +210,7 @@ const ClientDashboard = () => {
                     href={nextSession.meetingUrl}
                     target="_blank"
                     component="a"
+                    startIcon={<Iconify icon="solar:videocamera-record-linear" fontSize={20} />}
                   >
                     Join Session
                   </Button>

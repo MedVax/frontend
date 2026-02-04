@@ -15,7 +15,7 @@ import { Icon as Iconify } from "@iconify/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO } from "date-fns";
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, startOfDay } from "date-fns";
 import clsx from "clsx";
 
 import { useGetConsultantByIdQuery } from "@/apis/consultant-api";
@@ -138,9 +138,10 @@ const BookingStep1 = (props: BookingStep1Props) => {
 
   const handleTimeSlotSelect = (timeSlot: string) => {
     if (selectedTimeSlots.includes(timeSlot)) {
-      return;
+      setSelectedTimeSlots(selectedTimeSlots.filter((slot) => slot !== timeSlot));
+    } else {
+      setSelectedTimeSlots([...selectedTimeSlots, timeSlot]);
     }
-    setSelectedTimeSlots([...selectedTimeSlots, timeSlot]);
   };
 
 
@@ -162,7 +163,7 @@ const BookingStep1 = (props: BookingStep1Props) => {
   }, [currentMonth]);
 
   const totalAmount = consultant?.rate
-    ? consultant.rate * (selectedTimeSlots.length ? 1 : 0)
+    ? consultant.rate * (selectedTimeSlots.length)
     : 0;
 
   if (consultantLoading) {
@@ -252,22 +253,36 @@ const BookingStep1 = (props: BookingStep1Props) => {
                 const hasAvailableSlots =
                   dayAvailability?.slots.some((slot) => slot.isAvailable) || false;
                 const isSelected = selectedDate === dateStr;
-                const isPast = day < new Date();
+                const isPast = day < startOfDay(new Date());
+                const isDisabled = !hasAvailableSlots || isPast;
 
                 return (
                   <div key={dateStr}>
                     <ButtonBase
-                      disabled={!hasAvailableSlots || isPast}
+                      disabled={isDisabled}
                       onClick={() => handleDateSelect(day)}
-                      className={clsx(isSelected
-                        ? "bg-primary-main text-white "
-                        : hasAvailableSlots && !isPast
-                          ? "hover:bg-primary-light hover:text-white text-black"
-                          : "",
-                        "disabled:text-gray-500 flex items-center justify-center w-[28px]! h-[28px]! rounded-full sm:w-[36px]! sm:h-[36px]!"
+                      className={clsx(
+                        isSelected
+                          ? "bg-primary-main text-white"
+                          : hasAvailableSlots && !isPast
+                            ? "hover:bg-primary-light hover:text-white text-black cursor-pointer"
+                            : "cursor-not-allowed opacity-40",
+                        "flex items-center justify-center w-[28px]! h-[28px]! rounded-full sm:w-[36px]! sm:h-[36px]! transition-all"
                       )}
+                      sx={{
+                        '&:disabled': {
+                          opacity: 0.3,
+                          cursor: 'not-allowed',
+                        },
+                      }}
                     >
-                      <Typography variant="body2" className="font-semibold">
+                      <Typography
+                        variant="body2"
+                        className={clsx(
+                          "font-semibold",
+                          isDisabled && "text-gray-400"
+                        )}
+                      >
                         {format(day, "d")}
                       </Typography>
                     </ButtonBase>
@@ -280,32 +295,47 @@ const BookingStep1 = (props: BookingStep1Props) => {
           {/* Time Slots (Desktop) */}
           {!isMobile && selectedDate && (
             <div className="space-y-4 mb-6">
-              {selectedDate && (
-                <div key={selectedDate}>
-                  <div className="grid grid-cols-3 gap-2">
-                    {availabilitySlots.find(
-                      (d) => d.date === selectedDate
-                    )?.slots.map((slot) => {
-                      const slotTime = format(parseISO(slot.time), "h:mm a");
-                      const isSelected = selectedTimeSlots.includes(slot.time);
+              {selectedDate && (() => {
+                const dayAvailability = availabilitySlots.find(
+                  (d) => d.date === selectedDate
+                );
+                const availableSlots = dayAvailability?.slots.filter(
+                  (slot) => slot.isAvailable
+                ) || [];
 
-                      return (
-                        <Button
-                          key={slot.time}
-                          size="small"
-                          shape="square"
-                          variant={isSelected ? "contained" : "outlined"}
-                          color={isSelected ? "primary" : "secondary"}
-                          onClick={() => handleTimeSlotSelect(slot.time)}
-                          className={isSelected ? "bg-primary-main" : ""}
-                        >
-                          {slotTime}
-                        </Button>
-                      );
-                    })}
+                if (availableSlots.length === 0) {
+                  return (
+                    <Typography variant="body2" color="text.secondary" className="text-center py-4">
+                      No available time slots for this date
+                    </Typography>
+                  );
+                }
+
+                return (
+                  <div key={selectedDate}>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableSlots.map((slot) => {
+                        const slotTime = format(parseISO(slot.time), "h:mm a");
+                        const isSelected = selectedTimeSlots.includes(slot.time);
+
+                        return (
+                          <Button
+                            key={slot.time}
+                            size="small"
+                            shape="square"
+                            variant={isSelected ? "contained" : "outlined"}
+                            color={isSelected ? "primary" : "secondary"}
+                            onClick={() => handleTimeSlotSelect(slot.time)}
+                            className={isSelected ? "bg-primary-main" : ""}
+                          >
+                            {slotTime}
+                          </Button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           )}
 
