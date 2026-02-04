@@ -12,9 +12,7 @@ import {
   Alert,
   Skeleton,
   Checkbox,
-  Select,
   MenuItem,
-  InputLabel,
   Paper,
   Divider,
 } from "@mui/material";
@@ -35,7 +33,6 @@ import { useSnackbar } from "notistack";
 import useAuthUser from "@/hooks/use-auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { OrderRecurringFrequency } from "@/types/order";
 import { getFormikTextFieldProps } from "@/utils/formik";
 
 const CheckoutPage = () => {
