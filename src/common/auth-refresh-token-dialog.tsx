@@ -27,14 +27,15 @@ export default function AuthRefreshTokenDialog(
 
   const { logout } = useLogout();
   const [counter, setCounter] = useState(
-    differenceInSeconds(new Date(user.expiresIn), new Date())
+    differenceInSeconds(new Date(user?.expiresIn || new Date()), new Date())
   );
-  const { refreshToken } = useAuthUser();
   const { enqueueSnackbar } = useSnackbar();
+  const refreshToken = user?.refreshToken;
 
   useEffect(() => {
-    if (counter === 0) {
+    if (counter <= 0) {
       logout();
+      return;
     }
 
     const timer = setTimeout(() => {
@@ -42,12 +43,16 @@ export default function AuthRefreshTokenDialog(
     }, 1000);
 
     return () => clearTimeout(timer);
-  });
+  }, [counter, logout]);
 
   const [refreshTokenMutation, refreshTokenMutationResult] =
     userApi.useUserRefreshTokenMutation();
 
   const handleRefreshToken = async () => {
+    if (!refreshToken) {
+      enqueueSnackbar("No refresh token available", { variant: "error" });
+      return;
+    }
     try {
       await refreshTokenMutation({ data: { refreshToken } }).unwrap();
       enqueueSnackbar("Session Refreshed", { variant: "success" });

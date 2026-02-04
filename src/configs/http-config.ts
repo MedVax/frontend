@@ -4,13 +4,19 @@ import { BASE_URL } from "constants/env";
 
 export const MedvaxHttp = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true,
+  withCredentials: false,
 });
 
 export const setupInterceptors = (_store: Store) => {
   // Request interceptor - add auth token to requests
   MedvaxHttp?.interceptors?.request?.use(
     async (config: InternalAxiosRequestConfig) => {
+      const state = _store.getState();
+      const accessToken = state?.global?.authUser?.accessToken;
+
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
       return config;
     },
     (error) => Promise.reject(error)

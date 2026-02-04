@@ -18,7 +18,7 @@ import {
   useMediaQuery,
   Popover,
 } from "@mui/material";
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   AltArrowDown,
   User,
@@ -43,8 +43,8 @@ import productApi from "@/apis/product-api";
 import useDebouncedState from "@/hooks/use-debounced-state";
 
 const prescriptionMenuItems = [
-  { label: "Upload Prescription", href: "/prescription/upload" },
-  { label: "View Prescriptions", href: "/prescription/view" },
+  { label: "Patient Prescription", href: "/prescription/patient" },
+  { label: "Doctor Prescription", href: "/prescription/doctor" },
 ];
 
 export function Header() {
@@ -56,7 +56,7 @@ export function Header() {
   const router = useRouter();
   const { anchorEl, isOpen, setAnchorEl, togglePopover } = usePopover();
   const { toggleSideMenu } = useSideMenu();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(0);
   const getAllCategories = categoryApi.useGetCategoriesQuery({
     params: {
       includeSubcategories: false,
@@ -340,6 +340,24 @@ function MyAccountButton() {
       icon: <Logout size={20} />,
     },
   ];
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <Button
+        variant="soft"
+        onClick={() => router.push("/signup")}
+        startIcon={<User size={20} />}
+      >
+        Create Account
+      </Button>
+    );
+  }
+
   return (
     <>
       {isAuthenticated ? (
@@ -540,3 +558,4 @@ function SearchBar() {
     </form>
   );
 }
+

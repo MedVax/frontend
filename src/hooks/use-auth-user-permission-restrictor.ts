@@ -4,8 +4,10 @@ import { useMemo } from "react";
 
 function useAuthUserPermissionRestrictor() {
   const authUser = useAuthUser();
+  const type = authUser?.user?.type;
+
   return usePermissionRestrictor(
-    useMemo(() => [authUser?.user?.type], [authUser?.user?.type])
+    useMemo(() => (type ? [type] : []), [type])
   );
 }
 

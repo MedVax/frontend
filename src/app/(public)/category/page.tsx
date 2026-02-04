@@ -33,7 +33,7 @@ const page = () => {
                         <div key={category.id} className="bg-white p-4 flex flex-col items-center gap-2">
                             <div className="flex items-center gap-2 rounded-full overflow-hidden p-2 bg-gray-100 w-fit">
                                 <img
-                                    src={category.image}
+                                    src={category.image || ""}
                                     alt={category.name}
                                     className="object-cover w-[100px] h-[100px] rounded-full"
                                 />

@@ -172,7 +172,7 @@ const userApi = medvaxApi.injectEndpoints({
       providesTags: [RtkqTag.USER],
     }),
     userRefreshToken: builder.mutation<
-      ServerResponse<UserSignResponse>,
+      UserSignResponse,
       QueryRequest<{ refreshToken: string }, void, void>
     >({
       query: ({ ...config }) => ({

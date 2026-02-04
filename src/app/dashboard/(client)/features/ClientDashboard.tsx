@@ -17,12 +17,19 @@ const ClientDashboard = () => {
   const router = useRouter();
 
   // Get client profile with consultant info
+<<<<<<< HEAD
   const isClient = authUser?.user?.activeProfile?.type === "CLIENT";
   const { data: profileData, isLoading: profileLoading } = useGetClientProfileByUserQuery(
     {
       path: { clientProfileId: authUser?.user?.activeProfile?.id as string },
     },
     { skip: !isClient }
+=======
+  const clientProfileId = authUser?.user?.activeProfile?.id;
+  const { data: profileData, isLoading: profileLoading } = useGetClientProfileQuery(
+    { path: { id: clientProfileId || "" } },
+    { skip: !clientProfileId }
+>>>>>>> cf6dc32d857334ee6cac7cdfd122c7caf9696cee
   );
 
   // Get upcoming sessions
@@ -102,6 +109,7 @@ const ClientDashboard = () => {
               </Typography>
             )}
 
+<<<<<<< HEAD
             <div className="flex-1"></div>
 
             <div className="flex flex-col gap-2">
@@ -124,6 +132,16 @@ const ClientDashboard = () => {
 
             </div>
 
+=======
+            <Button
+              variant="soft"
+              fullWidth
+              component={Link}
+              href="/dashboard/consultants"
+            >
+              Change Consultant
+            </Button>
+>>>>>>> cf6dc32d857334ee6cac7cdfd122c7caf9696cee
           </Paper>
         ) : (
           <Paper variant="outlined" className="space-y-4 bg-white! p-4 md:w-[300px] w-full">

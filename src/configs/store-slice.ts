@@ -83,7 +83,9 @@ const slice = createSlice({
       .addMatcher(
         userApi.endpoints.userRefreshToken.matchFulfilled,
         (state, { payload }) => {
-          state.authUser = { ...state.authUser, ...payload?.data };
+          if (payload?.data) {
+            state.authUser = { ...state.authUser, ...payload.data };
+          }
         }
       )
       // New auth API handlers
@@ -95,6 +97,9 @@ const slice = createSlice({
             state.authUser = {
               user: data.user,
               expiresIn: data.expiresIn,
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              isAuthenticated: true,
             };
           }
         }
@@ -107,6 +112,9 @@ const slice = createSlice({
             state.authUser = {
               user: data.user,
               expiresIn: data.expiresIn,
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              isAuthenticated: true,
             };
           }
         }
@@ -119,6 +127,9 @@ const slice = createSlice({
             state.authUser = {
               user: data.user,
               expiresIn: data.expiresIn,
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
+              isAuthenticated: true,
             };
           }
         }
@@ -131,6 +142,8 @@ const slice = createSlice({
             state.authUser = {
               ...state.authUser,
               expiresIn: data.expiresIn,
+              accessToken: data.accessToken,
+              refreshToken: data.refreshToken,
             };
           }
         }

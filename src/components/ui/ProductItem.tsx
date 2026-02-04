@@ -2,11 +2,10 @@
 
 import {
   Card,
-  CardActionArea,
-  CardContent,
   Chip,
   IconButton,
   Typography,
+  CardContent,
 } from "@mui/material";
 import { CartPlus, Heart } from "@solar-icons/react";
 import Image from "next/image";
@@ -22,7 +21,7 @@ import { Product } from "@/types/product";
 import useAuthUser from "@/hooks/use-auth";
 
 interface ProductItemProps {
-  product: Product & {
+  product: Omit<Product, "price"> & {
     image: string;
     price: string;
     isOutOfStock: boolean;
@@ -133,29 +132,30 @@ export const ProductItem = ({ product }: ProductItemProps) => {
       {product.isLoading ? (
         <ProductLoader />
       ) : (
-        <Card variant="outlined" className="bg-white! p-0!">
-          <CardActionArea
-            disableRipple
+        <Card variant="outlined" className="bg-white! p-0! relative group">
+          <div
             onClick={() => router.push(`/products/${product.id}`)}
-            className="bg-none! p-3!"
+            className="cursor-pointer relative"
           >
-            {/* Product Image */}
-            <div className="relative w-full rounded-2xl bg-gray-50 overflow-hidden">
+            {/* Image Container */}
+            <div className="relative w-full rounded-2xl bg-gray-50 overflow-hidden p-3 pb-0">
               <Image
                 src={product.image}
                 alt={product.name}
-                className="h-[200px] w-full object-contain"
+                className="h-[200px] w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 width={180}
                 height={200}
-                // priority
-                // loading="lazy"
+              // priority
+              // loading="lazy"
               />
-              {/* Wishlist Button */}
+
+              {/* Wishlist Button - Inside click area, requires stopPropagation & onMouseDown stopPropagation */}
               <IconButton
                 variant="soft"
                 color="primary"
-                className="absolute! top-4 right-4"
+                className="absolute! top-4 right-4 z-10"
                 onClick={handleToggleFavorite}
+                onMouseDown={(e) => e.stopPropagation()}
                 disabled={isAddingFavorite || isRemovingFavorite}
               >
                 <Heart
@@ -164,12 +164,14 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                   className="text-primary"
                 />
               </IconButton>
+
               {/* Add to Cart Button */}
               <IconButton
                 variant="contained"
                 color="primary"
-                className="absolute! bottom-4 right-4"
+                className="absolute! bottom-4 right-4 z-10"
                 onClick={handleAddToCart}
+                onMouseDown={(e) => e.stopPropagation()}
                 disabled={isAddingToCart || isOutOfStock || isStockFullyInCart}
                 size="large"
               >
@@ -188,7 +190,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
             </div>
 
             {/* Product Info */}
-            <div className="flex flex-col gap-2 text-left mt-4">
+            <div className="flex flex-col gap-2 text-left p-3 pt-4">
               <div>
                 <Typography className="font-semibold!" noWrap>
                   {product.name}
@@ -201,7 +203,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 {product.price}
               </Typography>
             </div>
-          </CardActionArea>
+          </div>
         </Card>
       )}
     </>

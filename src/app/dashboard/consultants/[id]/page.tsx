@@ -259,7 +259,7 @@ const ConsultantDetails = () => {
       {/* Hero Card */}
       <Paper
         variant="outlined"
-        className="p-8 bg-gradient-to-r from-primary-main to-primary-dark text-white overflow-hidden relative"
+        className="p-8 bg-linear-to-r from-primary-main to-primary-dark text-white overflow-hidden relative"
       >
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
@@ -323,7 +323,7 @@ const ConsultantDetails = () => {
       {/* Quick Stats */}
       <Grid container spacing={3}>
         {rate && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full hover:shadow-lg transition-shadow bg-white!">
               <CardContent className="text-center p-6">
                 <Iconify
@@ -342,7 +342,7 @@ const ConsultantDetails = () => {
           </Grid>
         )}
         {yearsOfExperience && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full hover:shadow-lg transition-shadow bg-white!">
               <CardContent className="text-center p-6">
                 <Iconify
@@ -361,7 +361,7 @@ const ConsultantDetails = () => {
           </Grid>
         )}
         {rating && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full hover:shadow-lg transition-shadow bg-white!">
               <CardContent className="text-center p-6">
                 <Iconify
@@ -380,7 +380,7 @@ const ConsultantDetails = () => {
           </Grid>
         )}
         {expertise.length > 0 && (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card className="h-full hover:shadow-lg transition-shadow bg-white!">
               <CardContent className="text-center p-6">
                 <Iconify

@@ -30,6 +30,7 @@ import {
   useCreateOrderMutation,
   CreateOrderRequest,
 } from "@/apis/order-api";
+import { OrderRecurringFrequency } from "@/types/order";
 import { useSnackbar } from "notistack";
 import useAuthUser from "@/hooks/use-auth";
 import { useFormik } from "formik";
@@ -442,8 +443,13 @@ const CheckoutPage = () => {
                     : "/assets/dummy-product.png";
 
                 return (
+<<<<<<< HEAD
                   <div key={item.id} className="flex items-start gap-3 pb-3">
                     <div className="w-[50px] h-[50px] rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+=======
+                  <div key={item.id} className="flex items-start gap-3 pb-3 border-b">
+                    <div className="w-[50px] h-[50px] rounded-lg overflow-hidden bg-gray-100 shrink-0">
+>>>>>>> cf6dc32d857334ee6cac7cdfd122c7caf9696cee
                       <Image
                         src={productImage}
                         alt={item.product.name}
@@ -460,7 +466,7 @@ const CheckoutPage = () => {
                         x{item.quantity}
                       </Typography>
                     </div>
-                    <Typography variant="body2" className="font-semibold flex-shrink-0">
+                    <Typography variant="body2" className="font-semibold shrink-0">
                       {currency(itemTotal).format({ symbol: "₦" })}
                     </Typography>
                   </div>

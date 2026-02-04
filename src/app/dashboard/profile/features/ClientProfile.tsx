@@ -33,7 +33,11 @@ const ClientProfile = () => {
   const authUser = useAuthUser();
   const { data: userData, isLoading: userLoading } = useGetUserProfileInfoQuery();
 
+<<<<<<< HEAD
   const clientProfileId = authUser?.user?.activeProfile?.userProfileClient;
+=======
+  const clientProfileId = authUser?.user?.activeProfile?.id;
+>>>>>>> cf6dc32d857334ee6cac7cdfd122c7caf9696cee
   const { data: clientData, isLoading: clientLoading } = useGetClientProfileQuery(
     { path: { id: clientProfileId || "" } },
     { skip: !clientProfileId }
@@ -83,12 +87,24 @@ const ClientProfile = () => {
           }).unwrap();
 
           // Update email and phone separately via user API
+<<<<<<< HEAD
           // await updateUserProfile({
           //   data: {
           //     userId: user.id,
           //     email: values.email,
           //   },
           // }).unwrap();
+=======
+          await updateUserProfile({
+            data: {
+              userId: user.id,
+              firstName: values.firstName,
+              lastName: values.lastName,
+              email: values.email,
+              phoneNumber: values.phoneNumber,
+            },
+          }).unwrap();
+>>>>>>> cf6dc32d857334ee6cac7cdfd122c7caf9696cee
         }
 
         enqueueSnackbar("Profile updated successfully", { variant: "success" });
