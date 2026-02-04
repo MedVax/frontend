@@ -7,17 +7,7 @@ import {
   Button,
   Alert,
   Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Chip,
-  TextField,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -32,7 +22,6 @@ import { OrderRecurringFrequency } from "@/types/order";
 import { useSnackbar } from "notistack";
 import { format } from "date-fns";
 import Currency from "@/enums/currency";
-import { OrderRecurringFrequency } from "@/types/order";
 
 const CheckoutSuccess = () => {
   const searchParams = useSearchParams();
