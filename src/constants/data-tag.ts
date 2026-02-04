@@ -12,3 +12,4 @@ export const BRAND = "BRAND";
 export const FAVORITE = "FAVORITE";
 export const AVAILABILITY = "AVAILABILITY";
 export const SESSION = "SESSION";
+export const BLOG = "BLOG";

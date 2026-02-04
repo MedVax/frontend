@@ -1,5 +1,6 @@
 import { medvaxApi } from "@/configs/store-query";
 import { QueryRequest, ServerResponse, PaginationServerResponse } from "@/types/global";
+import * as RtkqTag from "constants/tags";
 
 const TAG = "/blog";
 
@@ -42,7 +43,7 @@ export const blogApi = medvaxApi.injectEndpoints({
           skip: params?.skip || 0,
           take: params?.take || 20,
         };
-        
+
         if (params?.published !== undefined) {
           queryParams.published = params.published;
         }
@@ -59,7 +60,7 @@ export const blogApi = medvaxApi.injectEndpoints({
           ...config,
         };
       },
-      providesTags: ["BLOG"],
+      providesTags: [RtkqTag.BLOG],
     }),
 
     getTopBlogPosts: builder.query<
@@ -73,7 +74,7 @@ export const blogApi = medvaxApi.injectEndpoints({
         },
         ...config,
       }),
-      providesTags: ["BLOG"],
+      providesTags: [RtkqTag.BLOG],
     }),
 
     getBlogPostBySlug: builder.query<
@@ -85,7 +86,7 @@ export const blogApi = medvaxApi.injectEndpoints({
         ...config,
       }),
       providesTags: (result, error, { path }) => {
-        return [{ type: "BLOG", id: path?.slug }];
+        return [{ type: RtkqTag.BLOG, id: path?.slug }];
       },
     }),
   }),
