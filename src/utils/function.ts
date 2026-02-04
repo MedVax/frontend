@@ -3,13 +3,14 @@
 export function debounce<C>(
   callback: C,
   wait = 0
-): C & { flush: Function; cancel: Function } {
-  let debounceTimer: any;
-  let triggerArgs: any;
-  let triggerThis: any;
+): C & { flush: () => void; cancel: () => void } {
+  let debounceTimer: NodeJS.Timeout | undefined;
+  let triggerArgs: unknown[];
+  let triggerThis: unknown;
 
-  function trigger(...arg: any[]) {
+  function trigger(...arg: unknown[]) {
     triggerArgs = arg;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     triggerThis = this;
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -20,20 +21,20 @@ export function debounce<C>(
   trigger.cancel = () => clearTimeout(debounceTimer);
   trigger.flush = () => {
     clearTimeout(debounceTimer);
-    // @ts-expect-error
+    // @ts-expect-error - callback is a function
     callback.apply(triggerThis, triggerArgs);
   };
 
   return trigger;
 }
 
-export function throttle(callback: any, wait = 0) {
-  let throttleTimer: any;
-  let triggerArgs: any;
-  let triggerThis: any;
+export function throttle(callback: () => void, wait = 0) {
+  let throttleTimer: NodeJS.Timeout | undefined;
+  let triggerArgs: unknown[];
+  let triggerThis: unknown;
   function trigger() {
-    triggerArgs = arguments;
-    // @ts-expect-error
+    triggerArgs = [...arguments as unknown[]]; // eslint-disable-line prefer-rest-params
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     triggerThis = this;
     if (throttleTimer) return;
     throttleTimer = true;

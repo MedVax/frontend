@@ -26,18 +26,18 @@ export default function axiosBaseQuery(
       return {
         error: error.response
           ? {
-              defaultUserMessage:
-                (Array.isArray(error?.response?.data?.message)
-                  ? error?.response?.data?.message?.[0]
-                  : error?.response?.data?.message) ||
-                error?.response?.data?.error,
-              status: error?.response?.status,
-              data: error?.response?.data,
-            }
+            defaultUserMessage:
+              (Array.isArray(error?.response?.data?.message)
+                ? error?.response?.data?.message?.[0]
+                : error?.response?.data?.message) ||
+              error?.response?.data?.error,
+            status: error?.response?.status,
+            data: error?.response?.data,
+          }
           : {
-              defaultUserMessage: "Something went wrong",
-              data: { defaultUserMessage: "Something went wrong" },
-            },
+            defaultUserMessage: "Something went wrong",
+            data: { defaultUserMessage: "Something went wrong" },
+          },
       };
     }
   }

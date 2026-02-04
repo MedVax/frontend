@@ -10,7 +10,7 @@ export async function dataURLToFile(dataURL: string, fileName: string) {
 }
 
 export const removeBase64URLMeta = (base64: string) => {
-  let base64Arr = base64?.split(",");
+  const base64Arr = base64?.split(",");
   let base64Link = base64Arr?.[1] || "";
   if (base64Link === undefined) {
     if (base64Arr[0].length >= 1) {
@@ -22,17 +22,17 @@ export const removeBase64URLMeta = (base64: string) => {
 };
 
 /**
- * @template {{[x: string]: any}} T
+ * @template {{[x: string]: unknown}} T
  * @param {URLSearchParams} searchParams
  * @param {T} params
  * @returns {T}
  */
-export function urlSearchParamsExtractor<T extends { [x: string]: any }>(
+export function urlSearchParamsExtractor<T extends { [x: string]: unknown }>(
   searchParams: URLSearchParams,
   params: T = {} as T
 ): T {
   if (searchParams && params) {
-    const result = {} as T;
+    const result: Partial<T> = {};
     for (const key in params) {
       const value = searchParams.get(key);
       result[key] = value || params[key];

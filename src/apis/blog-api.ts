@@ -1,6 +1,6 @@
 import { medvaxApi } from "@/configs/store-query";
 import { QueryRequest, ServerResponse, PaginationServerResponse } from "@/types/global";
-import * as RtkqTag from "constants/tags";
+import * as RtkqTag from "constants/data-tag";
 
 const TAG = "/blog";
 

@@ -7,16 +7,16 @@ export function cast(str: string) {
   return str === "null"
     ? null
     : str === "undefined"
-    ? undefined
-    : str === "'null'" || str === '"null"'
-    ? "null"
-    : str === "true"
-    ? true
-    : str === "false"
-    ? false
-    : !isNaN(Number(str))
-    ? Number(str)
-    : str;
+      ? undefined
+      : str === "'null'" || str === '"null"'
+        ? "null"
+        : str === "true"
+          ? true
+          : str === "false"
+            ? false
+            : !isNaN(Number(str))
+              ? Number(str)
+              : str;
 }
 
 /**
@@ -29,7 +29,9 @@ export function isJson(str: string) {
     try {
       JSON.parse(str);
       return true;
-    } catch (e) {}
+    } catch (error) {
+      console.error(error);
+    }
   }
   return false;
 }

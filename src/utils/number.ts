@@ -9,7 +9,7 @@ export function formatNumberToCurrency(number = "", decimalPlace = false) {
   let value = number.toString();
   const decimalPosition = value.indexOf(".");
   if (decimalPosition >= 0) {
-    let leftSide = formatNumber(value.substring(0, decimalPosition));
+    const leftSide = formatNumber(value.substring(0, decimalPosition));
     let rightSide = formatNumber(value.substring(decimalPosition));
     if (decimalPlace) {
       rightSide += "00";
