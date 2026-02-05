@@ -8,7 +8,6 @@ import {
   Avatar,
   Skeleton,
   Alert,
-  Grid,
   TextField,
   Box,
   Chip,
@@ -164,16 +163,16 @@ const SessionDetailPage = () => {
         <Typography variant="h5" className="font-semibold mb-4">
           Session Details
         </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Date & Time
             </Typography>
             <Typography variant="body1" className="font-medium">
               {format(new Date(session.scheduledDate), "MMMM dd, yyyy h:mm a")}
             </Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </div>
+          <div>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Status
             </Typography>
@@ -190,26 +189,26 @@ const SessionDetailPage = () => {
               }
               size="small"
             />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </div>
+          <div>
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Session Type
             </Typography>
             <Typography variant="body1" className="font-medium">
               {session.sessionType}
             </Typography>
-          </Grid>
+          </div>
           {session.clientTimezone && (
-            <Grid item xs={12} md={6}>
+            <div>
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Timezone
               </Typography>
               <Typography variant="body1" className="font-medium">
                 {session.clientTimezone}
               </Typography>
-            </Grid>
+            </div>
           )}
-        </Grid>
+        </div>
       </Paper>
 
       {/* Client Information */}
