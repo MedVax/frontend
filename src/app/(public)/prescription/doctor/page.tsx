@@ -228,27 +228,41 @@ export default function DoctorPrescriptionPage() {
 
     return (
         <Shell component="main" className="py-12 bg-gray-50/30 min-h-screen">
+            {/* Breadcrumbs - Wider Container */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+                <Breadcrumbs
+                    aria-label="breadcrumb"
+                    separator={<div className="w-1 h-1 rounded-full bg-gray-300" />}
+                    className="text-sm"
+                >
+                    <MuiLink
+                        component="a"
+                        underline="hover"
+                        color="inherit"
+                        href="/"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            router.push("/");
+                        }}
+                        className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                    >
+                        <Icon icon="solar:home-smile-linear" width={14} />
+                        Home
+                    </MuiLink>
+                    <MuiLink
+                        underline="none"
+                        color="inherit"
+                        className="text-gray-500 cursor-default"
+                    >
+                        Prescriptions
+                    </MuiLink>
+                    <Typography color="primary.main" className="font-semibold text-sm">Doctor Portal</Typography>
+                </Breadcrumbs>
+            </div>
+
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
                     <div className="flex flex-col gap-2 max-w-lg">
-                        <Breadcrumbs aria-label="breadcrumb" className="mb-2">
-                            <MuiLink
-                                component="a"
-                                underline="hover"
-                                color="inherit"
-                                href="/"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    router.push("/");
-                                }}
-                                className="text-gray-500 hover:text-gray-900 transition-colors"
-                            >
-                                Home
-                            </MuiLink>
-                            <Typography color="text.secondary" className="font-medium">Prescriptions</Typography>
-                            <Typography color="text.primary" className="font-semibold text-pink-600">Doctor Portal</Typography>
-                        </Breadcrumbs>
-
                         <Typography variant="h3" className="font-bold text-gray-900 tracking-tight">
                             Submit Prescription
                         </Typography>
@@ -263,7 +277,7 @@ export default function DoctorPrescriptionPage() {
                     {/* Doctor Details Section */}
                     <Paper
                         elevation={0}
-                        className="p-8 md:p-10 bg-white rounded-3xl border border-gray-100/50"
+                        className="p-8 md:p-10 bg-white rounded-[24px] border border-gray-100/50"
                         sx={{
                             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
                             transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -294,7 +308,6 @@ export default function DoctorPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="Dr. Start Lastname"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -304,7 +317,6 @@ export default function DoctorPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="e.g. City General Hospital"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -314,7 +326,6 @@ export default function DoctorPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="Official Phone Number"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -325,7 +336,6 @@ export default function DoctorPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="dr.name@hospital.com"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
@@ -335,7 +345,6 @@ export default function DoctorPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="Full address of the medical facility"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                         </Grid>
@@ -344,7 +353,7 @@ export default function DoctorPrescriptionPage() {
                     {/* Prescription File Section */}
                     <Paper
                         elevation={0}
-                        className="p-8 md:p-10 bg-white rounded-3xl border border-gray-100/50"
+                        className="p-8 md:p-10 bg-white rounded-[24px] border border-gray-100/50"
                         sx={{
                             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
                             transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -370,7 +379,7 @@ export default function DoctorPrescriptionPage() {
                         <Grid container spacing={4}>
                             <Grid size={{ xs: 12 }}>
                                 <div className="group transition-all duration-300">
-                                    <div className="relative border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-pink-400 hover:bg-pink-50/30 transition-all cursor-pointer text-center group-hover:shadow-sm">
+                                    <div className="relative border-2 border-dashed border-gray-200 rounded-[24px] p-8 hover:border-pink-400 hover:bg-pink-50/30 transition-all cursor-pointer text-center group-hover:shadow-sm">
                                         <FileUploadInput
                                             formik={formik}
                                             name="prescriptionFile"
@@ -388,13 +397,12 @@ export default function DoctorPrescriptionPage() {
                                     rows={3}
                                     disabled={isLoading}
                                     placeholder="Dosage instructions, contraindications, etc..."
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                         </Grid>
                     </Paper>
 
-                    <div className="bg-linear-to-r from-indigo-50 to-blue-50 p-6 rounded-3xl border border-indigo-100 flex items-start gap-4">
+                    <div className="bg-linear-to-r from-indigo-50 to-blue-50 p-6 rounded-[24px] border border-indigo-100 flex items-start gap-4">
                         <div className="bg-white p-2 rounded-full shadow-sm text-indigo-600 shrink-0">
                             <Icon icon="solar:shield-check-bold" width={24} />
                         </div>
@@ -441,7 +449,7 @@ export default function DoctorPrescriptionPage() {
                                 disabled={isLoading}
                                 startIcon={isLoading ? null : <Icon icon="solar:verified-check-bold" />}
                                 sx={{
-                                    borderRadius: "50px",
+                                    // Theme default borderRadius: 84px
                                     textTransform: "none",
                                     py: 2,
                                     fontSize: "1.125rem",
