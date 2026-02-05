@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import ClientDashboard from "./(client)/features/ClientDashboard";
 import ConsultantDashboard from "./(consultant)/features/ConsultantDashboard";
 
-const page = () => {
+const Page = () => {
   const auth = useAuth();
   return (
     <div>
@@ -14,4 +14,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

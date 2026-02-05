@@ -54,6 +54,7 @@ const CalendarIntegrationComponent = () => {
       if (result.data?.authUrl) {
         // Store provider in sessionStorage for callback
         sessionStorage.setItem("calendarProvider", provider);
+        // eslint-disable-next-line react-hooks/immutability
         window.location.href = result.data.authUrl;
       }
     } catch (error) {

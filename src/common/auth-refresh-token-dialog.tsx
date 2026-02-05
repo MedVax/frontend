@@ -67,7 +67,7 @@ export default function AuthRefreshTokenDialog(
       <DialogTitle>Session Expired</DialogTitle>
 
       <DialogContent>
-        You'll be logged out in the next <b>{counter}s</b>
+        You&apos;ll be logged out in the next <b>{counter}s</b>
       </DialogContent>
 
       <DialogActions>

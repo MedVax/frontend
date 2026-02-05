@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   Avatar,
-  Divider,
   Skeleton,
   Alert,
   Grid,
@@ -37,7 +36,6 @@ const SessionDetailPage = () => {
   const sessionId = params?.id as string;
 
   const isConsultant = authUser?.user?.activeProfile?.type === "CONSULTANT";
-  const isClient = authUser?.user?.activeProfile?.type === "CLIENT";
 
   const { data, isLoading, error } = useGetSessionByIdQuery(
     { path: { id: sessionId } },
@@ -185,10 +183,10 @@ const SessionDetailPage = () => {
                 session.status === "COMPLETED"
                   ? "success"
                   : session.status === "UPCOMING"
-                  ? "primary"
-                  : session.status === "CANCELED"
-                  ? "error"
-                  : "default"
+                    ? "primary"
+                    : session.status === "CANCELED"
+                      ? "error"
+                      : "default"
               }
               size="small"
             />

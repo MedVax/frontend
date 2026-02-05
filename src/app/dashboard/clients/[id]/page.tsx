@@ -76,7 +76,7 @@ const ClientDetailsPage = () => {
   if (!isConsultant) {
     return (
       <Alert severity="error">
-        You don't have permission to view this page.
+        You don&apos;t have permission to view this page.
       </Alert>
     );
   }

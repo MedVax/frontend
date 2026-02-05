@@ -41,6 +41,7 @@ const BookingStep1 = (props: BookingStep1Props) => {
 
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [bottomSheetDate, setBottomSheetDate] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
 
@@ -123,9 +124,8 @@ const BookingStep1 = (props: BookingStep1Props) => {
     }
 
     if (isMobile) {
+      setBottomSheetDate(dateStr);
       setShowBottomSheet(true);
-      // Store the date for bottom sheet
-      (window as any).__selectedDateForBooking = dateStr;
     } else {
       // Desktop: show time slots inline
       if (selectedDate === dateStr) {
@@ -374,13 +374,14 @@ const BookingStep1 = (props: BookingStep1Props) => {
       {isMobile && (
         <AvailabilityBottomSheet
           open={showBottomSheet}
-          onClose={() => setShowBottomSheet(false)}
+          onClose={() => {
+            setShowBottomSheet(false);
+            setBottomSheetDate(null);
+          }}
           availabilitySlots={availabilitySlots}
           selectedTimeSlots={selectedTimeSlots}
           selectedDate={
-            (window as any).__selectedDateForBooking
-              ? parseISO((window as any).__selectedDateForBooking)
-              : null
+            bottomSheetDate ? parseISO(bottomSheetDate) : null
           }
           onTimeSlotSelect={(dateStr, timeSlot) => {
             if (selectedDate === dateStr) {
