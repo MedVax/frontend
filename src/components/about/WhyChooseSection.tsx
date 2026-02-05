@@ -51,7 +51,7 @@ export function WhyChooseSection() {
                         <Card
                             key={index}
                             elevation={0}
-                            className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-[24px]"
+                            className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-xl"
                             sx={{ backgroundColor: "#FFFFFF", boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.02)" }}
                         >
                             <Box className="w-12 h-12 rounded-full bg-[#e91d74] shrink-0" />

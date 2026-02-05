@@ -19,7 +19,7 @@ export function MissionVisionSection() {
                     {/* Mission Card */}
                     <Card
                         elevation={0}
-                        className="flex flex-col items-center text-center p-12 rounded-[24px] border border-gray-100"
+                        className="flex flex-col items-center text-center p-12 rounded-xl border border-gray-100"
                         sx={{ backgroundColor: "#FAFAFA" }}
                     >
                         <Box className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm">
@@ -44,7 +44,7 @@ export function MissionVisionSection() {
                     {/* Vision Card */}
                     <Card
                         elevation={0}
-                        className="flex flex-col items-center text-center p-12 rounded-[24px] border border-gray-100"
+                        className="flex flex-col items-center text-center p-12 rounded-xl border border-gray-100"
                         sx={{ backgroundColor: "#FAFAFA" }}
                     >
                         <Box className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm">

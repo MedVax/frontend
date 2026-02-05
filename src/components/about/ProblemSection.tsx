@@ -64,7 +64,7 @@ export function ProblemSection() {
                         <Card
                             key={index}
                             elevation={0}
-                            className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-[24px]"
+                            className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-xl"
                             sx={{ backgroundColor: "#FDFDFD" }}
                         >
                             <Box className="w-12 h-12 rounded-full bg-[#e91d74] shrink-0" />
