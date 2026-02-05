@@ -2,8 +2,9 @@ import { Typography } from "@mui/material";
 import clsx from "clsx";
 import "./empty-content.css";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { ComponentPropsWithoutRef } from "react";
 
-export function EmptyContent(props) {
+export function EmptyContent(props: EmptyContentProps) {
   const { title, className, ...rest } = props;
   return (
     <div className={clsx("EmptyContent", className)} {...rest}>
@@ -19,4 +20,7 @@ export function EmptyContent(props) {
   );
 }
 
+export type EmptyContentProps = ComponentPropsWithoutRef<"div"> & {
+  title?: string;
+};
 export default EmptyContent;

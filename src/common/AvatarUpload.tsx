@@ -61,7 +61,7 @@ export function AvatarUpload(props: AvatarUploadProps) {
       {loading && <CircularProgress color="primary" className="absolute" />}
       <IconButton
         disabled={disabled || loading}
-        variant="filled"
+        variant="contained"
         color="primary"
         className="absolute bg-gray-50"
       >

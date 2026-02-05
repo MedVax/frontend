@@ -4,7 +4,7 @@ import PermissionRestrictor, {
   PermissionRestrictorProps,
 } from "./permission-restrictor";
 
-const AuthUserPermissionRestrictor = forwardRef(
+const AuthUserPermissionRestrictor = forwardRef<any, AuthUserPermissionRestrictorProps>(
   function AuthUserPermissionRestrictor(
     props: AuthUserPermissionRestrictorProps,
     ref: any
@@ -17,17 +17,12 @@ const AuthUserPermissionRestrictor = forwardRef(
         ? !permissionValidator.every(permissions)
         : permissionValidator.every(permissions)
       : negateValidation
-      ? !permissionValidator.some(permissions)
-      : permissionValidator.some(permissions);
+        ? !permissionValidator.some(permissions)
+        : permissionValidator.some(permissions);
 
     return <PermissionRestrictor {...{ ref, ...rest, permitted }} />;
   }
 );
-
-AuthUserPermissionRestrictor.defaultProps = {
-  visible: false,
-  permissions: [],
-} as Partial<AuthUserPermissionRestrictorProps>;
 
 export default AuthUserPermissionRestrictor;
 

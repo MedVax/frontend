@@ -33,7 +33,6 @@ const ConsultantDetails = () => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
 
-  console.log({ authUser });
   const consultantId = params?.id as string;
   const isConsultant = authUser?.user?.activeProfile?.type === "CONSULTANT";
   const activeProfileId = authUser?.user?.activeProfile?.id;
@@ -44,7 +43,7 @@ const ConsultantDetails = () => {
     { skip: !consultantId }
   );
   const { data: clientProfileData } = useGetClientProfileByUserQuery(
-    undefined,
+    { path: { clientProfileId: activeProfileId as string } },
     { skip: !isClient }
   );
   const [assignConsultant, { isLoading: isAssigning }] = useAssignConsultantMutation();

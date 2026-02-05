@@ -14,7 +14,7 @@ export function BlogCarousel() {
     params: { limit: 10 },
   });
 
-  const posts = blogPostsData?.data?.data || [];
+  const posts = blogPostsData?.data || [];
 
   if (isLoading) {
     return (

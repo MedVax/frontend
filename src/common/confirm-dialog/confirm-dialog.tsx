@@ -96,7 +96,7 @@ function ConfirmDialog(props: ConfirmDialogPropsType) {
         {onClose ? (
           <IconButton
             aria-label="close"
-            variant="filled"
+            variant="contained"
             color="primary"
             onClick={onClose}
           >

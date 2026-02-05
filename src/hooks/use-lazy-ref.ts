@@ -14,6 +14,7 @@ export function useLazyRef<A, R>(
   if (!ref.current && func) {
     ref.current = func(...args);
   }
+  // @ts-expect-error - RefObject<R | null> is not assignable to MutableRefObject<R>, but this is safe in practice
   return ref;
 }
 

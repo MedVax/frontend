@@ -1,4 +1,4 @@
-import { store } from "configs/store";
+import store from "../configs/store";
 import { logoutAction } from "configs/store-actions";
 import { clearAuthCookie } from "./auth-cookies";
 import { medvaxApi } from "configs/store-query";

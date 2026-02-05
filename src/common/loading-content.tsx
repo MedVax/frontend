@@ -12,7 +12,7 @@ import useDataRef from "../hooks/use-data-ref";
  * @param {LoadingUIProps} props
  * @returns
  */
-function LoadingContent(props) {
+function LoadingContent(props: any) {
   const {
     fullHeight,
     centered,
@@ -76,7 +76,7 @@ LoadingContent.defaultProps = {
 
 export default LoadingContent;
 
-function CustomLoading(props) {
+function CustomLoading(props: any) {
   return (
     <div {...props}>
       <LoadingIndicator />
@@ -88,7 +88,7 @@ function CustomLoading(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderLoading(props) {
+function renderLoading(props: any) {
   const Loading = props.Loading;
   return (
     <Loading
@@ -98,7 +98,7 @@ function renderLoading(props) {
   );
 }
 
-function CustomError(props) {
+function CustomError(props: any) {
   return <ErrorContent {...props} />;
 }
 
@@ -106,7 +106,7 @@ function CustomError(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderError(props) {
+function renderError(props: any) {
   const Error = props.Error;
   return (
     <Error
@@ -121,7 +121,7 @@ function renderError(props) {
  *
  * @param {LoadingUIProps} props
  */
-function renderBlocking(props) {
+function renderBlocking(props: any) {
   const Blocking = props.Blocking;
   return (
     <Blocking

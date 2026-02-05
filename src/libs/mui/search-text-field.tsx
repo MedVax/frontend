@@ -8,7 +8,7 @@ const SearchTextField = forwardRef(
    * @param {import("@mui/material").TextFieldProps} props
    * @param {any} ref
    */
-  function SearchTextField(props: TextFieldProps, ref: any) {
+  function SearchTextField(props: TextFieldProps, ref: React.Ref<HTMLInputElement>) {
     const { InputProps, ...rest } = props;
 
     return (
@@ -30,7 +30,5 @@ const SearchTextField = forwardRef(
     );
   }
 );
-
-SearchTextField.defaultProps = {};
 
 export default SearchTextField;

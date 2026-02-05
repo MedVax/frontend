@@ -1,2 +1,2 @@
-export { AuthGuard, AdminGuard, GuestGuard } from "./AuthGuard";
+export { AuthGuard, GuestGuard } from "./AuthGuard";
 

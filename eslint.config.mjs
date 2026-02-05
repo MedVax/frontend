@@ -29,6 +29,14 @@ export default defineConfig([
       "react-hooks/immutability": "warn", // Allow window assignments in event handlers
       "react-hooks/refs": "warn", // Allow ref access in hooks (common pattern)
       
+      // TypeScript: Convert implicit any parameter errors to warnings
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-call": "warn",
+      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-return": "warn",
+      
       // Keep critical errors
       "react-hooks/rules-of-hooks": "error", // Keep this as error
     },

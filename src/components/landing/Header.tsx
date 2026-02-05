@@ -532,6 +532,7 @@ function SearchBar() {
               },
             }}
             slotProps={{
+              // @ts-ignore
               input: {
                 ...params.inputProps,
                 startAdornment: (

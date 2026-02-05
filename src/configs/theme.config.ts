@@ -1,4 +1,4 @@
-import type {} from "@mui/material/themeCssVarsAugmentation";
+import type { } from "@mui/material/themeCssVarsAugmentation";
 import DateFormat from "enums/date-format";
 import {
   createTheme,
@@ -191,35 +191,35 @@ export const theme = responsiveFontSizes(
                 : {}),
               ...(ownerState.variant === "soft"
                 ? {
-                    color:
-                      theme.palette[color]?.main || theme.palette.grey[500],
+                  color:
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                  backgroundColor: alpha(
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                    0.2
+                  ),
+                  "&:hover": {
                     backgroundColor: alpha(
                       theme.palette[color]?.main || theme.palette.grey[500],
-                      0.2
+                      0.3
                     ),
-                    "&:hover": {
-                      backgroundColor: alpha(
-                        theme.palette[color]?.main || theme.palette.grey[500],
-                        0.3
-                      ),
-                    },
-                  }
+                  },
+                }
                 : {}),
               ...(ownerState.variant === "soft"
                 ? {
-                    color:
-                      theme.palette[color]?.main || theme.palette.grey[500],
+                  color:
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                  backgroundColor: alpha(
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                    0.2
+                  ),
+                  "&:hover": {
                     backgroundColor: alpha(
                       theme.palette[color]?.main || theme.palette.grey[500],
-                      0.2
+                      0.3
                     ),
-                    "&:hover": {
-                      backgroundColor: alpha(
-                        theme.palette[color]?.main || theme.palette.grey[500],
-                        0.3
-                      ),
-                    },
-                  }
+                  },
+                }
                 : {}),
             };
           },
@@ -240,19 +240,19 @@ export const theme = responsiveFontSizes(
             return {
               ...(ownerState.variant === "soft"
                 ? {
-                    color:
-                      theme.palette[color]?.main || theme.palette.grey[600],
+                  color:
+                    theme.palette[color]?.main || theme.palette.grey[600],
+                  backgroundColor: alpha(
+                    theme.palette[color]?.main || theme.palette.grey[600],
+                    0.2
+                  ),
+                  "&:hover": {
                     backgroundColor: alpha(
-                      theme.palette[color]?.main || theme.palette.grey[600],
-                      0.2
+                      theme.palette[color]?.main || theme.palette.grey[500],
+                      0.3
                     ),
-                    "&:hover": {
-                      backgroundColor: alpha(
-                        theme.palette[color]?.main || theme.palette.grey[500],
-                        0.3
-                      ),
-                    },
-                  }
+                  },
+                }
                 : {}),
             };
           },
@@ -276,51 +276,51 @@ export const theme = responsiveFontSizes(
               ...(!isNaN(Number(ownerState.shape))
                 ? { borderRadius: Number(ownerState.shape) }
                 : {
-                    borderRadius: {
-                      square: 0,
-                      default: 8,
-                      circular: undefined,
-                    }[ownerState.shape!],
-                  }),
+                  borderRadius: {
+                    square: 0,
+                    default: 8,
+                    circular: undefined,
+                  }[ownerState.shape!],
+                }),
               ...(ownerState.variant === "contained"
                 ? {
-                    color:
-                      theme.palette[color]?.contrastText ||
-                      theme.palette.text.primary,
+                  color:
+                    theme.palette[color]?.contrastText ||
+                    theme.palette.text.primary,
+                  backgroundColor:
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                  "&:hover": {
                     backgroundColor:
+                      theme.palette[color]?.dark || theme.palette.grey[700],
+                  },
+                  "&:disabled": {
+                    backgroundColor: alpha(
                       theme.palette[color]?.main || theme.palette.grey[500],
-                    "&:hover": {
-                      backgroundColor:
-                        theme.palette[color]?.dark || theme.palette.grey[700],
-                    },
-                    "&:disabled": {
-                      backgroundColor: alpha(
-                        theme.palette[color]?.main || theme.palette.grey[500],
-                        0.5
-                      ),
-                    },
-                  }
+                      0.5
+                    ),
+                  },
+                }
                 : {}),
               ...(ownerState.variant === "soft"
                 ? {
-                    color:
-                      theme.palette[color]?.main || theme.palette.grey[500],
+                  color:
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                  backgroundColor: alpha(
+                    theme.palette[color]?.main || theme.palette.grey[500],
+                    0.2
+                  ),
+                  "&:hover": {
                     backgroundColor: alpha(
                       theme.palette[color]?.main || theme.palette.grey[500],
-                      0.2
+                      0.3
                     ),
-                    "&:hover": {
-                      backgroundColor: alpha(
-                        theme.palette[color]?.main || theme.palette.grey[500],
-                        0.3
-                      ),
-                    },
-                  }
+                  },
+                }
                 : {}),
               ...(ownerState.variant === "outlined"
                 ? {
-                    border: `1px solid ${theme.palette.secondary.light}`,
-                  }
+                  border: `1px solid ${theme.palette.secondary.light}`,
+                }
                 : {}),
             };
           },
@@ -360,55 +360,55 @@ export const theme = responsiveFontSizes(
 
               ...(ownerState.variant === "outlined"
                 ? {
-                    paddingTop: ownerState.label
-                      ? ownerState.size === "small"
-                        ? 14
-                        : 25
-                      : undefined,
+                  paddingTop: ownerState.label
+                    ? ownerState.size === "small"
+                      ? 14
+                      : 25
+                    : undefined,
 
-                    "& .MuiInputLabel-shrink": {
-                      transform:
-                        ownerState.size === "small"
-                          ? "translate(0px, 0px) scale(0.60)"
-                          : "translate(0px, 0px) scale(0.80)",
+                  "& .MuiInputLabel-shrink": {
+                    transform:
+                      ownerState.size === "small"
+                        ? "translate(0px, 0px) scale(0.60)"
+                        : "translate(0px, 0px) scale(0.80)",
+                  },
+
+                  "& .MuiInputBase-root": {
+                    backgroundColor: (theme.vars || theme).palette.common
+                      .white,
+                    borderRadius: 12,
+
+                    "&.Mui-focused fieldset": {
+                      borderColor: (theme.vars || theme).palette.grey[6],
+                      borderStyle: "solid",
+                      borderWidth: 1.3,
                     },
 
-                    "& .MuiInputBase-root": {
-                      backgroundColor: (theme.vars || theme).palette.common
-                        .white,
-                      borderRadius: 12,
-
-                      "&.Mui-focused fieldset": {
-                        borderColor: (theme.vars || theme).palette.grey[6],
-                        borderStyle: "solid",
-                        borderWidth: 1.3,
-                      },
-
-                      "& > fieldset": {
-                        borderColor: (theme.vars || theme).palette.grey[5],
-                        borderStyle: "solid",
-                        borderWidth: 1.3,
-                      },
-
-                      "&:hover fieldset": {
-                        borderColor: (theme.vars || theme).palette.grey[6],
-                      },
+                    "& > fieldset": {
+                      borderColor: (theme.vars || theme).palette.grey[5],
+                      borderStyle: "solid",
+                      borderWidth: 1.3,
                     },
-                  }
+
+                    "&:hover fieldset": {
+                      borderColor: (theme.vars || theme).palette.grey[6],
+                    },
+                  },
+                }
                 : {}),
 
               ...(ownerState.variant === "filled"
                 ? {
-                    "& .MuiFilledInput-input": {
-                      borderRadius: 12,
-                    },
+                  "& .MuiFilledInput-input": {
+                    borderRadius: 12,
+                  },
 
-                    "& .MuiInputBase-root": {
-                      borderRadius: 12,
-                      paddingTop: ownerState.size === "small" ? 1 : 2,
-                      paddingBottom: ownerState.size === "small" ? 1 : 2,
-                    },
-                  }
+                  "& .MuiInputBase-root": {
+                    borderRadius: 12,
+                    paddingTop: ownerState.size === "small" ? 1 : 2,
+                    paddingBottom: ownerState.size === "small" ? 1 : 2,
+                  },
+                }
                 : {}),
             };
           },
@@ -420,9 +420,8 @@ export const theme = responsiveFontSizes(
         styleOverrides: {
           input: ({ theme }) => ({
             "&:-webkit-autofill": {
-              WebkitBoxShadow: `0 0 0 100px ${
-                (theme.vars || theme).palette.grey[2]
-              } inset`,
+              WebkitBoxShadow: `0 0 0 100px ${(theme.vars || theme).palette.grey[2]
+                } inset`,
               WebkitTextFillColor: "#000000",
             },
           }),
@@ -565,18 +564,18 @@ declare module "@mui/material/styles" {
   }
 
   interface PaletteColor {
-    light?: string;
+    light: string;
     lighter?: string;
-    main?: string;
-    dark?: string;
-    darker?: string;
-    contrastText?: string;
+    main: string;
+    dark: string;
+    darker: string;
+    contrastText: string;
   }
 
   interface SimplePaletteColorOptions {
     light?: string;
     lighter?: string;
-    main?: string;
+    // main?: string;  
     dark?: string;
     darker?: string;
     contrastText?: string;
@@ -651,9 +650,9 @@ declare module "@mui/material/styles" {
   }
 
   interface ComponentsPropsList {
-    MuiDatePicker: Partial<DatePickerProps<never, true>>;
-    MuiDesktopDatePicker: Partial<DesktopDatePickerProps<never, true>>;
-    MuiMobileDatePicker: Partial<MobileDatePickerProps<never, true>>;
+    MuiDatePicker: Partial<DatePickerProps<true>>;
+    MuiDesktopDatePicker: Partial<DesktopDatePickerProps<true>>;
+    MuiMobileDatePicker: Partial<MobileDatePickerProps<true>>;
     MuiLoadingButton: Partial<LoadingButtonProps>;
   }
 

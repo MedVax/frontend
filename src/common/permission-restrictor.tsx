@@ -1,6 +1,6 @@
 import { ReactNode, forwardRef } from "react";
 
-const PermissionRestrictor = forwardRef(function PermissionRestrictor(
+const PermissionRestrictor = forwardRef<any, PermissionRestrictorProps>(function PermissionRestrictor(
   props: PermissionRestrictorProps,
   ref: any
 ) {
@@ -23,12 +23,6 @@ const PermissionRestrictor = forwardRef(function PermissionRestrictor(
 
   return altChildren;
 });
-
-PermissionRestrictor.defaultProps = {
-  permitted: false,
-  disableInteraction: false,
-  altChildren: null,
-} as Partial<PermissionRestrictorProps>;
 
 export default PermissionRestrictor;
 

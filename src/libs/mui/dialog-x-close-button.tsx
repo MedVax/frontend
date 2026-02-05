@@ -16,7 +16,7 @@ function DialogTitleXCloseButton(props: DialogTitleXCloseButtonProps) {
           className="absolute top-2"
           sx={{ right: "30px" }}
           aria-label="close"
-          variant="filled"
+          variant="contained"
           color="primary"
           onClick={onClose}
         >

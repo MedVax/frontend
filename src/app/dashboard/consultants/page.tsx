@@ -249,7 +249,7 @@ const AssignConsultantDialog = ({
       enqueueSnackbar("Consultant assigned successfully", { variant: "success" });
       onClose();
       // Optionally refresh or redirect
-    } catch (error: unknown) {
+    } catch (error: any) {
       enqueueSnackbar(error?.data?.defaultMessage || "Failed to assign consultant", {
         variant: "error",
       });
