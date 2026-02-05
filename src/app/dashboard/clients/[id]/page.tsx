@@ -9,7 +9,6 @@ import {
   Divider,
   Skeleton,
   Alert,
-  Grid,
   Tabs,
   Tab,
   Box,
@@ -160,29 +159,29 @@ const ClientDetailsPage = () => {
 
         <Divider className="my-4" />
 
-        <Grid container spacing={3}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {client.referral && (
-            <Grid item xs={12} md={6}>
+            <div className="col-span-1 md:col-span-2">
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Referral
               </Typography>
               <Typography variant="body1" className="font-medium">
                 {client.referral}
               </Typography>
-            </Grid>
+            </div>
           )}
           {client.channel && (
-            <Grid item xs={12} md={6}>
+            <div className="col-span-1 md:col-span-2">
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Channel
               </Typography>
               <Typography variant="body1" className="font-medium">
                 {client.channel}
               </Typography>
-            </Grid>
+            </div>
           )}
           {client.symptoms && client.symptoms.length > 0 && (
-            <Grid item xs={12}>
+            <div className="col-span-1 md:col-span-2">
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 Symptoms
               </Typography>
@@ -191,9 +190,9 @@ const ClientDetailsPage = () => {
                   <Chip key={index} label={symptom} size="small" />
                 ))}
               </div>
-            </Grid>
+            </div>
           )}
-        </Grid>
+        </div>
       </Paper>
 
       {/* Tabs */}
@@ -329,8 +328,8 @@ const ClientDetailsPage = () => {
                               prescription.status === PrescriptionStatus.APPROVED
                                 ? "success"
                                 : prescription.status === PrescriptionStatus.REJECTED
-                                ? "error"
-                                : "warning"
+                                  ? "error"
+                                  : "warning"
                             }
                             size="small"
                           />
@@ -338,59 +337,59 @@ const ClientDetailsPage = () => {
 
                         <Divider className="my-3" />
 
-                        <Grid container spacing={2}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {prescription.prescriberType && (
-                            <Grid item xs={12} md={6}>
+                            <div className="col-span-1 md:col-span-2">
                               <Typography variant="body2" color="text.secondary" gutterBottom>
                                 Prescriber Type
                               </Typography>
                               <Typography variant="body1" className="font-medium">
                                 {prescription.prescriberType}
                               </Typography>
-                            </Grid>
+                            </div>
                           )}
 
                           {prescription.prescriberType === "PATIENT" && (
                             <>
                               {prescription.patientName && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Patient Name
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.patientName}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.patientEmail && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Patient Email
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.patientEmail}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.patientPhone && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Patient Phone
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.patientPhone}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.patientLocation && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Location
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.patientLocation}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                             </>
                           )}
@@ -398,61 +397,61 @@ const ClientDetailsPage = () => {
                           {prescription.prescriberType === "DOCTOR" && (
                             <>
                               {prescription.prescriberName && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Prescriber Name
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.prescriberName}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.hospitalName && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Hospital
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.hospitalName}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.drugName && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Drug Name
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.drugName}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                               {prescription.dosage && (
-                                <Grid item xs={12} md={6}>
+                                <div className="col-span-1 md:col-span-2">
                                   <Typography variant="body2" color="text.secondary" gutterBottom>
                                     Dosage
                                   </Typography>
                                   <Typography variant="body1" className="font-medium">
                                     {prescription.dosage}
                                   </Typography>
-                                </Grid>
+                                </div>
                               )}
                             </>
                           )}
 
                           {prescription.additionalNote && (
-                            <Grid item xs={12}>
+                            <div className="col-span-1 md:col-span-2">
                               <Typography variant="body2" color="text.secondary" gutterBottom>
                                 Additional Note
                               </Typography>
                               <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
                                 {prescription.additionalNote}
                               </Typography>
-                            </Grid>
+                            </div>
                           )}
 
                           {prescription.notes && (
-                            <Grid item xs={12}>
+                            <div className="col-span-1 md:col-span-2">
                               <Box
                                 sx={{
                                   backgroundColor: "#f5f5f5",
@@ -467,11 +466,11 @@ const ClientDetailsPage = () => {
                                   {prescription.notes}
                                 </Typography>
                               </Box>
-                            </Grid>
+                            </div>
                           )}
 
                           {prescription.fileUrl && (
-                            <Grid item xs={12}>
+                            <div className="col-span-1 md:col-span-2">
                               <Button
                                 variant="outlined"
                                 href={prescription.fileUrl}
@@ -482,9 +481,9 @@ const ClientDetailsPage = () => {
                               >
                                 View Prescription File
                               </Button>
-                            </Grid>
+                            </div>
                           )}
-                        </Grid>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -537,10 +536,10 @@ const ClientDetailsPage = () => {
                                     session.status === SessionStatus.COMPLETED
                                       ? "success"
                                       : session.status === SessionStatus.UPCOMING
-                                      ? "primary"
-                                      : session.status === SessionStatus.CANCELED
-                                      ? "error"
-                                      : "default"
+                                        ? "primary"
+                                        : session.status === SessionStatus.CANCELED
+                                          ? "error"
+                                          : "default"
                                   }
                                   size="small"
                                 />
@@ -649,11 +648,11 @@ const ClientDetailsPage = () => {
                     (session) =>
                       session.prescriptionNote || session.sessionNote || session.note
                   ).length === 0 && (
-                    <Alert severity="info">
-                      No medical reports available. Notes will appear here once sessions have
-                      prescription notes or session notes added.
-                    </Alert>
-                  )}
+                      <Alert severity="info">
+                        No medical reports available. Notes will appear here once sessions have
+                        prescription notes or session notes added.
+                      </Alert>
+                    )}
                 </div>
               )}
             </div>
