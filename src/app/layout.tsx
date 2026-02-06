@@ -12,13 +12,33 @@ export const metadata: Metadata = {
     shortcut: '/logo.svg',
     apple: '/logo.svg',
   },
+  openGraph: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'MedVax',
+    images: [
+      {
+        url: '/assets/medvax-e-pharmacy-inscription.png',
+        width: 1200,
+        height: 630,
+        alt: 'MedVax - Healthcare Made Simple',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ['/assets/medvax-e-pharmacy-inscription.png'],
+  },
+  metadataBase: 'https://medvaxhealth.com',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
