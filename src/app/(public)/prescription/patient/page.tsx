@@ -172,27 +172,41 @@ export default function PatientPrescriptionPage() {
 
     return (
         <Shell component="main" className="py-12 bg-gray-50/30 min-h-screen">
+            {/* Breadcrumbs - Wider Container */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+                <Breadcrumbs
+                    aria-label="breadcrumb"
+                    separator={<div className="w-1 h-1 rounded-full bg-gray-300" />}
+                    className="text-sm"
+                >
+                    <MuiLink
+                        component="a"
+                        underline="hover"
+                        color="inherit"
+                        href="/"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            router.push("/");
+                        }}
+                        className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                    >
+                        <Icon icon="solar:home-smile-linear" width={14} />
+                        Home
+                    </MuiLink>
+                    <MuiLink
+                        underline="none"
+                        color="inherit"
+                        className="text-gray-500 cursor-default"
+                    >
+                        Prescriptions
+                    </MuiLink>
+                    <Typography color="primary.main" className="font-semibold text-sm">Patient Upload</Typography>
+                </Breadcrumbs>
+            </div>
+
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-12">
                     <div className="flex flex-col gap-2 max-w-lg">
-                        <Breadcrumbs aria-label="breadcrumb" className="mb-2">
-                            <MuiLink
-                                component="a"
-                                underline="hover"
-                                color="inherit"
-                                href="/"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    router.push("/");
-                                }}
-                                className="text-gray-500 hover:text-gray-900 transition-colors"
-                            >
-                                Home
-                            </MuiLink>
-                            <Typography color="text.secondary" className="font-medium">Prescriptions</Typography>
-                            <Typography color="text.primary" className="font-semibold text-pink-600">Patient Upload</Typography>
-                        </Breadcrumbs>
-
                         <Typography variant="h3" className="font-bold text-gray-900 tracking-tight">
                             Upload Prescription
                         </Typography>
@@ -207,7 +221,7 @@ export default function PatientPrescriptionPage() {
                         onClick={() => router.push("/consultation")}
                         startIcon={<Icon icon="solar:stethoscope-bold" />}
                         sx={{
-                            borderRadius: "50px",
+                            // Theme defaults
                             textTransform: "none",
                             color: "text.primary",
                             borderColor: "grey.200",
@@ -229,7 +243,7 @@ export default function PatientPrescriptionPage() {
                     {/* Patient Section */}
                     <Paper
                         elevation={0}
-                        className="p-8 md:p-10 bg-white rounded-3xl border border-gray-100/50"
+                        className="p-8 md:p-10 bg-white rounded-[24px] border border-gray-100/50"
                         sx={{
                             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
                             transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -260,7 +274,6 @@ export default function PatientPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="e.g. John"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -271,7 +284,6 @@ export default function PatientPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="e.g. Doe"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -281,7 +293,6 @@ export default function PatientPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="Enter Phone Number"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12, md: 6 }}>
@@ -292,7 +303,6 @@ export default function PatientPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="johndoe@example.com"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                             <Grid size={{ xs: 12 }}>
@@ -302,7 +312,6 @@ export default function PatientPrescriptionPage() {
                                     fullWidth
                                     disabled={isLoading}
                                     placeholder="e.g. 123 Main St, New York"
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                         </Grid>
@@ -311,7 +320,7 @@ export default function PatientPrescriptionPage() {
                     {/* Prescription Section */}
                     <Paper
                         elevation={0}
-                        className="p-8 md:p-10 bg-white rounded-3xl border border-gray-100/50"
+                        className="p-8 md:p-10 bg-white rounded-[24px] border border-gray-100/50"
                         sx={{
                             boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
                             transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
@@ -337,7 +346,7 @@ export default function PatientPrescriptionPage() {
                         <Grid container spacing={4}>
                             <Grid size={{ xs: 12 }}>
                                 <div className="group transition-all duration-300">
-                                    <div className="relative border-2 border-dashed border-gray-200 rounded-3xl p-8 hover:border-pink-400 hover:bg-pink-50/30 transition-all cursor-pointer text-center group-hover:shadow-sm">
+                                    <div className="relative border-2 border-dashed border-gray-200 rounded-[24px] p-8 hover:border-pink-400 hover:bg-pink-50/30 transition-all cursor-pointer text-center group-hover:shadow-sm">
                                         <FileUploadInput
                                             formik={formik}
                                             name="prescriptionFile"
@@ -355,13 +364,12 @@ export default function PatientPrescriptionPage() {
                                     rows={3}
                                     disabled={isLoading}
                                     placeholder="Any specific instructions for the pharmacist..."
-                                    InputProps={{ sx: { borderRadius: "16px" } }}
                                 />
                             </Grid>
                         </Grid>
                     </Paper>
 
-                    <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-3xl border border-blue-100 flex items-start gap-4">
+                    <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-[24px] border border-blue-100 flex items-start gap-4">
                         <div className="bg-white p-2 rounded-full shadow-sm text-blue-600 shrink-0">
                             <Icon icon="solar:shield-check-bold" width={24} />
                         </div>
@@ -411,7 +419,7 @@ export default function PatientPrescriptionPage() {
                                 disabled={isLoading}
                                 startIcon={isLoading ? null : <Icon icon="solar:verified-check-bold" />}
                                 sx={{
-                                    borderRadius: "50px",
+                                    // Theme default borderRadius: 84px
                                     textTransform: "none",
                                     py: 2,
                                     fontSize: "1.125rem",

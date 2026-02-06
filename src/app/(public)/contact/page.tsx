@@ -48,22 +48,35 @@ export default function ContactPage() {
 
     return (
         <Shell component="main" className="py-12 bg-gray-50/30 min-h-screen">
+            {/* Breadcrumbs - Wider Container */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+                <Breadcrumbs
+                    aria-label="breadcrumb"
+                    separator={<div className="w-1 h-1 rounded-full bg-gray-300" />}
+                    className="text-sm"
+                >
+                    <MuiLink
+                        component="a"
+                        underline="hover"
+                        color="inherit"
+                        href="/"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            router.push("/");
+                        }}
+                        className="text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+                    >
+                        <Icon icon="solar:home-smile-linear" width={14} />
+                        Home
+                    </MuiLink>
+                    <Typography color="primary.main" className="font-semibold text-sm">Contact Us</Typography>
+                </Breadcrumbs>
+            </div>
+
             <div className="max-w-6xl mx-auto px-4 sm:px-6">
 
                 {/* Header Section */}
                 <div className="mb-12">
-                    <Breadcrumbs aria-label="breadcrumb" className="mb-4">
-                        <MuiLink
-                            component="button"
-                            underline="hover"
-                            color="inherit"
-                            onClick={() => router.push("/")}
-                            className="text-gray-500 hover:text-gray-900 transition-colors"
-                        >
-                            Home
-                        </MuiLink>
-                        <Typography color="text.primary" className="font-semibold text-pink-600">Contact Us</Typography>
-                    </Breadcrumbs>
                     <Typography variant="h3" component="h1" className="font-bold text-gray-900 tracking-tight mb-2">
                         Get in Touch
                     </Typography>
@@ -80,11 +93,11 @@ export default function ContactPage() {
                             {/* Contact Card */}
                             <Paper
                                 elevation={0}
-                                className="p-8 bg-white rounded-3xl border border-gray-100"
+                                className="p-8 bg-white rounded-[24px] border border-gray-100"
                                 sx={{ boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)" }}
                             >
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
+                                    <div className="p-3 bg-blue-50 text-blue-600 rounded-[16px]">
                                         <Icon icon="solar:chat-round-call-bold" width={28} />
                                     </div>
                                     <Typography variant="h6" fontWeight="bold" className="text-gray-900">
@@ -126,10 +139,10 @@ export default function ContactPage() {
                             {/* Social Media / Connect Card */}
                             <Paper
                                 elevation={0}
-                                className="p-8 text-white rounded-3xl border border-gray-100 relative overflow-hidden"
+                                className="p-8 text-white rounded-[24px] border border-gray-100 relative overflow-hidden"
                                 sx={{
-                                    bgcolor: "#E91D74", // primary.main from theme
-                                    boxShadow: "0px 10px 30px rgba(233, 29, 116, 0.3)"
+                                    bgcolor: "primary.main",
+                                    boxShadow: (theme) => `0px 10px 30px ${theme.palette.primary.main}4D`, // 30% opacity
                                 }}
                             >
                                 {/* Decorative circle */}
@@ -188,7 +201,7 @@ export default function ContactPage() {
                     <Grid size={{ xs: 12, md: 7, lg: 8 }}>
                         <Paper
                             elevation={0}
-                            className="p-8 md:p-10 bg-white rounded-3xl border border-gray-100"
+                            className="p-8 md:p-10 bg-white rounded-[24px] border border-gray-100"
                             sx={{
                                 boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.03)",
                             }}
@@ -210,7 +223,6 @@ export default function ContactPage() {
                                             label="Full Name"
                                             fullWidth
                                             placeholder="John Doe"
-                                            InputProps={{ sx: { borderRadius: "16px" } }}
                                         />
                                     </Grid>
                                     <Grid size={{ xs: 12, md: 6 }}>
@@ -219,7 +231,6 @@ export default function ContactPage() {
                                             label="Email Address"
                                             fullWidth
                                             placeholder="john@example.com"
-                                            InputProps={{ sx: { borderRadius: "16px" } }}
                                         />
                                     </Grid>
                                     <Grid size={{ xs: 12 }}>
@@ -228,7 +239,6 @@ export default function ContactPage() {
                                             label="Subject"
                                             fullWidth
                                             placeholder="How can we help?"
-                                            InputProps={{ sx: { borderRadius: "16px" } }}
                                         />
                                     </Grid>
                                     <Grid size={{ xs: 12 }}>
@@ -239,7 +249,6 @@ export default function ContactPage() {
                                             multiline
                                             rows={6}
                                             placeholder="Tell us more about your inquiry..."
-                                            InputProps={{ sx: { borderRadius: "16px" } }}
                                         />
                                     </Grid>
                                 </Grid>
@@ -252,16 +261,14 @@ export default function ContactPage() {
                                         disabled={formik.isSubmitting}
                                         endIcon={!formik.isSubmitting && <Icon icon="solar:plain-3-bold" />}
                                         sx={{
-                                            borderRadius: "50px",
+                                            // Theme defaults: borderRadius 84px
                                             textTransform: "none",
                                             px: 5,
                                             py: 1.5,
                                             fontSize: "1rem",
                                             fontWeight: "700",
-                                            bgcolor: "#2D3748",
                                             boxShadow: "0 10px 20px rgba(45, 55, 72, 0.15)",
                                             "&:hover": {
-                                                bgcolor: "#1A202C",
                                                 boxShadow: "0 15px 30px rgba(45, 55, 72, 0.25)",
                                                 transform: "translateY(-2px)"
                                             },
