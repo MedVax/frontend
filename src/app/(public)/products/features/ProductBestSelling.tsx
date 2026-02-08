@@ -54,7 +54,7 @@ export function ProductBestSelling() {
 
   if (isLoading) {
     return (
-      <div className="flex gap-6">
+      <div className="flex gap-6 overflow-x-auto scrollbar-hidden">
         {[...Array(4)].map((_, index) => (
           <div
             key={index}

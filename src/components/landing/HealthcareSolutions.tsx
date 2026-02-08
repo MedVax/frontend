@@ -70,8 +70,8 @@ export function HealthcareSolutions() {
       </div>
 
       {/* Chatbot Section */}
-      <div className="bg-gray-50 rounded-3xl flex flex-col gap-6 items-center w-full">
-        <div className="flex flex-col items-center gap-6 max-w-[469px] p-10">
+      {/* <div className="bg-gray-50 rounded-3xl flex flex-col gap-6 items-center w-full"> */}
+      {/* <div className="flex flex-col items-center gap-6 max-w-[469px] p-10">
           <div className="flex flex-col items-center gap-4 text-center space-y-2">
             <Typography
               variant="body1"
@@ -113,17 +113,18 @@ export function HealthcareSolutions() {
           >
             Chat with us
           </Button>
-        </div>
+        </div> */}
 
-        {/* Phone Mockup */}
-        <div className="flex justify-center w-full">
+      {/* Phone Mockup */}
+      {/* <div className="flex justify-center w-full">
           <img
             src="/assets/support.svg"
             alt="Support"
             className="w-full max-w-sm h-auto"
           />
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
+
     </Shell>
   );
 }

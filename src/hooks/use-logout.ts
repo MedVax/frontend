@@ -4,11 +4,13 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { clearAuthCookie } from "utils/auth-cookies";
 import { useLogoutMutation } from "apis/auth-api";
+import { useSnackbar } from "notistack";
 
 function useLogout() {
   const dispatch = useDispatch();
   const router = useRouter();
   const [logoutMutation] = useLogoutMutation();
+  const { enqueueSnackbar } = useSnackbar();
 
   const logout = useCallback(
     async function logout() {
@@ -17,6 +19,7 @@ function useLogout() {
         await logoutMutation().unwrap();
       } catch {
         // Continue with client-side logout even if API fails
+        enqueueSnackbar("Logout failed", { variant: "error" });
         console.error("Logout API failed, continuing with client-side logout");
       } finally {
         // Clear auth cookie

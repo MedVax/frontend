@@ -22,7 +22,7 @@ export default function LandingPage() {
       <HealthcareSolutions />
       <WhoWeServe />
       <PartnersSection />
-      <BlogCarousel />
+      {/* <BlogCarousel /> */}
       <CtaSection />
       <PartnerCtaSection />
       <Footer />

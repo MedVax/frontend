@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
 import store, { makeStore } from "configs/store";
 import { setupInterceptors } from "configs/http-config";
-import { logoutAction } from "configs/store-actions";
 import { Store } from "@reduxjs/toolkit";
 import { RootState } from "configs/store";
 
@@ -30,16 +29,6 @@ export function ReduxProvider({ children }: ReduxProviderProps) {
     }
   }, []);
 
-  useEffect(() => {
-    const handleLogout = (event: MessageEvent) => {
-      if (event.data?.type === "LOGOUT") {
-        storeRef.current?.dispatch(logoutAction());
-      }
-    };
-
-    window.addEventListener("message", handleLogout);
-    return () => window.removeEventListener("message", handleLogout);
-  }, []);
 
   // eslint-disable-next-line react-hooks/refs
   return <Provider store={storeRef.current}>{children}</Provider>;

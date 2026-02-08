@@ -19,15 +19,22 @@ const PUBLIC_ROUTES = [
 // Routes that require authentication
 const PROTECTED_ROUTE_PREFIXES = [
   "/dashboard",
-  "/profile",
   "/orders",
-  "/cart/checkout",
-  "/prescriptions",
   "/account",
   "/settings",
+  "/consultation",
+  "/meeting",
+  "/bookings",
+  "/addresses",
+  "/watchlist",
+  "/security",
+  "/profile",
+  "/calendar",
+  "/sessions",
+  "/booking"
 ];
 
-const CONSULTANT_ROUTE_PREFIXES = ["provider"];
+const CONSULTANT_ROUTE_PREFIXES = ["provider", "/availability",];
 const CLIENT_ROUTE_PREFIXES = ["/client"];
 
 function isPublicRoute(pathname: string): boolean {
@@ -107,7 +114,6 @@ export async function proxy(request: NextRequest) {
 
   // Handle client routes
   if (isClientRoute(pathname)) {
-    console.log("isClientRoute");
     if (!isAuthenticated) {
       const signinUrl = new URL("/signin", request.url);
       signinUrl.searchParams.set("returnUrl", pathname);

@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "configs/store";
 
 import { AuthUser, User, UserProfileType } from "types/user";
+import { request } from "http";
+import { getAuthCookie } from "utils/auth-cookies";
 
 interface UseAuthReturn {
   user: User | null;
@@ -28,7 +30,7 @@ export function useAuth(): UseAuthReturn {
   // Computed values
   const user = authUser?.user ?? null;
 
-  const isAuthenticated = !!authUser?.isAuthenticated;
+  const isAuthenticated = !!getAuthCookie()?.accessToken;
 
   // User type helpers
   const isConsultant = user?.activeProfile?.type === UserProfileType.CONSULTANT;

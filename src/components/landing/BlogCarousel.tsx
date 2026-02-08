@@ -7,6 +7,7 @@ import { useGetTopBlogPostsQuery } from "@/apis/blog-api";
 import { Icon as Iconify } from "@iconify/react";
 import * as dfns from "date-fns";
 import Link from "next/link";
+import Image from "next/image";
 
 export function BlogCarousel() {
   const router = useRouter();
@@ -64,7 +65,7 @@ export function BlogCarousel() {
               {post.image && (
                 <CardMedia
                   component="img"
-                  height="200"
+                  height={200}
                   image={post.image}
                   alt={post.title}
                   className="object-cover"
