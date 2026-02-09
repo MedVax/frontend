@@ -28,7 +28,7 @@ export function PartnersSection() {
       <Typography variant="h4" className="font-semibold! text-center">
         Our partners
       </Typography>
-      <div className="flex gap-6">
+      <div className="flex gap-6 overflow-x-auto scrollbar-hidden">
         {partnerLogos.map((partner, index) => (
           <div
             key={index}
