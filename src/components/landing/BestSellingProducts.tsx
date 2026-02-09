@@ -7,9 +7,9 @@ import Link from "next/link";
 
 export function BestSellingProducts() {
   return (
-    <Shell component="section" className="flex flex-col items-center mt-25">
+    <Shell component="section" className="flex flex-col items-center mt-10 sm:mt-25">
       <div className="w-full relative">
-        <div className="flex items-center justify-between h-[76px] mb-11">
+        <div className="flex items-center justify-between h-[76px] mb-5 sm:mb-11">
           <div className="flex flex-col gap-2">
             <Typography variant="h4" className="font-semibold!">
               Best selling products

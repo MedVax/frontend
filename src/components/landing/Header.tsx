@@ -72,15 +72,20 @@ export function Header() {
 
   const navigationMenuItems = [
     {
+      label: "Home",
+      icon: <></>,
+      onClick: () => router.push("/"),
+    },
+    {
       label: "Shop by category",
       onClick: () => setIsHovered((prev) => !prev),
       onMouseEnter: () => setIsHovered(true),
     },
-    {
-      label: "Consultation",
-      icon: <></>,
-      onClick: () => router.push("/consultation"),
-    },
+    // {
+    //   label: "Consultation",
+    //   icon: <></>,
+    //   onClick: () => router.push("/consultation"),
+    // },
     {
       label: "Blog",
       icon: <></>,

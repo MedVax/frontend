@@ -5,7 +5,7 @@ import { Shell } from "../ui";
 
 export function HealthcareSolutions() {
   return (
-    <Shell component="section" className="flex flex-col items-center mt-20">
+    <Shell component="section" className="flex flex-col items-center mt-10 sm:mt-20 hidden sm:block">
       <Typography variant="h4" className="font-semibold! text-center">
         One-top healthcare
         <br />

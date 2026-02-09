@@ -62,14 +62,14 @@ const ProductList = () => {
   const totalPages = Math.ceil(totalCount / limit);
 
   return (
-    <Shell component="section" className="my-20 ">
+    <Shell component="section" className="my-10 sm:my-20 ">
       <div className="flex justify-between items-center">
         <Typography variant="h5" className="font-semibold!">
           {search
             ? `Search results for "${search}"`
             : categoryIds.length > 0
-            ? "Products"
-            : "All Products"}{" "}
+              ? "Products"
+              : "All Products"}{" "}
           - {totalCount} {totalCount === 1 ? "Product" : "Products"} Found
         </Typography>
         {isMediumScreen && (
@@ -184,14 +184,14 @@ const ProductList = () => {
         </div>
       </div>
 
-      <div className="mt-30">
+      <div className="mt-20 sm:mt-30">
         <Typography variant="h4" className="font-semibold! text-center">
           Best selling products
         </Typography>
         <Typography
           variant="body1"
           color="text.secondary"
-          className="text-center mb-10"
+          className="text-center mb-5 sm:mb-10"
         >
           Some of our best selling products
         </Typography>

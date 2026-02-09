@@ -11,7 +11,7 @@ export function HeroSection() {
       className="hero flex items-center justify-center sm:h-[calc(100vh-250px)] sm:min-h-[500px] sm:max-h-[1200px]"
       id="hero"
     >
-      <Shell component="section" className="my-20">
+      <Shell component="section" className="my-2 sm:my-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="flex justify-center">
             <div className="w-[500px]">
