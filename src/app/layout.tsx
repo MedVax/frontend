@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   title: siteConfig.title,
   description: siteConfig.description,
   icons: {
-    icon: '/logo.svg',
+    icon: [
+      { url: '/logo.svg', type: 'image/svg+xml' },
+      { url: '/logo.svg', type: 'image/svg+xml', sizes: 'any' },
+    ],
     shortcut: '/logo.svg',
     apple: '/logo.svg',
   },
