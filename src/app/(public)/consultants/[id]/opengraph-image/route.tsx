@@ -1,6 +1,15 @@
 import { ImageResponse } from "next/og";
 import { BASE_URL } from "@/constants/env";
 import type { NextRequest } from "next/server";
+// Sharp is used to convert WebP images to PNG (ImageResponse doesn't support WebP)
+// Install with: yarn add sharp
+let sharp: any = null;
+try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    sharp = require('sharp');
+} catch {
+    // Sharp not installed - will fall back to initials for WebP images
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -85,10 +94,12 @@ export async function GET(
             .toUpperCase()
             .substring(0, 2);
 
-        // Try to verify image is accessible before using it
-        // ImageResponse can handle direct URLs if they're publicly accessible
+        // Try to verify image is accessible and convert WebP to PNG if needed
+        // ImageResponse supports PNG, JPEG, GIF but NOT WebP
+        // We'll convert WebP to PNG using sharp if available
         let useImage = false;
         let finalImageUrl = absoluteImageUrl;
+        let imageDataUrl: string | null = null;
 
         try {
             // Quick HEAD request to verify image exists and is accessible
@@ -106,11 +117,57 @@ export async function GET(
             clearTimeout(timeoutId);
 
             if (checkResponse.ok) {
-                const contentType = checkResponse.headers.get('content-type');
-                // Only use if it's an image type
-                if (contentType?.startsWith('image/')) {
+                const contentType = checkResponse.headers.get('content-type') || '';
+                const isWebP = contentType.includes('webp') || absoluteImageUrl.toLowerCase().endsWith('.webp');
+                const supportedFormats = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+                const isSupported = supportedFormats.some(format =>
+                    contentType.toLowerCase().includes(format.split('/')[1])
+                );
+
+                // Also check URL extension as fallback
+                const urlLower = absoluteImageUrl.toLowerCase();
+                const hasSupportedExtension = urlLower.endsWith('.png') ||
+                    urlLower.endsWith('.jpg') ||
+                    urlLower.endsWith('.jpeg') ||
+                    urlLower.endsWith('.gif');
+
+                if (isSupported || hasSupportedExtension) {
+                    // Direct support - use URL as-is
                     useImage = true;
+                    finalImageUrl = absoluteImageUrl;
+                } else if (isWebP && sharp) {
+                    // WebP detected and sharp is available - convert to PNG
+                    try {
+                        const imageResponse = await fetch(absoluteImageUrl, {
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0',
+                            },
+                        });
+
+                        if (imageResponse.ok) {
+                            const arrayBuffer = await imageResponse.arrayBuffer();
+                            const imageBuffer = Buffer.from(arrayBuffer);
+
+                            // Convert WebP to PNG using sharp
+                            const pngBuffer = await sharp(imageBuffer)
+                                .png()
+                                .resize(500, 630, {
+                                    fit: 'cover',
+                                    withoutEnlargement: true,
+                                })
+                                .toBuffer();
+
+                            // Convert PNG buffer to base64 data URL
+                            const base64 = pngBuffer.toString('base64');
+                            imageDataUrl = `data:image/png;base64,${base64}`;
+                            useImage = true;
+                        }
+                    } catch (conversionError) {
+                        // Conversion failed - fall back to initials
+                        useImage = false;
+                    }
                 }
+                // If WebP but sharp not available, or other unsupported format, use initials fallback
             }
         } catch (error) {
             // If check fails, use initials fallback
@@ -249,9 +306,9 @@ export async function GET(
                         }}
                     >
                         {useImage ? (
-                            /* Avatar Image - Use direct URL (ImageResponse handles external URLs) */
+                            /* Avatar Image - Use direct URL or converted PNG data URL */
                             <img
-                                src={finalImageUrl}
+                                src={imageDataUrl || finalImageUrl}
                                 alt={name}
                                 width={500}
                                 height={630}
