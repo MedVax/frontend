@@ -84,64 +84,36 @@ export async function GET(
         .toUpperCase()
         .substring(0, 2);
 
-    // Fetch image and convert to base64 for reliable embedding
-    // This avoids issues with external URLs in ImageResponse
-    let imageElement;
+    // Try to verify image is accessible before using it
+    // ImageResponse can handle direct URLs if they're publicly accessible
+    let useImage = false;
+    let finalImageUrl = absoluteImageUrl;
 
     try {
-        const imageResponse = await fetch(absoluteImageUrl, {
+        // Quick HEAD request to verify image exists and is accessible
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 second timeout
+
+        const checkResponse = await fetch(absoluteImageUrl, {
+            method: 'HEAD',
+            signal: controller.signal,
             headers: {
                 'User-Agent': 'Mozilla/5.0',
             },
         });
 
-        if (imageResponse.ok) {
-            const arrayBuffer = await imageResponse.arrayBuffer();
-            const base64 = Buffer.from(arrayBuffer).toString('base64');
-            const contentType = imageResponse.headers.get('content-type') || 'image/png';
-            const dataUrl = `data:${contentType};base64,${base64}`;
+        clearTimeout(timeoutId);
 
-            imageElement = (
-                <img
-                    src={dataUrl}
-                    alt={name}
-                    width={500}
-                    height={630}
-                    style={{
-                        objectFit: "cover",
-                        width: "100%",
-                        height: "100%",
-                    }}
-                />
-            );
-        } else {
-            throw new Error('Image fetch failed');
+        if (checkResponse.ok) {
+            const contentType = checkResponse.headers.get('content-type');
+            // Only use if it's an image type
+            if (contentType?.startsWith('image/')) {
+                useImage = true;
+            }
         }
-    } catch {
-        // Fallback to initials if image fetch fails
-        imageElement = (
-            <div
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "linear-gradient(135deg, #26532E 0%, #1a3d22 100%)",
-                }}
-            >
-                <div
-                    style={{
-                        fontSize: 120,
-                        fontWeight: 700,
-                        color: "white",
-                        textAlign: "center",
-                    }}
-                >
-                    {initials}
-                </div>
-            </div>
-        );
+    } catch (error) {
+        // If check fails, use initials fallback
+        useImage = false;
     }
 
     return new ImageResponse(
@@ -275,7 +247,43 @@ export async function GET(
                         backgroundColor: "#0a0a0a",
                     }}
                 >
-                    {imageElement}
+                    {useImage ? (
+                        /* Avatar Image - Use direct URL (ImageResponse handles external URLs) */
+                        <img
+                            src={finalImageUrl}
+                            alt={name}
+                            width={500}
+                            height={630}
+                            style={{
+                                objectFit: "cover",
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    ) : (
+                        /* Fallback: Initials on gradient background */
+                        <div
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "linear-gradient(135deg, #26532E 0%, #1a3d22 100%)",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    fontSize: 120,
+                                    fontWeight: 700,
+                                    color: "white",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {initials}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         ),
