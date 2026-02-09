@@ -76,6 +76,26 @@ export async function GET(
         ? imageUrl
         : `${BASE_URL || "https://staging.medvaxhealth.com"}${imageUrl}`;
 
+    // Fetch the avatar image and convert to base64 data URL for ImageResponse
+    let avatarDataUrl = absoluteImageUrl;
+    try {
+        const imageResponse = await fetch(absoluteImageUrl, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; MedVax/1.0)',
+            },
+        });
+
+        if (imageResponse.ok) {
+            const arrayBuffer = await imageResponse.arrayBuffer();
+            const base64 = Buffer.from(arrayBuffer).toString('base64');
+            const contentType = imageResponse.headers.get('content-type') || 'image/png';
+            avatarDataUrl = `data:${contentType};base64,${base64}`;
+        }
+    } catch (error) {
+        // If fetch fails, fallback to URL (might not work but won't break)
+        console.error('Failed to fetch avatar image:', error);
+    }
+
     return new ImageResponse(
         (
             <div
@@ -208,9 +228,9 @@ export async function GET(
                     }}
                 >
                     {/* Avatar Image */}
-                    {/* @ts-ignore - ImageResponse supports img tags with external URLs */}
+                    {/* Using data URL for reliable image loading */}
                     <img
-                        src={absoluteImageUrl}
+                        src={avatarDataUrl}
                         alt={name}
                         width={500}
                         height={630}
