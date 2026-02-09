@@ -55,7 +55,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? `${name} is a ${jobTitle} at MedVax. ${bio.substring(0, 150)}...`
     : `${name} is a ${jobTitle} at MedVax. Book a consultation session today.`;
 
-  const imageUrl = user?.avatar || null;
+  // Use consultant avatar if available, otherwise use default avatar
+  const defaultAvatarUrl = user?.id
+    ? `https://api.dicebear.com/9.x/shapes/svg?backgroundColor=26532E,f88c49,D9EEDD&seed=${user.id}`
+    : `https://api.dicebear.com/9.x/shapes/svg?backgroundColor=26532E,f88c49,D9EEDD&seed=${id}`;
+  const imageUrl = user?.avatar || defaultAvatarUrl;
   const expertise = consultant.areaOfExpertise || [];
   const yearsOfExperience = consultant.yearsOfExperience;
   const rate = consultant.rate;
@@ -97,16 +101,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: "profile",
       url: canonicalUrl,
       siteName: "MedVax",
-      ...(imageUrl && {
-        images: [
-          {
-            url: imageUrl,
-            width: 1200,
-            height: 630,
-            alt: `${name} - ${jobTitle}`,
-          },
-        ],
-      }),
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${name} - ${jobTitle}`,
+        },
+      ],
       locale: "en_US",
     },
     twitter: {
@@ -114,9 +116,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: fullTitle,
       description,
       creator: "@medvax",
-      ...(imageUrl && {
-        images: [imageUrl],
-      }),
+      images: [imageUrl],
     },
     other: {
       ...(yearsOfExperience && {
@@ -152,6 +152,12 @@ export default async function Page({ params }: PageProps) {
   const consultant = await getConsultant(id);
 
   // Generate structured data for SEO
+  const user = consultant?.userProfile?.user;
+  const defaultAvatarUrl = user?.id
+    ? `https://api.dicebear.com/9.x/shapes/svg?backgroundColor=26532E,f88c49,D9EEDD&seed=${user.id}`
+    : `https://api.dicebear.com/9.x/shapes/svg?backgroundColor=26532E,f88c49,D9EEDD&seed=${id}`;
+  const imageUrl = user?.avatar || defaultAvatarUrl;
+
   const structuredData = consultant
     ? {
       "@context": "https://schema.org",
@@ -161,7 +167,7 @@ export default async function Page({ params }: PageProps) {
         : "Consultant",
       jobTitle: consultant.jobTitle || "Healthcare Consultant",
       description: consultant.bio || "",
-      image: consultant.userProfile?.user?.avatar || "",
+      image: imageUrl,
       email: consultant.userProfile?.user?.email || "",
       ...(consultant.areaOfExpertise && {
         knowsAbout: consultant.areaOfExpertise,
