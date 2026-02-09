@@ -41,18 +41,17 @@ export async function generateMetadata({
   const title = `${product.name} | MedVax`;
   const description =
     product.description ||
-    `Buy ${product.name} online at MedVax. ${
-      product.requiresPrescription
-        ? "Prescription required."
-        : "Available without prescription."
+    `Buy ${product.name} online at MedVax. ${product.requiresPrescription
+      ? "Prescription required."
+      : "Available without prescription."
     } Fast delivery and trusted healthcare.`;
 
   // Format price
   const price = product.price
     ? new Intl.NumberFormat("en-NG", {
-        style: "currency",
-        currency: product.currency || "NGN",
-      }).format(product.price / 100)
+      style: "currency",
+      currency: product.currency || "NGN",
+    }).format(product.price / 100)
     : null;
 
   const imageUrl = product.images?.[0] || product.image || null;
@@ -109,5 +108,52 @@ export async function generateMetadata({
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
-  return <ProductDetail id={id} />;
+  const product = await getProduct(id);
+
+  // Generate structured data for SEO (Schema.org Product)
+  const structuredData = product
+    ? {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: product.name,
+      description: product.description || "",
+      image: product.images?.[0] || product.image || "",
+      sku: product.sku || "",
+      brand: {
+        "@type": "Brand",
+        name: "MedVax",
+      },
+      offers: product.price
+        ? {
+          "@type": "Offer",
+          price: product.price / 100,
+          priceCurrency: product.currency || "NGN",
+          availability: "https://schema.org/InStock",
+          url: `${BASE_URL || "https://staging.medvaxhealth.com"}/products/${id}`,
+        }
+        : undefined,
+      ...(product.category && {
+        category: product.category.name,
+      }),
+      ...(product.ingredients && product.ingredients.length > 0 && {
+        additionalProperty: product.ingredients.map((ingredient: string) => ({
+          "@type": "PropertyValue",
+          name: "ingredient",
+          value: ingredient,
+        })),
+      }),
+    }
+    : null;
+
+  return (
+    <>
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      )}
+      <ProductDetail id={id} />
+    </>
+  );
 }

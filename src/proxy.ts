@@ -14,6 +14,7 @@ const PUBLIC_ROUTES = [
   "/features",
   "/terms-and-condition",
   "/api",
+  "/consultants", // Public consultant profiles and OG images
 ];
 
 // Routes that require authentication
@@ -70,11 +71,21 @@ function isStaticAsset(pathname: string): boolean {
   );
 }
 
+function isOpengraphImageRoute(pathname: string): boolean {
+  // Next.js opengraph-image routes should be handled by Next.js, not proxied
+  return pathname.includes("/opengraph-image");
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip middleware for static assets
   if (isStaticAsset(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Skip middleware for opengraph-image routes - let Next.js handle them
+  if (isOpengraphImageRoute(pathname)) {
     return NextResponse.next();
   }
 

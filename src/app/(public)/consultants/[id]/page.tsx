@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BASE_URL } from "@/constants/env";
+import { BASE_URL, WEB_BASE_URL } from "@/constants/env";
 import PublicConsultantProfile from "./features/PublicConsultantProfile";
 
 interface PageProps {
@@ -55,6 +55,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ? `${name} is a ${jobTitle} at MedVax. ${bio.substring(0, 150)}...`
     : `${name} is a ${jobTitle} at MedVax. Book a consultation session today.`;
 
+
+
   // Use consultant avatar if available, otherwise use default avatar
   const defaultAvatarUrl = user?.id
     ? `https://api.dicebear.com/9.x/shapes/svg?backgroundColor=26532E,f88c49,D9EEDD&seed=${user.id}`
@@ -78,6 +80,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   ].filter(Boolean);
 
   const canonicalUrl = `/consultants/${id}`;
+  const baseUrl = BASE_URL || 'https://staging.medvaxhealth.com';
+  const absoluteUrl = `${baseUrl}${canonicalUrl}`;
+
+  // Use the dynamically generated Open Graph image template
+  const ogImageUrl = `${WEB_BASE_URL}/consultants/${id}/opengraph-image`;
 
   return {
     title: fullTitle,
@@ -91,7 +98,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       address: false,
       telephone: false,
     },
-    metadataBase: new URL(BASE_URL || "https://medvax.com"),
+    metadataBase: new URL(baseUrl),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -99,14 +106,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: fullTitle,
       description,
       type: "profile",
-      url: canonicalUrl,
+      url: absoluteUrl, // WhatsApp requires absolute URL
       siteName: "MedVax",
       images: [
         {
-          url: imageUrl,
+          url: ogImageUrl, // Dynamically generated template image
           width: 1200,
           height: 630,
           alt: `${name} - ${jobTitle}`,
+          type: 'image/png', // Explicitly set type for WhatsApp
         },
       ],
       locale: "en_US",
