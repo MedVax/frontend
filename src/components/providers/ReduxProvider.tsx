@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Provider } from "react-redux";
-import store, { makeStore } from "configs/store";
+import { makeStore, getStore } from "configs/store";
 import { setupInterceptors } from "configs/http-config";
 import { Store } from "@reduxjs/toolkit";
 import { RootState } from "configs/store";
@@ -17,8 +17,14 @@ export function ReduxProvider({ children }: ReduxProviderProps) {
   const storeRef = useRef<Store<RootState>>(undefined);
   // eslint-disable-next-line react-hooks/refs
   if (!storeRef?.current) {
-    // Create the store instance the first time this renders
-    storeRef.current = makeStore();
+    // Create the store instance the first time this renders (client-side only)
+    // Use getStore() to ensure singleton pattern and avoid SSR issues
+    if (typeof window !== "undefined") {
+      storeRef.current = getStore();
+    } else {
+      // Fallback for SSR - create a temporary store (will be replaced on client)
+      storeRef.current = makeStore();
+    }
   }
 
   useEffect(() => {

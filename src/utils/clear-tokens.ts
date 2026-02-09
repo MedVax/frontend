@@ -1,4 +1,4 @@
-import store from "../configs/store";
+import { getStore } from "../configs/store";
 import { logoutAction } from "configs/store-actions";
 import { clearAuthCookie } from "./auth-cookies";
 import { medvaxApi } from "configs/store-query";
@@ -12,7 +12,10 @@ import { medvaxApi } from "configs/store-query";
  * - LocalStorage auth data
  */
 export function clearTokens(): void {
+  if (typeof window === "undefined") return; // Only run on client
+
   // Clear Redux store auth state
+  const store = getStore();
   store.dispatch(logoutAction());
 
   // Clear RTK Query cache

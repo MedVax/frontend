@@ -38,9 +38,9 @@ function saveState(state: Partial<RootState>): void {
       DEVELOPMENT
         ? serializedState
         : CryptoJS.AES.encrypt(
-            serializedState,
-            AES_ENCRYPTION_KEY || ""
-          ).toString()
+          serializedState,
+          AES_ENCRYPTION_KEY || ""
+        ).toString()
     );
   } catch (error) {
     console.error("Error saving state:", error);
@@ -73,9 +73,9 @@ function getLocalStorageState(): Partial<RootState> | null {
         DEVELOPMENT
           ? serializedState
           : CryptoJS.AES.decrypt(
-              serializedState,
-              AES_ENCRYPTION_KEY || ""
-            ).toString(CryptoJS.enc.Utf8)
+            serializedState,
+            AES_ENCRYPTION_KEY || ""
+          ).toString(CryptoJS.enc.Utf8)
       );
     }
   } catch (error) {
@@ -141,8 +141,19 @@ export function makeStore(): Store<RootState> {
   return newStore;
 }
 
-// Create a singleton store for client-side usage
-// This will be created when the module loads, but after all imports are resolved
-const store: Store<RootState> = makeStore();
+// Don't create store at module level to avoid SSR issues
+// Store will be created in ReduxProvider component on client side only
+let store: Store<RootState> | undefined;
 
-export default store;
+export function getStore(): Store<RootState> {
+  if (!isBrowser) {
+    throw new Error("Store can only be accessed on the client side");
+  }
+  if (!store) {
+    store = makeStore();
+  }
+  return store;
+}
+
+// Export default for backwards compatibility (only use on client)
+export default getStore;
