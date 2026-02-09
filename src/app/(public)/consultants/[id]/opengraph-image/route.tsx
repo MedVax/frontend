@@ -76,24 +76,60 @@ export async function GET(
         ? imageUrl
         : `${BASE_URL || "https://staging.medvaxhealth.com"}${imageUrl}`;
 
-    // Fetch the avatar image and convert to base64 data URL for ImageResponse
-    let avatarDataUrl = absoluteImageUrl;
+    // Prepare fallback with initials
+    const initials = name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
+
+    // Try to fetch and convert image to base64, with fallback
+    let avatarDataUrl: string | null = null;
+    let useImageFallback = false;
+
     try {
+        // Use a timeout to prevent hanging (5 seconds)
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         const imageResponse = await fetch(absoluteImageUrl, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (compatible; MedVax/1.0)',
+                'Accept': 'image/*',
             },
+            signal: controller.signal,
         });
 
+        clearTimeout(timeoutId);
+
         if (imageResponse.ok) {
-            const arrayBuffer = await imageResponse.arrayBuffer();
-            const base64 = Buffer.from(arrayBuffer).toString('base64');
-            const contentType = imageResponse.headers.get('content-type') || 'image/png';
-            avatarDataUrl = `data:${contentType};base64,${base64}`;
+            const contentType = imageResponse.headers.get('content-type');
+            if (contentType?.startsWith('image/')) {
+                const arrayBuffer = await imageResponse.arrayBuffer();
+                // Limit size to prevent memory issues (max 2MB)
+                if (arrayBuffer.byteLength < 2 * 1024 * 1024) {
+                    const base64 = Buffer.from(arrayBuffer).toString('base64');
+                    avatarDataUrl = `data:${contentType};base64,${base64}`;
+                } else {
+                    // Image too large, use fallback
+                    useImageFallback = true;
+                }
+            } else {
+                // Not an image content type
+                useImageFallback = true;
+            }
+        } else {
+            // HTTP error response
+            useImageFallback = true;
         }
-    } catch (error) {
-        // If fetch fails, fallback to URL (might not work but won't break)
-        console.error('Failed to fetch avatar image:', error);
+    } catch (error: any) {
+        // If fetch fails (timeout, network error, CORS, etc.), use fallback
+        // Log error for debugging (only in development)
+        if (process.env.NODE_ENV === 'development') {
+            console.error('Failed to fetch avatar image:', error?.message || error);
+        }
+        useImageFallback = true;
     }
 
     return new ImageResponse(
@@ -227,19 +263,56 @@ export async function GET(
                         backgroundColor: "#0a0a0a",
                     }}
                 >
-                    {/* Avatar Image */}
-                    {/* Using data URL for reliable image loading */}
-                    <img
-                        src={avatarDataUrl}
-                        alt={name}
-                        width={500}
-                        height={630}
-                        style={{
-                            objectFit: "cover",
-                            width: "100%",
-                            height: "100%",
-                        }}
-                    />
+                    {useImageFallback ? (
+                        /* Fallback: Colored background with initials */
+                        <div
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "linear-gradient(135deg, #26532E 0%, #1a3d22 100%)",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    fontSize: 120,
+                                    fontWeight: 700,
+                                    color: "white",
+                                    textAlign: "center",
+                                }}
+                            >
+                                {initials}
+                            </div>
+                        </div>
+                    ) : avatarDataUrl ? (
+                        /* Avatar Image - Using data URL */
+                        <img
+                            src={avatarDataUrl}
+                            alt={name}
+                            width={500}
+                            height={630}
+                            style={{
+                                objectFit: "cover",
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    ) : (
+                        /* Try direct URL as last resort */
+                        <img
+                            src={absoluteImageUrl}
+                            alt={name}
+                            width={500}
+                            height={630}
+                            style={{
+                                objectFit: "cover",
+                                width: "100%",
+                                height: "100%",
+                            }}
+                        />
+                    )}
                 </div>
             </div>
         ),

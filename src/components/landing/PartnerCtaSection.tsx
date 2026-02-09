@@ -2,6 +2,7 @@
 
 import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
+import Link from "next/link";
 
 export function PartnerCtaSection() {
   return (
@@ -22,7 +23,7 @@ export function PartnerCtaSection() {
           Let Medvax power your medication access and delivery.
         </Typography>
       </div>
-      <Button>Partner With Medvax Health</Button>
+      <Button component={Link} href="/contact">Partner With Medvax Health</Button>
     </Shell>
   );
 }

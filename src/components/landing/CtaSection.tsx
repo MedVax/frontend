@@ -2,6 +2,7 @@
 
 import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
+import Link from "next/link";
 
 export function CtaSection() {
   return (
@@ -22,7 +23,7 @@ export function CtaSection() {
               Order, consult, or search — all in one place.
             </Typography>
           </div>
-          <Button>Get Medication</Button>
+          <Button component={Link} href="/products">Get Medication</Button>
         </div>
       </div>
     </Shell>
