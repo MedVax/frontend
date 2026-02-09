@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Typography,
@@ -13,6 +13,11 @@ import {
   Grid,
   Card,
   CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react";
 import { useParams, useRouter } from "next/navigation";
@@ -46,35 +51,16 @@ const ConsultantDetails = () => {
     { path: { clientProfileId: activeProfileId as string } },
     { skip: !isClient }
   );
-  const [assignConsultant, { isLoading: isAssigning }] = useAssignConsultantMutation();
 
   const consultant = data?.data;
-  const clientProfileId = authUser?.user?.activeProfile?.id;
   const assignedConsultant = clientProfileData?.data?.userProfileConsultant;
   const hasAssignedConsultant = !!assignedConsultant;
   const isCurrentConsultantAssigned = assignedConsultant?.id === consultantId;
   const isOwnProfile = isConsultant && activeProfileId === consultantId;
+  const [assignDialogOpen, setAssignDialogOpen] = useState(false);
 
-  const handleAssign = async () => {
-
-
-    try {
-      await assignConsultant({
-        data: {
-          clientId: clientProfileId || "",
-          consultantId,
-        },
-      }).unwrap();
-      enqueueSnackbar("Consultant assigned successfully", { variant: "success" });
-      router.push("/dashboard");
-    } catch (error: unknown) {
-      const errorMessage =
-        (error as { data?: { message?: string } })?.data?.message ||
-        "Failed to assign consultant";
-      enqueueSnackbar(errorMessage, {
-        variant: "error",
-      });
-    }
+  const handleAssignClick = () => {
+    setAssignDialogOpen(true);
   };
 
   const handleShare = () => {
@@ -232,7 +218,7 @@ const ConsultantDetails = () => {
           >
             Share
           </Button>
-          {clientProfileId && !isConsultant && (
+          {activeProfileId && !isConsultant && (
             <>
               {isCurrentConsultantAssigned ? (
                 <Button
@@ -246,10 +232,9 @@ const ConsultantDetails = () => {
               ) : (
                 <Button
                   variant="outlined"
-                  onClick={handleAssign}
-                  disabled={isAssigning}
+                  onClick={handleAssignClick}
                 >
-                  {isAssigning ? "Assigning..." : "Assign Consultant"}
+                  Assign Consultant
                 </Button>
               )}
             </>
@@ -491,7 +476,99 @@ const ConsultantDetails = () => {
           )}
         </div>
       </div>
+
+      {/* Assign Dialog */}
+      <AssignConsultantDialog
+        open={assignDialogOpen}
+        onClose={() => setAssignDialogOpen(false)}
+        consultantId={consultantId}
+      />
     </div>
+  );
+};
+
+interface AssignConsultantDialogProps {
+  open: boolean;
+  onClose: () => void;
+  consultantId: string;
+}
+
+const AssignConsultantDialog = ({
+  open,
+  onClose,
+  consultantId,
+}: AssignConsultantDialogProps) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const authUser = useAuthUser();
+  const router = useRouter();
+  const clientProfileId = authUser?.user?.activeProfile?.userProfileClient || "";
+  const [assignConsultantMutation, { isLoading }] = useAssignConsultantMutation();
+  const { data: consultantData } = useGetConsultantByIdQuery(
+    { path: { id: consultantId } },
+    { skip: !consultantId }
+  );
+
+  const consultant = consultantData?.data;
+
+  const handleAssign = async () => {
+    try {
+      await assignConsultantMutation({
+        data: {
+          clientId: clientProfileId,
+          consultantId,
+        },
+      }).unwrap();
+      enqueueSnackbar("Consultant assigned successfully", { variant: "success" });
+      onClose();
+      router.push("/dashboard");
+    } catch (error: any) {
+      enqueueSnackbar(error?.data?.defaultMessage || "Failed to assign consultant", {
+        variant: "error",
+      });
+    }
+  };
+
+  if (!consultant) {
+    return null;
+  }
+
+  const user = consultant.userProfile?.user;
+  const name = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
+
+  return (
+    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+      <DialogTitle>Assign Consultant</DialogTitle>
+      <DialogContent>
+        <DialogContentText className="mb-4">
+          Are you sure you want to assign this consultant to your profile?
+        </DialogContentText>
+        <Paper variant="outlined" className="p-4 bg-white!">
+          <div className="flex items-center gap-4">
+            <Avatar src={user?.avatar || undefined} sx={{ width: 56, height: 56 }}>
+              {user?.firstName?.[0]}{user?.lastName?.[0]}
+            </Avatar>
+            <div>
+              <Typography variant="h6" className="font-semibold">
+                {name || "Consultant"}
+              </Typography>
+              {consultant.jobTitle && (
+                <Typography variant="body2" color="text.secondary">
+                  {consultant.jobTitle}
+                </Typography>
+              )}
+            </div>
+          </div>
+        </Paper>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={isLoading}>
+          Cancel
+        </Button>
+        <Button onClick={handleAssign} variant="contained" disabled={isLoading}>
+          {isLoading ? "Assigning..." : "Assign Consultant"}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
