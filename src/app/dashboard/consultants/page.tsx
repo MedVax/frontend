@@ -24,6 +24,7 @@ import {
   useGetConsultantByIdQuery,
   useAssignConsultantMutation,
 } from "@/apis/consultant-api";
+import { useGetClientProfileByUserQuery } from "@/apis/client-api";
 import { useSnackbar } from "notistack";
 import useAuthUser from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
@@ -40,6 +41,8 @@ const Consultants = () => {
   const limit = 12;
 
   const skip = (page - 1) * limit;
+  const activeProfileId = authUser?.user?.activeProfile?.id;
+  const isClient = authUser?.user?.activeProfile?.type === "CLIENT";
 
   const { data, isLoading } = useGetConsultantsQuery({
     params: {
@@ -49,8 +52,14 @@ const Consultants = () => {
     },
   });
 
+  const { data: clientProfileData } = useGetClientProfileByUserQuery(
+    { path: { clientProfileId: activeProfileId as string } },
+    { skip: !isClient || !activeProfileId }
+  );
+
   const consultants = data?.data?.data || [];
   const pagination = data?.data;
+  const assignedConsultantId = clientProfileData?.data?.userProfileConsultant?.id;
 
   const handleAssignClick = (consultantId: string) => {
     setSelectedConsultantId(consultantId);
@@ -111,6 +120,7 @@ const Consultants = () => {
               <ConsultantCard
                 key={consultant.id}
                 consultant={consultant}
+                assignedConsultantId={assignedConsultantId}
                 onAssign={() => handleAssignClick(consultant.id)}
                 onViewDetails={() => router.push(`/dashboard/consultants/${consultant.id}`)}
               />
@@ -147,14 +157,16 @@ const Consultants = () => {
 
 interface ConsultantCardProps {
   consultant: any;
+  assignedConsultantId?: string;
   onAssign: () => void;
   onViewDetails: () => void;
 }
 
-const ConsultantCard = ({ consultant, onAssign, onViewDetails }: ConsultantCardProps) => {
+const ConsultantCard = ({ consultant, assignedConsultantId, onAssign, onViewDetails }: ConsultantCardProps) => {
   const user = consultant.userProfile?.user;
   const avatar = user?.avatar;
   const name = `${user?.firstName || ""} ${user?.lastName || ""}`.trim();
+  const isAssigned = assignedConsultantId === consultant.id;
 
   return (
     <Paper variant="outlined" className="p-6 hover:shadow-md transition-shadow bg-white!">
@@ -205,9 +217,21 @@ const ConsultantCard = ({ consultant, onAssign, onViewDetails }: ConsultantCardP
         <Button variant="outlined" size="small" onClick={onViewDetails} fullWidth>
           View Details
         </Button>
-        <Button variant="contained" size="small" onClick={onAssign} fullWidth>
-          Assign
-        </Button>
+        {isAssigned ? (
+          <Button
+            variant="contained"
+            size="small"
+            component={Link}
+            href={`/consultant/${consultant.id}/book`}
+            fullWidth
+          >
+            Book
+          </Button>
+        ) : (
+          <Button variant="contained" size="small" onClick={onAssign} fullWidth>
+            Assign
+          </Button>
+        )}
       </div>
     </Paper>
   );

@@ -30,6 +30,7 @@ import * as Yup from "yup";
 import useAuthUser from "@/hooks/use-auth";
 import { getFormikTextFieldProps } from "@/utils/formik";
 import { LoadingButton } from "@mui/lab";
+import { Tooltip, IconButton } from "@mui/material";
 
 const ConsultantProfile = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -49,9 +50,59 @@ const ConsultantProfile = () => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [bioTab, setBioTab] = useState(0); // 0 = edit, 1 = preview
   const [expertiseInput, setExpertiseInput] = useState("");
+  const [isSharing, setIsSharing] = useState(false);
 
   const user = userData?.data || authUser?.user;
   const consultantProfile = consultantData?.data;
+
+  const handleShare = async () => {
+    if (!consultantProfileId) {
+      enqueueSnackbar("Profile not available for sharing", { variant: "error" });
+      return;
+    }
+
+    try {
+      setIsSharing(true);
+      const profileUrl = typeof window !== "undefined" 
+        ? `${window.location.origin}/consultants/${consultantProfileId}`
+        : "";
+
+      const name = user ? `${user.firstName || ""} ${user.lastName || ""}`.trim() : "Consultant";
+      const shareData = {
+        title: `${name} - Consultant Profile`,
+        text: `Check out my consultant profile on MedVax${consultantProfile?.jobTitle ? ` - ${consultantProfile.jobTitle}` : ""}`,
+        url: profileUrl,
+      };
+
+      // Try Web Share API first (mobile devices)
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        enqueueSnackbar("Profile shared successfully!", { variant: "success" });
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(profileUrl);
+        enqueueSnackbar("Profile link copied to clipboard!", { variant: "success" });
+      }
+    } catch (error: any) {
+      // User cancelled share or clipboard failed
+      if (error.name !== "AbortError") {
+        // Try fallback to clipboard if Web Share failed
+        try {
+          const profileUrl = typeof window !== "undefined" 
+            ? `${window.location.origin}/consultants/${consultantProfileId}`
+            : "";
+          await navigator.clipboard.writeText(profileUrl);
+          enqueueSnackbar("Profile link copied to clipboard!", { variant: "success" });
+        } catch (clipboardError) {
+          enqueueSnackbar("Failed to share profile. Please copy the URL manually.", {
+            variant: "error",
+          });
+        }
+      }
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First name is required"),
@@ -261,9 +312,28 @@ const ConsultantProfile = () => {
 
   return (
     <div className="space-y-10">
-      <Typography variant="h5" className="font-semibold">
-        My Profile
-      </Typography>
+      <div className="flex items-center justify-between">
+        <Typography variant="h5" className="font-semibold">
+          My Profile
+        </Typography>
+        {consultantProfileId && (
+          <Tooltip title="Share your public profile">
+            <Button
+              variant="outlined"
+              onClick={handleShare}
+              disabled={isSharing}
+              startIcon={
+                <Iconify 
+                  icon={isSharing ? "solar:loading-circle-bold" : "solar:share-bold"} 
+                  fontSize={20} 
+                />
+              }
+            >
+              {isSharing ? "Sharing..." : "Share Profile"}
+            </Button>
+          </Tooltip>
+        )}
+      </div>
 
       {/* Profile Photo */}
       <Paper variant="outlined" className="p-6 bg-white!">

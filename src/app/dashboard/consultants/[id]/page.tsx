@@ -52,6 +52,7 @@ const ConsultantDetails = () => {
   const clientProfileId = authUser?.user?.activeProfile?.id;
   const assignedConsultant = clientProfileData?.data?.userProfileConsultant;
   const hasAssignedConsultant = !!assignedConsultant;
+  const isCurrentConsultantAssigned = assignedConsultant?.id === consultantId;
   const isOwnProfile = isConsultant && activeProfileId === consultantId;
 
   const handleAssign = async () => {
@@ -233,23 +234,24 @@ const ConsultantDetails = () => {
           </Button>
           {clientProfileId && !isConsultant && (
             <>
-              <Button
-                variant="contained"
-                component={Link}
-                href={`/consultant/${consultantId}/book`}
-                startIcon={<Iconify icon="solar:calendar-add-outline" fontSize={20} />}
-                disabled={!hasAssignedConsultant}
-                title={!hasAssignedConsultant ? "Please assign a consultant first" : ""}
-              >
-                Book Session
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleAssign}
-                disabled={isAssigning}
-              >
-                {isAssigning ? "Assigning..." : "Assign Consultant"}
-              </Button>
+              {isCurrentConsultantAssigned ? (
+                <Button
+                  variant="contained"
+                  component={Link}
+                  href={`/consultant/${consultantId}/book`}
+                  startIcon={<Iconify icon="solar:calendar-add-outline" fontSize={20} />}
+                >
+                  Book
+                </Button>
+              ) : (
+                <Button
+                  variant="outlined"
+                  onClick={handleAssign}
+                  disabled={isAssigning}
+                >
+                  {isAssigning ? "Assigning..." : "Assign Consultant"}
+                </Button>
+              )}
             </>
           )}
         </div>
@@ -429,7 +431,7 @@ const ConsultantDetails = () => {
                     label={exp}
                     color="primary"
                     variant="soft"
-                    className="text-base py-6 px-4"
+                    className="text-base py-2 px-2"
                     sx={{
                       fontSize: "1rem",
                       height: "auto",

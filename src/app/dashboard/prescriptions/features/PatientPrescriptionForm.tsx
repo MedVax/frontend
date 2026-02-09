@@ -8,6 +8,9 @@ import {
     Checkbox,
     FormControlLabel,
     InputAdornment,
+    Paper,
+    Divider,
+    Alert,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -141,106 +144,113 @@ export default function PatientPrescriptionForm() {
 
     return (
         <form onSubmit={formik.handleSubmit} className="max-w-2xl mx-auto">
-            <div className="bg-blue-50/50 p-4 rounded-lg mb-6 border border-blue-100">
-                <Typography variant="body2" className="text-blue-800">
-                    Upload your prescription below. ensure all details are visible.
+            <Paper variant="outlined" className="p-8 bg-white!">
+                <Typography variant="h5" className="font-bold mb-4 flex items-center gap-2">
+                    <Icon icon="solar:document-medicine-linear" fontSize={24} />
+                    Patient Information
                 </Typography>
-            </div>
+                <Divider className="mb-6" />
 
-            <div className="grid grid-cols-1 gap-4">
-                <div className="flex flex-col sm:flex-row gap-4">
+                <Alert severity="info" className="mb-6">
+                    Upload your prescription below. Ensure all details are visible.
+                </Alert>
+
+                <div className="grid grid-cols-1 gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <TextField
+                            {...getFormikTextFieldProps(formik, "firstName")}
+                            label="First Name"
+                            fullWidth
+                            disabled={isLoading}
+                            placeholder="e.g. John"
+                        />
+
+                        <TextField
+                            {...getFormikTextFieldProps(formik, "lastName")}
+                            label="Last Name"
+                            fullWidth
+                            disabled={isLoading}
+                            placeholder="e.g. Doe"
+                        />
+                    </div>
+
                     <TextField
-                        {...getFormikTextFieldProps(formik, "firstName")}
-                        label="First Name"
+                        {...getFormikTextFieldProps(formik, "mobileNumber")}
+                        label="Mobile Number"
                         fullWidth
                         disabled={isLoading}
-                        placeholder="e.g. John"
+                        placeholder="Enter Phone Number"
                     />
 
                     <TextField
-                        {...getFormikTextFieldProps(formik, "lastName")}
-                        label="Last Name"
+                        {...getFormikTextFieldProps(formik, "email")}
+                        label="Email Address (Optional)"
+                        type="email"
                         fullWidth
                         disabled={isLoading}
-                        placeholder="e.g. Doe"
+                        placeholder="johndoe@example.com"
+                    />
+
+                    <FileUploadInput
+                        formik={formik}
+                        name="prescriptionFile"
+                        label="Prescription File *"
+                    />
+
+                    <TextField
+                        {...getFormikTextFieldProps(formik, "additionalNote")}
+                        label="Additional Note (Optional)"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        disabled={isLoading}
+                        placeholder="Any specific instructions for the pharmacist..."
                     />
                 </div>
 
-                <TextField
-                    {...getFormikTextFieldProps(formik, "mobileNumber")}
-                    label="Mobile Number"
-                    fullWidth
-                    disabled={isLoading}
-                    placeholder="Enter Phone Number"
-                />
+                <Divider className="my-6" />
 
-                <TextField
-                    {...getFormikTextFieldProps(formik, "email")}
-                    label="Email Address (Optional)"
-                    type="email"
-                    fullWidth
-                    disabled={isLoading}
-                    placeholder="johndoe@example.com"
-                />
-
-                <FileUploadInput
-                    formik={formik}
-                    name="prescriptionFile"
-                    label="Prescription File *"
-                />
-
-                <TextField
-                    {...getFormikTextFieldProps(formik, "additionalNote")}
-                    label="Additional Note (Optional)"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    disabled={isLoading}
-                    placeholder=""
-                />
-            </div>
-
-            <div className="mb-4 mt-4">
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            name="consent"
-                            checked={formik.values.consent}
-                            onChange={formik.handleChange}
-                            color="primary"
-                        />
-                    }
-                    label={
-                        <Typography variant="caption" className="text-gray-600">
-                            I consent to the terms and verify this document is authentic.
+                <div className="mb-4">
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                name="consent"
+                                checked={formik.values.consent}
+                                onChange={formik.handleChange}
+                                color="primary"
+                            />
+                        }
+                        label={
+                            <Typography variant="body2" className="text-gray-600">
+                                I consent to the terms and verify this document is authentic.
+                            </Typography>
+                        }
+                        className="items-start -ml-2"
+                    />
+                    {formik.touched.consent && formik.errors.consent && (
+                        <Typography variant="caption" color="error" className="ml-2 block mt-1">
+                            {formik.errors.consent}
                         </Typography>
-                    }
-                    className="items-start -ml-2"
-                />
-                {formik.touched.consent && formik.errors.consent && (
-                    <Typography variant="caption" color="error" className="ml-2 block mt-1">
-                        {formik.errors.consent}
-                    </Typography>
-                )}
-            </div>
+                    )}
+                </div>
 
-            <div className="mt-8 flex justify-end">
-                <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    disabled={isLoading}
-                    sx={{
-                        bgcolor: "#4B5563",
-                        "&:hover": { bgcolor: "#374151" },
-                        borderRadius: "50px",
-                        textTransform: "none",
-                        px: 6
-                    }}
-                >
-                    {isLoading ? "Uploading..." : "Submit Prescription"}
-                </Button>
-            </div>
+                <div className="mt-6 flex justify-end">
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        disabled={isLoading}
+                        sx={{
+                            borderRadius: "8px",
+                            textTransform: "none",
+                            px: 4,
+                            py: 1.5
+                        }}
+                    >
+                        {isLoading ? "Uploading..." : "Submit Prescription"}
+                    </Button>
+                </div>
+            </Paper>
         </form>
     );
 }

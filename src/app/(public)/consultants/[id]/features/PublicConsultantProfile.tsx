@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Paper,
   Typography,
@@ -12,12 +12,16 @@ import {
   Divider,
   Button,
   Grid,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { Icon as Iconify } from "@iconify/react";
 import { useGetConsultantByIdQuery } from "@/apis/consultant-api";
 import { Calendar, ClockCircle, Star, Star2, User } from "@solar-icons/react";
 import { Icon } from "@mui/material";
 import Link from "next/link";
+import { useSnackbar } from "notistack";
+import { usePathname } from "next/navigation";
 
 interface PublicConsultantProfileProps {
   consultantId: string;
@@ -28,6 +32,9 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
     { path: { id: consultantId } },
     { skip: !consultantId }
   );
+  const { enqueueSnackbar } = useSnackbar();
+  const pathname = usePathname();
+  const [isSharing, setIsSharing] = useState(false);
 
   const consultant = data?.data;
 
@@ -63,6 +70,49 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
   const rate = consultant.rate;
   const yearsOfExperience = consultant.yearsOfExperience;
   const rating = consultant.rating;
+
+  const handleShare = async () => {
+    try {
+      setIsSharing(true);
+      const profileUrl = typeof window !== "undefined" 
+        ? `${window.location.origin}${pathname}`
+        : "";
+
+      const shareData = {
+        title: `${name} - Consultant Profile`,
+        text: `Check out ${name}'s consultant profile on MedVax${consultant.jobTitle ? ` - ${consultant.jobTitle}` : ""}`,
+        url: profileUrl,
+      };
+
+      // Try Web Share API first (mobile devices)
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        enqueueSnackbar("Profile shared successfully!", { variant: "success" });
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(profileUrl);
+        enqueueSnackbar("Profile link copied to clipboard!", { variant: "success" });
+      }
+    } catch (error: any) {
+      // User cancelled share or clipboard failed
+      if (error.name !== "AbortError") {
+        // Try fallback to clipboard if Web Share failed
+        try {
+          const profileUrl = typeof window !== "undefined" 
+            ? `${window.location.origin}${pathname}`
+            : "";
+          await navigator.clipboard.writeText(profileUrl);
+          enqueueSnackbar("Profile link copied to clipboard!", { variant: "success" });
+        } catch (clipboardError) {
+          enqueueSnackbar("Failed to share profile. Please copy the URL manually.", {
+            variant: "error",
+          });
+        }
+      }
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   // Simple markdown rendering for bio
   const renderBio = (bio: string) => {
@@ -170,13 +220,34 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
               {user?.firstName?.[0]}{user?.lastName?.[0]}
             </Avatar>
             <div className="flex-1 text-center md:text-left">
-              <Typography
-                variant="h3"
-                className="font-bold mb-2"
-                sx={{ color: "white" }}
-              >
-                {name}
-              </Typography>
+              <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                <Typography
+                  variant="h3"
+                  className="font-bold"
+                  sx={{ color: "white" }}
+                >
+                  {name}
+                </Typography>
+                <Tooltip title="Share profile">
+                  <IconButton
+                    onClick={handleShare}
+                    disabled={isSharing}
+                    sx={{
+                      color: "white",
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.3)",
+                      },
+                    }}
+                    size="small"
+                  >
+                    <Iconify 
+                      icon={isSharing ? "solar:loading-circle-bold" : "solar:share-bold"} 
+                      fontSize={24} 
+                    />
+                  </IconButton>
+                </Tooltip>
+              </div>
               {consultant.jobTitle && (
                 <Typography variant="h5" className="mb-4 opacity-90">
                   {consultant.jobTitle}
@@ -339,12 +410,28 @@ const PublicConsultantProfile = ({ consultantId }: PublicConsultantProfileProps)
               <Button
                 variant="contained"
                 fullWidth
-                className="bg-white text-primary-main hover:bg-gray-100"
+                className="bg-white text-primary-main hover:bg-gray-100 mb-3"
                 component={Link}
                 href="/dashboard/bookings"
                 size="large"
               >
                 Book Now
+              </Button>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleShare}
+                disabled={isSharing}
+                className="border-white text-white hover:bg-white/10"
+                size="medium"
+                startIcon={
+                  <Iconify 
+                    icon={isSharing ? "solar:loading-circle-bold" : "solar:share-bold"} 
+                    fontSize={20} 
+                  />
+                }
+              >
+                Share Profile
               </Button>
             </Paper>
 
