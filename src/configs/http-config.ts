@@ -4,7 +4,7 @@ import { BASE_URL } from "constants/env";
 
 export const MedvaxHttp = axios.create({
   baseURL: BASE_URL,
-  withCredentials: false,
+  withCredentials: true, // Required for cookies to work in cross-origin requests
 });
 
 export const setupInterceptors = (_store: Store) => {
