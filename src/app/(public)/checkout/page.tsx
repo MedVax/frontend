@@ -41,9 +41,9 @@ const CheckoutPage = () => {
   const authUser = useAuthUser();
   const isAuthenticated = !!authUser?.isAuthenticated;
 
-  const { data: cartData, isLoading: cartLoading } = useGetCartQuery(undefined, {
-    skip: !isAuthenticated,
-  });
+  // Fetch cart for both authenticated and anonymous users
+  // Backend handles anonymous users via sessionId from cookies
+  const { data: cartData, isLoading: cartLoading } = useGetCartQuery();
   const { data: addressesData, isLoading: addressesLoading } = useGetAddressesQuery(undefined, {
     skip: !isAuthenticated,
   });
@@ -200,135 +200,62 @@ const CheckoutPage = () => {
       <div className="flex sm:flex-row flex-col justify-center gap-6 max-w-[1000px] mx-auto">
         <div className="flex-1">
           {!isAuthenticated && (
-            <>
-              <Typography variant="body1" className="mb-4">
-                Already have an account?{" "}
-                <Link
-                  href="/signin"
-                  className="text-pink-600 hover:text-pink-700 font-semibold"
-                >
-                  Login
-                </Link>
-              </Typography>
-
-              <Paper variant="outlined" className="p-6 mb-6 bg-white!">
-                <Typography variant="h6" className="font-semibold mb-4">
+            <Paper variant="outlined" className="p-6 mb-6 bg-white!">
+              <div className="flex items-center justify-between mb-4">
+                <Typography variant="h6" className="font-semibold">
                   Continue as a guest
                 </Typography>
+                <Typography variant="body2" className="text-gray-600">
+                  Already have an account?{" "}
+                  <Link
+                    href="/signin"
+                    className="text-pink-600 hover:text-pink-700 font-semibold"
+                  >
+                    Login
+                  </Link>
+                </Typography>
+              </div>
 
-                <form onSubmit={guestFormik.handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <TextField
-                      label="First name"
-                      name="firstName"
-                      fullWidth
-                      size="small"
-                      {...getFormikTextFieldProps(guestFormik, "firstName")}
-                    />
-                    <TextField
-                      label="Last name"
-                      name="lastName"
-                      fullWidth
-                      size="small"
-                      {...getFormikTextFieldProps(guestFormik, "lastName")}
-                    />
-                  </div>
+              <form onSubmit={guestFormik.handleSubmit} className="space-y-4">
+                {/* Personal Information */}
+                <div className="grid grid-cols-2 gap-4">
                   <TextField
-                    label="Email Address"
-                    name="email"
-                    type="email"
+                    label="First name"
+                    name="firstName"
                     fullWidth
                     size="small"
-                    {...getFormikTextFieldProps(guestFormik, "email")}
+                    {...getFormikTextFieldProps(guestFormik, "firstName")}
                   />
                   <TextField
-                    label="Mobile Number"
-                    name="phone"
+                    label="Last name"
+                    name="lastName"
                     fullWidth
                     size="small"
-                    {...getFormikTextFieldProps(guestFormik, "phone")}
+                    {...getFormikTextFieldProps(guestFormik, "lastName")}
                   />
-                </form>
-              </Paper>
-            </>
-          )}
-
-          {/* Shipping Method */}
-          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
-            <Typography variant="h6" className="font-semibold mb-4">
-              Shipping Method
-            </Typography>
-            <FormControl component="fieldset">
-              <RadioGroup
-                value={selectedShippingMethod}
-                onChange={(e) => setSelectedShippingMethod(e.target.value)}
-              >
-                <FormControlLabel
-                  value="Delivery"
-                  control={<Radio />}
-                  label="Delivery to me"
-                />
-                <FormControlLabel
-                  value="Pickup"
-                  control={<Radio />}
-                  label="Pick up from pharmacy"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Paper>
-
-          {/* Shipping Address */}
-          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
-            <Typography variant="h6" className="font-semibold mb-4">
-              {isAuthenticated ? "Delivery Address" : "Shipping Details"}
-            </Typography>
-
-            {isAuthenticated ? (
-              addressesLoading ? (
-                <Skeleton variant="rectangular" height={100} />
-              ) : addresses.length > 0 ? (
-                <div className="flex flex-col gap-2">
-                  <TextField
-                    label="Select Address"
-                    name="selectedAddressId"
-                    fullWidth
-                    value={selectedAddressId}
-                    onChange={(e) => setSelectedAddressId(e.target.value)} size="small"
-                    select>
-                    {addresses.map((address) => (
-                      <MenuItem key={address.id} value={address.id}>
-                        {address.line1}, {address.city}, {address.state}
-                        {address.isDefault && " (Default)"}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-
-
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    className="mt-2"
-                    onClick={() => router.push("/dashboard/addresses")}
-                  >
-                    Add New Address
-                  </Button>
                 </div>
+                <TextField
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  fullWidth
+                  size="small"
+                  {...getFormikTextFieldProps(guestFormik, "email")}
+                />
+                <TextField
+                  label="Mobile Number"
+                  name="phone"
+                  fullWidth
+                  size="small"
+                  {...getFormikTextFieldProps(guestFormik, "phone")}
+                />
 
-              ) : (
-                <div>
-                  <Alert severity="warning" className="mb-4">
-                    No addresses found. Please add a delivery address.
-                  </Alert>
-                  <Button
-                    variant="contained"
-                    onClick={() => router.push("/dashboard/addresses")}
-                  >
-                    Add Address
-                  </Button>
-                </div>
-              )
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
+                <Divider className="my-4" />
+
+                {/* Shipping Address - Visible immediately for anonymous users */}
+                <Typography variant="subtitle2" className="font-semibold mb-3">
+                  Shipping Address
+                </Typography>
                 <TextField
                   label="Address"
                   name="addressLine1"
@@ -375,9 +302,86 @@ const CheckoutPage = () => {
                     size="small"
                   />
                 </div>
-              </div>
-            )}
+              </form>
+            </Paper>
+          )}
+
+          {/* Shipping Method */}
+          <Paper variant="outlined" className="p-6 mb-6 bg-white!">
+            <Typography variant="h6" className="font-semibold mb-4">
+              Shipping Method
+            </Typography>
+            <FormControl component="fieldset">
+              <RadioGroup
+                value={selectedShippingMethod}
+                onChange={(e) => setSelectedShippingMethod(e.target.value)}
+              >
+                <FormControlLabel
+                  value="Delivery"
+                  control={<Radio />}
+                  label="Delivery to me"
+                />
+                <FormControlLabel
+                  value="Pickup"
+                  control={<Radio />}
+                  label="Pick up from pharmacy"
+                />
+              </RadioGroup>
+            </FormControl>
           </Paper>
+
+          {/* Delivery Address - Only for authenticated users */}
+          {isAuthenticated && (
+            <Paper variant="outlined" className="p-6 mb-6 bg-white!">
+              <Typography variant="h6" className="font-semibold mb-4">
+                Delivery Address
+              </Typography>
+
+              {addressesLoading ? (
+                <Skeleton variant="rectangular" height={100} />
+              ) : addresses.length > 0 ? (
+                <div className="flex flex-col gap-2">
+                  <TextField
+                    label="Select Address"
+                    name="selectedAddressId"
+                    fullWidth
+                    value={selectedAddressId}
+                    onChange={(e) => setSelectedAddressId(e.target.value)} size="small"
+                    select>
+                    {addresses.map((address) => (
+                      <MenuItem key={address.id} value={address.id}>
+                        {address.line1}, {address.city}, {address.state}
+                        {address.isDefault && " (Default)"}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+
+
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    className="mt-2"
+                    onClick={() => router.push("/dashboard/addresses")}
+                  >
+                    Add New Address
+                  </Button>
+                </div>
+
+              ) : (
+                <div>
+                  <Alert severity="warning" className="mb-4">
+                    No addresses found. Please add a delivery address.
+                  </Alert>
+                  <Button
+                    variant="contained"
+                    onClick={() => router.push("/dashboard/addresses")}
+                  >
+                    Add Address
+                  </Button>
+                </div>
+              )}
+            </Paper>
+          )}
 
           {/* Order Notes */}
           <Paper variant="outlined" className="p-6 mb-6 bg-white!">
