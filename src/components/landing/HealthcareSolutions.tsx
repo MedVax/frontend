@@ -3,9 +3,13 @@
 import { Button, Typography } from "@mui/material";
 import { Shell } from "../ui";
 
-export function HealthcareSolutions() {
+interface HealthcareSolutionsProps {
+  showOnMobile?: boolean;
+}
+
+export function HealthcareSolutions({ showOnMobile = false }: HealthcareSolutionsProps) {
   return (
-    <Shell component="section" className="flex flex-col items-center mt-10 sm:mt-20 hidden sm:block">
+    <Shell component="section" className={`flex flex-col items-center mt-10 sm:mt-20 ${!showOnMobile ? 'hidden sm:block' : ''}`}>
       <Typography variant="h4" className="font-semibold! text-center">
         One-top healthcare
         <br />

@@ -1,5 +1,5 @@
 import { medvaxApi } from "configs/store-query";
-import { QueryRequest, PaginationServerResponse } from "types/global";
+import { QueryRequest, PaginationServerResponse, ServerResponse } from "types/global";
 import { OrderResponse, OrdersResponse, OrderRecurringFrequency, CreateOrderResponse, OrderStatus, PaymentStatus, PrescriptionStatus } from "types/order";
 import * as RtkqTag from "constants/data-tag";
 
@@ -26,6 +26,7 @@ export interface CreateOrderRequest {
   notes?: string;
   isRecurring?: boolean;
   recurringFrequency?: OrderRecurringFrequency;
+  deliveryFee?: number;
 }
 
 export type PaginatedOrdersResponse = PaginationServerResponse<OrdersResponse["data"]>;
@@ -119,6 +120,21 @@ export const orderApi = medvaxApi.injectEndpoints({
         return [{ type: RtkqTag.ORDER, id: path?.id }, RtkqTag.ORDER];
       },
     }),
+
+    calculateDeliveryFee: builder.query<
+      { data: { deliveryFee: number; orderValue: number; city: string | null; state: string | null; currency: string } },
+      QueryRequest<void, { orderValue: number; city?: string; state?: string }, void>
+    >({
+      query: ({ params, ...config }) => ({
+        url: `${TAG}/delivery-fee/calculate`,
+        params: {
+          orderValue: params?.orderValue,
+          city: params?.city,
+          state: params?.state,
+        },
+        ...config,
+      }),
+    }),
   }),
 });
 
@@ -129,5 +145,6 @@ export const {
   useVerifyPaymentMutation,
   useCancelRecurringOrderMutation,
   useSetOrderRecurringMutation,
+  useCalculateDeliveryFeeQuery,
 } = orderApi;
 

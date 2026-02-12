@@ -26,6 +26,7 @@ import { useGetCartQuery } from "@/apis/cart-api";
 import { useGetAddressesQuery } from "@/apis/address-api";
 import {
   useCreateOrderMutation,
+  useCalculateDeliveryFeeQuery,
   CreateOrderRequest,
 } from "@/apis/order-api";
 import { OrderRecurringFrequency } from "@/types/order";
@@ -114,7 +115,41 @@ const CheckoutPage = () => {
     }, 0);
   }, [cartItems]);
 
-  const total = subtotal;
+  // Get delivery address for fee calculation
+  const deliveryAddress = useMemo(() => {
+    if (isAuthenticated) {
+      return addresses.find((a) => a.id === selectedAddressId);
+    } else {
+      return {
+        city: guestFormik.values.city,
+        state: guestFormik.values.state,
+      };
+    }
+  }, [isAuthenticated, selectedAddressId, addresses, guestFormik.values.city, guestFormik.values.state]);
+
+  // Calculate delivery fee (same-day delivery)
+  // Only calculate if "Delivery" is selected (not "Pickup")
+  const orderValueInKobo = Math.round(subtotal * 100);
+  const isDelivery = selectedShippingMethod === "Delivery";
+  const { data: deliveryFeeData, isLoading: deliveryFeeLoading, error: deliveryFeeError } = useCalculateDeliveryFeeQuery(
+    {
+      params: {
+        orderValue: orderValueInKobo,
+        city: deliveryAddress?.city || undefined,
+        state: deliveryAddress?.state || undefined,
+      },
+    },
+    {
+      skip: subtotal === 0 || cartItems.length === 0 || !isDelivery, // Skip if cart is empty or pickup is selected
+    }
+  );
+
+  // Extract delivery fee from response (default to 1000 Naira = 100000 kobo if not available)
+  // Set to 0 if pickup is selected
+  // Response structure: { data: { deliveryFee, ... } } (RTK Query unwraps ServerResponse)
+  const deliveryFee = isDelivery ? (deliveryFeeData?.data?.deliveryFee ?? 100000) : 0; // No fee for pickup
+  const deliveryFeeInNaira = deliveryFee / 100;
+  const total = subtotal + deliveryFeeInNaira;
 
   const handlePlaceOrder = async (orderData: Partial<CreateOrderRequest>) => {
     if (cartItems.length === 0) {
@@ -129,6 +164,7 @@ const CheckoutPage = () => {
         paymentMethod: "paystack",
         isRecurring: isRecurring,
         recurringFrequency: isRecurring ? recurringFrequency : undefined,
+        deliveryFee: deliveryFee,
       };
 
       if (isAuthenticated && !orderData.guestInfo) {
@@ -319,12 +355,28 @@ const CheckoutPage = () => {
                 <FormControlLabel
                   value="Delivery"
                   control={<Radio />}
-                  label="Delivery to me"
+                  label={
+                    <div className="flex items-center justify-between w-full">
+                      <span>Same-Day Delivery</span>
+                      <Typography variant="body2" color="text.secondary">
+                        {deliveryFeeLoading
+                          ? "Calculating..."
+                          : currency(deliveryFeeInNaira).format({ symbol: "₦" })}
+                      </Typography>
+                    </div>
+                  }
                 />
                 <FormControlLabel
                   value="Pickup"
                   control={<Radio />}
-                  label="Pick up from pharmacy"
+                  label={
+                    <div className="flex items-center justify-between w-full">
+                      <span>Pick up from pharmacy</span>
+                      <Typography variant="body2" color="text.secondary">
+                        Free
+                      </Typography>
+                    </div>
+                  }
                 />
               </RadioGroup>
             </FormControl>
@@ -479,8 +531,23 @@ const CheckoutPage = () => {
                   {currency(subtotal).format({ symbol: "₦" })}
                 </Typography>
               </div>
+              {isDelivery && (
+                <div className="flex flex-row justify-between">
+                  <Typography>Delivery Fee (Same-Day)</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {deliveryFeeLoading ? (
+                      "Calculating..."
+                    ) : (
+                      currency(deliveryFeeInNaira).format({ symbol: "₦" })
+                    )}
+                  </Typography>
+                </div>
+              )}
+              <Divider />
               <div className="flex flex-row justify-between">
-                <Typography>Total</Typography>
+                <Typography variant="h6" className="font-semibold!">
+                  Total
+                </Typography>
                 <Typography variant="h6" className="font-semibold!">
                   {currency(total).format({ symbol: "₦" })}
                 </Typography>

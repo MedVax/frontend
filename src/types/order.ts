@@ -92,6 +92,7 @@ export interface Order {
   guestPostalCode?: string | null;
   guestCountry?: string | null;
   totalAmount: number; // in minor currency units
+  deliveryFee: number; // in minor currency units
   currency: string;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;

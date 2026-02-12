@@ -11,7 +11,7 @@ const nunito = Nunito({
 
 export function AboutHero() {
     return (
-        <Box className="w-full bg-white py-20 sm:py-28">
+        <Box className="w-full bg-white py-10 sm:py-20">
             <Container maxWidth="md">
                 <Box className="flex flex-col items-center gap-4 text-center">
                     <Typography

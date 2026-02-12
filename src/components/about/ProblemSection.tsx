@@ -49,43 +49,6 @@ export function ProblemSection() {
                     >
                         Across Africa, people can order food, on-demand and get it delivered in minutes. yet still struggle to access essential medication in time.
                     </Typography>
-
-                    <Typography
-                        variant="h5"
-                        className={`${nunito.className} font-medium`}
-                        sx={{ fontSize: { xs: "20px", md: "24px" } }}
-                    >
-                        Delays in medication access result in:
-                    </Typography>
-                </Box>
-
-                <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {cards.map((card, index) => (
-                        <Card
-                            key={index}
-                            elevation={0}
-                            className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-xl"
-                            sx={{ backgroundColor: "#FDFDFD" }}
-                        >
-                            <Box className="w-12 h-12 rounded-full bg-[#e91d74] shrink-0" />
-
-                            <Box>
-                                <Typography
-                                    variant="h6"
-                                    className={`${nunito.className} font-semibold mb-3`}
-                                    sx={{ fontSize: "18px" }}
-                                >
-                                    {card.title}
-                                </Typography>
-                                <Typography
-                                    variant="body2"
-                                    className={`${nunito.className} text-gray-500 leading-relaxed`}
-                                >
-                                    {card.description}
-                                </Typography>
-                            </Box>
-                        </Card>
-                    ))}
                 </Box>
             </Shell>
         </Box>

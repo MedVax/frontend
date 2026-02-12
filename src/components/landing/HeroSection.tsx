@@ -62,6 +62,7 @@ export function HeroSection() {
                 </Button>
                 <Button
                   variant="white"
+                  onClick={() => router.push("/dashboard")}
                   sx={{ boxShadow: "0px 0px 18px 0px #0000000A" }}
                 >
                   Book Consultation

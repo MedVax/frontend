@@ -2,6 +2,7 @@
 
 import { TextField, Button, Divider } from "@mui/material";
 import { Icon } from "@iconify/react";
+import Link from "next/link";
 import { Shell } from "../ui";
 
 export function Footer() {
@@ -29,18 +30,29 @@ export function Footer() {
           <span className="font-medium text-base text-gray-950/50">MedVax</span>
           <div className="flex flex-col gap-3">
             {[
-              "Pharmacy",
-              "Consultation",
-              "ChatBot",
-              "Contact  Us",
-              "About Us",
-            ].map((link) => (
+              {
+                label: "Pharmacy",
+                href: "/products",
+              },
+              {
+                label: "Consultation",
+                href: "/consultation",
+              },
+              {
+                label: "Contact Us",
+                href: "/contact",
+              },
+              {
+                label: "About Us",
+                href: "/about",
+              },
+            ].map(({ label, href }) => (
               <a
-                key={link}
-                href="#"
+                key={label}
+                href={href}
                 className="font-medium text-base text-gray-950 hover:text-primary-500 transition-colors"
               >
-                {link}
+                {label}
               </a>
             ))}
           </div>
@@ -50,19 +62,24 @@ export function Footer() {
         <div className="flex flex-col gap-4">
           <span className="font-medium text-base text-gray-950/50">Legal</span>
           <div className="flex flex-col gap-3">
-            {[
-              "Privacy Policy",
-              "Terms & Condition",
-              "Refund &\nDelivery Policy",
-            ].map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="font-medium text-base text-gray-950 hover:text-primary-500 transition-colors whitespace-pre-line"
-              >
-                {link}
-              </a>
-            ))}
+            <Link
+              href="/privacy"
+              className="font-medium text-base text-gray-950 hover:text-primary-500 transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <a
+              href="/privacy"
+              className="font-medium text-base text-gray-950 hover:text-primary-500 transition-colors whitespace-pre-line"
+            >
+              Terms & Condition
+            </a>
+            <Link
+              href="/return-delivery-policy"
+              className="font-medium text-base text-gray-950 hover:text-primary-500 transition-colors whitespace-pre-line"
+            >
+              Refund &{'\n'}Delivery Policy
+            </Link>
           </div>
         </div>
 

@@ -7,9 +7,10 @@ import { BestSellingProducts } from "@/components/landing/BestSellingProducts";
 import { HealthcareSolutions } from "@/components/landing/HealthcareSolutions";
 import { WhoWeServe } from "@/components/landing/WhoWeServe";
 import { PartnersSection } from "@/components/landing/PartnersSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { FAQSection } from "@/components/landing/FAQSection";
 import { BlogCarousel } from "@/components/landing/BlogCarousel";
 import { CtaSection } from "@/components/landing/CtaSection";
-import { PartnerCtaSection } from "@/components/landing/PartnerCtaSection";
 import { Footer } from "@/components/landing/Footer";
 
 export default function LandingPage() {
@@ -22,9 +23,10 @@ export default function LandingPage() {
       <HealthcareSolutions />
       <WhoWeServe />
       <PartnersSection />
+      <TestimonialsSection />
       {/* <BlogCarousel /> */}
       <CtaSection />
-      <PartnerCtaSection />
+      <FAQSection />
       <Footer />
     </div>
   );

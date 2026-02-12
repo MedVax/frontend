@@ -3,6 +3,7 @@
 import { Box, Card, Typography } from "@mui/material";
 import { Shell } from "@/components/ui/shell";
 import { Nunito } from "next/font/google";
+import { Icon } from "@iconify/react";
 
 const nunito = Nunito({
     subsets: ["latin"],
@@ -14,38 +15,24 @@ const cards = [
     {
         title: "Pharmacist-Led Platform",
         description: "Built and overseen by licensed pharmacists who prioritize patient safety.",
+        icon: "solar:users-group-rounded-linear",
     },
     {
         title: "Verified Supply Chain",
         description: "We partner only with trusted, licensed pharmacies to reduce counterfeit medication risks.",
+        icon: "solar:shield-check-bold-duotone",
     },
     {
         title: "Speed With Responsibility",
         description: "Fast delivery without compromising ethical and regulatory standards.",
+        icon: "solar:rocket-2-bold-duotone",
     },
 ];
 
 export function WhyChooseSection() {
     return (
-        <Box className="bg-white py-16">
+        <Box className="bg-white">
             <Shell>
-                <Box className="flex flex-col items-center mb-12 text-center">
-                    <Typography
-                        variant="h3"
-                        className={`${nunito.className} font-semibold mb-2`}
-                        sx={{ fontSize: { xs: "28px", md: "36px" } }}
-                    >
-                        Why Choose
-                    </Typography>
-                    <Typography
-                        variant="h3"
-                        className={`${nunito.className} font-semibold`}
-                        sx={{ fontSize: { xs: "28px", md: "36px" } }}
-                    >
-                        Medvax Health
-                    </Typography>
-                </Box>
-
                 <Box className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {cards.map((card, index) => (
                         <Card
@@ -54,7 +41,14 @@ export function WhyChooseSection() {
                             className="p-8 h-full flex flex-col items-start gap-4 border border-gray-100 rounded-xl"
                             sx={{ backgroundColor: "#FFFFFF", boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.02)" }}
                         >
-                            <Box className="w-12 h-12 rounded-full bg-[#e91d74] shrink-0" />
+                            <Box className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center shrink-0">
+                                <Icon
+                                    icon={card.icon}
+                                    width={24}
+                                    height={24}
+                                    className="text-[#e91d74]"
+                                />
+                            </Box>
 
                             <Box>
                                 <Typography
@@ -74,7 +68,7 @@ export function WhyChooseSection() {
                         </Card>
                     ))}
                 </Box>
-            </Shell>
-        </Box>
+            </Shell >
+        </Box >
     );
 }

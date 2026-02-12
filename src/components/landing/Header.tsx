@@ -273,22 +273,11 @@ export function Header() {
                           setAnchorEl(null);
                           setActiveIndex(null);
                         }}
-                        className="w-full max-w-[591px] h-fit sm:h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50"
+                        className="w-full max-w-[591px] h-fit sm:h-[288px] bg-white shadow-lg border-b rounded-b-xl border-gray-100 animate-fadeIn z-50 scrollbar-hidden"
                       >
                         <div className="max-w-[1200px] mx-auto px-8 py-10">
-                          <div className="flex gap-12">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-6">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img
-                                  src="/assets/logo.svg"
-                                  alt="MedVax Logo"
-                                  className="w-[13px] h-[16px]"
-                                />
-                                <h3 className="text-lg font-medium text-black">
-                                  {category.name}
-                                </h3>
-                              </div>
+                          <div className="flex gap-12 scrollbar-hidden">
+                            <div className="flex-1 scrollbar-hidden">
                               <div className="grid grid-cols-2 gap-4">
                                 {category?.subCategories?.map((subCategory) => (
                                   <Link
