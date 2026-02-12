@@ -23,7 +23,7 @@ export function HeroSection() {
                     className="w-4 h-[14px]"
                   />
                   <Typography variant="body1">
-                    Trusted by 100k+ users
+                    Join 20k+ women and families who trust Medvax for their health needs
                   </Typography>
                 </div>
 
@@ -32,14 +32,14 @@ export function HeroSection() {
                     variant="h2"
                     className="font-semibold! leading-[103%]  text-center sm:text-left"
                   >
-                    E-Pharmacy & <br /> Consultation{" "}
+                    Teleconsultations and Same-day delivery of{" "}
                   </Typography>
                   <Typography
                     variant="h2"
                     color="primary"
                     className="font-semibold! text-black leading-[103%] tracking-[-2px] text-center sm:text-left"
                   >
-                    made easy
+                    prescriptions
                   </Typography>
                 </div>
 
@@ -47,9 +47,7 @@ export function HeroSection() {
                   color="text.secondary"
                   className="max-w-[451px] text-center sm:text-left"
                 >
-                  As a full-service pharmacy We connect people and healthcare
-                  providers with quality medications and solutions that improve
-                  health outcomes.
+                  A women-centric telemedicine platform, providing discreet services for Fertility, STIs| STDs, Post-abortion care, oncology, Period care, postnatal and sexual and reproductive healthcare needs.
                 </Typography>
               </div>
 

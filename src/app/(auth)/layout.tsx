@@ -14,7 +14,7 @@ export default function AuthLayout({
       <Shell component="section" className="my-20">
         <div className="grid grid-cols-1 sm:grid-cols-2">
           <div className="sm:flex hidden flex-col justify-center items-center gap-4 ">
-            <div className="grid grid-cols-2 gap-2 max-h-[300px] max-w-[300px] rounded-full overflow-hidden">
+            <div className="grid grid-cols-2 gap-2 max-h-[300px] w-full max-w-[300px] rounded-full overflow-hidden">
               <div className="row-span-2 w-full h-full rounded-xl overflow-hidden bg-gray-100">
                 <img
                   src="/assets/woman-baby.png"
