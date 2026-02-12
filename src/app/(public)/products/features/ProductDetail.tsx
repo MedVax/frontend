@@ -37,7 +37,7 @@ interface ProductDetailProps {
 
 const ProductDetail = ({ id }: ProductDetailProps) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [quantity, setQuantity] = useState(1);
+  const [localQuantity, setLocalQuantity] = useState(1);
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const isAuthenticated = authUser?.isAuthenticated;
@@ -78,6 +78,11 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     return cartItem?.quantity || 0;
   }, [cartItem]);
 
+  // Display quantity: use cart quantity if item is in cart, otherwise use local quantity
+  const displayQuantity = useMemo(() => {
+    return cartItem ? cartQuantity : localQuantity;
+  }, [cartItem, cartQuantity, localQuantity]);
+
   // Calculate available stock (total stock minus what's already in cart)
   const availableStock = useMemo(() => {
     if (!product) return 0;
@@ -92,20 +97,96 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     }).format(product.price / 100);
   }, [product]);
 
-  const handleQuantityChange = (delta: number) => {
+  const handleQuantityChange = async (delta: number) => {
     if (!product) return;
-    const newQuantity = quantity + delta;
-    // Use available stock (stockQuantity - cartQuantity) as the max
-    const maxQuantity = availableStock || 1;
-    const clampedQuantity = Math.max(1, Math.min(newQuantity, maxQuantity));
-    setQuantity(clampedQuantity);
 
-    // Show feedback if user tries to exceed available stock
-    if (newQuantity > maxQuantity && maxQuantity > 0) {
+    // Calculate new quantity based on current state
+    const currentQuantity = cartItem ? cartQuantity : localQuantity;
+    const newQuantity = currentQuantity + delta;
+
+    // For decrease, ensure it doesn't go below 1
+    if (delta < 0) {
+      if (newQuantity < 1) {
+        enqueueSnackbar("Quantity cannot be less than 1", { variant: "warning" });
+        return;
+      }
+
+      // If item is in cart, update cart directly
+      if (cartItem) {
+        try {
+          // If reducing to 0, we might want to remove from cart, but for now just set to 1
+          const finalQuantity = Math.max(1, newQuantity);
+          await updateCartItem({
+            path: { id: cartItem.id },
+            data: { quantity: finalQuantity },
+          }).unwrap();
+        } catch (error: unknown) {
+          const errorMessage =
+            (error as { data?: { message?: string } })?.data?.message ||
+            "Failed to update cart";
+          enqueueSnackbar(errorMessage, { variant: "error" });
+        }
+      } else {
+        // Not in cart, just update local quantity
+        setLocalQuantity(Math.max(1, newQuantity));
+      }
+      return;
+    }
+
+    // For increase, check stock availability
+    if (product.stockQuantity <= 0) {
+      enqueueSnackbar("Product is out of stock", { variant: "warning" });
+      return;
+    }
+
+    // Calculate max quantity based on available stock
+    const maxQuantity = cartItem
+      ? product.stockQuantity // If in cart, can go up to total stock
+      : availableStock > 0
+        ? availableStock
+        : product.stockQuantity;
+
+    if (newQuantity > maxQuantity) {
       enqueueSnackbar(
-        `Only ${maxQuantity} ${maxQuantity === 1 ? "item" : "items"} available`,
+        `Only ${maxQuantity} ${maxQuantity === 1 ? "item" : "items"} available${cartQuantity > 0 ? ` (${cartQuantity} already in cart)` : ""}`,
         { variant: "warning" }
       );
+      return;
+    }
+
+    // Update cart or local state
+    if (cartItem) {
+      // Item is in cart, update it directly
+      try {
+        await updateCartItem({
+          path: { id: cartItem.id },
+          data: { quantity: newQuantity },
+        }).unwrap();
+      } catch (error: unknown) {
+        const errorMessage =
+          (error as { data?: { message?: string } })?.data?.message ||
+          "Failed to update cart";
+        enqueueSnackbar(errorMessage, { variant: "error" });
+      }
+    } else {
+      // Item not in cart, add it with the new quantity
+      try {
+        await addCartItem({
+          data: {
+            productId: product.id,
+            quantity: newQuantity,
+          },
+        }).unwrap();
+        enqueueSnackbar(
+          `${newQuantity} ${newQuantity === 1 ? "item" : "items"} added to cart`,
+          { variant: "success" }
+        );
+      } catch (error: unknown) {
+        const errorMessage =
+          (error as { data?: { message?: string } })?.data?.message ||
+          "Failed to add to cart";
+        enqueueSnackbar(errorMessage, { variant: "error" });
+      }
     }
   };
 
@@ -117,6 +198,15 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
       return;
     }
 
+    // If item is already in cart, the quantity controls handle updates
+    // This button is mainly for adding initial quantity
+    if (cartItem) {
+      enqueueSnackbar("Item is already in cart. Use quantity controls to adjust.", {
+        variant: "info",
+      });
+      return;
+    }
+
     if (availableStock <= 0) {
       enqueueSnackbar(
         `All available stock (${product.stockQuantity}) is already in your cart`,
@@ -125,7 +215,7 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
       return;
     }
 
-    if (quantity > availableStock) {
+    if (localQuantity > availableStock) {
       enqueueSnackbar(
         `Only ${availableStock} ${availableStock === 1 ? "item" : "items"
         } available (${cartQuantity} already in cart)`,
@@ -135,40 +225,17 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     }
 
     try {
-      // If item is already in cart, update it; otherwise add new item
-      if (cartItem) {
-        const newTotalQuantity = cartQuantity + quantity;
-
-        // Check if the new total exceeds stock
-        if (newTotalQuantity > product.stockQuantity) {
-          enqueueSnackbar(
-            `Cannot add ${quantity} more. Total would exceed available stock of ${product.stockQuantity}`,
-            { variant: "warning" }
-          );
-          return;
-        }
-
-        await updateCartItem({
-          path: { id: cartItem.id },
-          data: { quantity: newTotalQuantity },
-        }).unwrap();
-        enqueueSnackbar(
-          `Cart updated: ${newTotalQuantity} ${newTotalQuantity === 1 ? "item" : "items"} in cart`,
-          { variant: "success" }
-        );
-      } else {
-        await addCartItem({
-          data: {
-            productId: product.id,
-            quantity,
-          },
-        }).unwrap();
-        enqueueSnackbar(
-          `${quantity} ${quantity === 1 ? "item" : "items"} added to cart`,
-          { variant: "success" }
-        );
-      }
-      setQuantity(1); // Reset quantity after adding
+      await addCartItem({
+        data: {
+          productId: product.id,
+          quantity: localQuantity,
+        },
+      }).unwrap();
+      enqueueSnackbar(
+        `${localQuantity} ${localQuantity === 1 ? "item" : "items"} added to cart`,
+        { variant: "success" }
+      );
+      setLocalQuantity(1); // Reset quantity after adding
     } catch (error: unknown) {
       const errorMessage =
         (error as { data?: { message?: string } })?.data?.message ||
@@ -257,7 +324,7 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     <Shell component="section" className="sm:my-20 my-10">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden sm:max-h-[400px] max-h-[200px] sm:max-w-[500px] max-w-[300px]">
+          <div className="w-full h-full bg-gray-100 rounded-lg overflow-hidden sm:max-h-[400px] max-h-[200px] sm:max-w-[500px] max-w-[500px]">
             <Image
               src={displayImages[selectedImageIndex]}
               alt={product.name}
@@ -376,7 +443,11 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
                 color="secondary"
                 variant="outlined"
                 onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1 || product.stockQuantity <= 0}
+                disabled={
+                  displayQuantity <= 1 ||
+                  isAddingToCart ||
+                  isUpdatingCart
+                }
                 size="small"
                 sx={{
                   border: "1px solid",
@@ -393,7 +464,7 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
                 <Icon icon="mdi:minus" fontSize={20} />
               </IconButton>
               <Typography variant="h6" className="min-w-[2rem] text-center">
-                {quantity}
+                {displayQuantity}
               </Typography>
               <IconButton
                 color="secondary"
@@ -401,8 +472,11 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
                 onClick={() => handleQuantityChange(1)}
                 disabled={
                   product.stockQuantity <= 0 ||
-                  availableStock <= 0 ||
-                  quantity >= availableStock
+                  (cartItem
+                    ? displayQuantity >= product.stockQuantity
+                    : availableStock <= 0 || displayQuantity >= availableStock) ||
+                  isAddingToCart ||
+                  isUpdatingCart
                 }
                 size="small"
                 sx={{
@@ -457,7 +531,8 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
                 isUpdatingCart ||
                 product.stockQuantity <= 0 ||
                 availableStock <= 0 ||
-                quantity > availableStock
+                localQuantity > availableStock ||
+                !!cartItem // Disable if already in cart (use quantity controls instead)
               }
               className="flex-1"
             >
