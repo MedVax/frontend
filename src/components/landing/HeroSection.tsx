@@ -23,7 +23,7 @@ export function HeroSection() {
                     className="w-4 h-[14px]"
                   />
                   <Typography variant="body1">
-                    Join 20k+ women and families who trust Medvax for their health needs
+                    Join 20k+ women and families
                   </Typography>
                 </div>
 
