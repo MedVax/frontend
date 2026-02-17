@@ -17,7 +17,7 @@ export function WhatsAppButton({ onClick, href }: WhatsAppButtonProps) {
   return (
     <IconButton
       component="a"
-      href="https://wa.me/2348123834240"
+      href="https://wa.me/2347067125522"
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}

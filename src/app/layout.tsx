@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/AppProviders";
+import { WhatsAppButtonFloater } from "@/components/ui/whatsapp-button-floater";
 import "./globals.css";
 import { nunito, dmSans } from "@/configs/font";
 import { siteConfig } from "@/configs/site";
@@ -48,7 +49,10 @@ export default function RootLayout({
         className={`${nunito.variable} ${dmSans.variable} antialiased`}
         style={{ fontFamily: "var(--font-nunito), sans-serif" }}
       >
-        <AppProviders>{children}</AppProviders>
+        <AppProviders>
+          {children}
+          <WhatsAppButtonFloater />
+        </AppProviders>
       </body>
     </html>
   );
