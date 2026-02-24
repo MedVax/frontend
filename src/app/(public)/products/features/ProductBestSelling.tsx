@@ -93,7 +93,7 @@ export function ProductBestSelling() {
                     price: new Intl.NumberFormat("en-NG", {
                       style: "currency",
                       currency: product.currency || "NGN",
-                    }).format(product.price / 100),
+                      }).format(product.price),
                     image: product.images?.[0] || "/assets/dummy-product.png",
                     isOutOfStock: product.stockQuantity <= 0,
                     favorite: false,
@@ -160,7 +160,7 @@ export function ProductBestSelling() {
               price: new Intl.NumberFormat("en-NG", {
                 style: "currency",
                 currency: product.currency || "NGN",
-              }).format(product.price / 100),
+                  }).format(product.price),
             }}
           />
         ))}

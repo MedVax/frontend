@@ -49,9 +49,9 @@ export async function generateMetadata({
   // Format price
   const price = product.price
     ? new Intl.NumberFormat("en-NG", {
-      style: "currency",
-      currency: product.currency || "NGN",
-    }).format(product.price / 100)
+        style: "currency",
+        currency: product.currency || "NGN",
+      }).format(product.price)
     : null;
 
   const imageUrl = product.images?.[0] || product.image || null;
@@ -96,7 +96,7 @@ export async function generateMetadata({
       canonical: `/products/${id}`,
     },
     other: {
-      ...(price && { "product:price:amount": String(product.price / 100) }),
+      ...(price && { "product:price:amount": String(product.price) }),
       ...(product.currency && { "product:price:currency": product.currency }),
       ...(product.sku && { "product:sku": product.sku }),
       ...(product.requiresPrescription !== undefined && {
@@ -125,12 +125,12 @@ export default async function Page({ params }: PageProps) {
       },
       offers: product.price
         ? {
-          "@type": "Offer",
-          price: product.price / 100,
-          priceCurrency: product.currency || "NGN",
-          availability: "https://schema.org/InStock",
-          url: `${BASE_URL || "https://staging.medvaxhealth.com"}/products/${id}`,
-        }
+            "@type": "Offer",
+            price: product.price,
+            priceCurrency: product.currency || "NGN",
+            availability: "https://schema.org/InStock",
+            url: `${BASE_URL || "https://staging.medvaxhealth.com"}/products/${id}`,
+          }
         : undefined,
       ...(product.category && {
         category: product.category.name,

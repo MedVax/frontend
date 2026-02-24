@@ -133,7 +133,7 @@ const ProductList = () => {
                       price: new Intl.NumberFormat("en-NG", {
                         style: "currency",
                         currency: product.currency || "NGN",
-                      }).format(product.price / 100),
+                      }).format(product.price),
                     }}
                   />
                 ))}

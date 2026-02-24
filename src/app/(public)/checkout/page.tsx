@@ -110,7 +110,7 @@ const CheckoutPage = () => {
 
   const subtotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const price = item.product.price / 100;
+      const price = item.product.price;
       return total + price * item.quantity;
     }, 0);
   }, [cartItems]);
@@ -488,7 +488,7 @@ const CheckoutPage = () => {
 
             <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
               {cartItems.map((item) => {
-                const productPrice = item.product.price / 100;
+                const productPrice = item.product.price;
                 const itemTotal = productPrice * item.quantity;
                 const productImage =
                   item.product.images && item.product.images.length > 0

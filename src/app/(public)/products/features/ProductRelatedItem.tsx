@@ -142,7 +142,7 @@ export function ProductRelatedItem({
               const formattedPrice = new Intl.NumberFormat("en-NG", {
                 style: "currency",
                 currency: product.currency || "NGN",
-              }).format(product.price / 100);
+              }).format(product.price);
 
               return (
                 <div

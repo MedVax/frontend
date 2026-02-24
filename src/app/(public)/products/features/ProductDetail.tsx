@@ -94,7 +94,7 @@ const ProductDetail = ({ id }: ProductDetailProps) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: product.currency || "NGN",
-    }).format(product.price / 100);
+    }).format(product.price);
   }, [product]);
 
   const handleQuantityChange = async (delta: number) => {
