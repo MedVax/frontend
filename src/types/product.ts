@@ -28,6 +28,7 @@ export interface Product {
   pharmacyAdvise?: string | null;
   specification?: string | null;
   isActive: boolean;
+  featured: boolean;
   stockQuantity: number;
   stockReserved: number;
   version: number;
