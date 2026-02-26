@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AppProviders } from "@/components/providers/AppProviders";
 import { WhatsAppButtonFloater } from "@/components/ui/whatsapp-button-floater";
+import { ChatbotPopover } from "@/components/ui/chatbot-popover";
 import "./globals.css";
 import { nunito, dmSans } from "@/configs/font";
 import { siteConfig } from "@/configs/site";
@@ -52,6 +53,7 @@ export default function RootLayout({
         <AppProviders>
           {children}
           <WhatsAppButtonFloater />
+          <ChatbotPopover />
         </AppProviders>
       </body>
     </html>

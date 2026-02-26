@@ -87,13 +87,13 @@ export function Header() {
     //   onClick: () => router.push("/consultation"),
     // },
     {
+      label: "Upload Prescription",
+      items: prescriptionMenuItems,
+    },
+    {
       label: "Blog",
       icon: <></>,
       onClick: () => router.push("/blog"),
-    },
-    {
-      label: "Upload Prescription",
-      items: prescriptionMenuItems,
     },
     {
       label: "Contact Us",

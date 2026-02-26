@@ -6,6 +6,7 @@ import {
   IconButton,
   Typography,
   CardContent,
+  useMediaQuery,
 } from "@mui/material";
 import { CartPlus, Heart } from "@solar-icons/react";
 import Image from "next/image";
@@ -35,6 +36,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const authUser = useAuthUser();
   const isAuthenticated = authUser?.isAuthenticated;
+  const isSmallScreen = useMediaQuery("(max-width:640px)");
 
   const [addCartItem, { isLoading: isAddingToCart }] = useAddCartItemMutation();
   const { data: cartData } = useGetCartQuery();
@@ -142,7 +144,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
               <Image
                 src={product.image}
                 alt={product.name}
-                className="h-[200px] w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                className="md:h-[200px] h-[130px] w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 width={180}
                 height={200}
               // priority
@@ -156,6 +158,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 className="absolute! top-4 right-4 z-10"
                 onClick={handleToggleFavorite}
                 onMouseDown={(e) => e.stopPropagation()}
+                size={isSmallScreen ? "small" : "medium"}
                 disabled={isAddingFavorite || isRemovingFavorite}
               >
                 <Heart
@@ -173,7 +176,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
                 onClick={handleAddToCart}
                 onMouseDown={(e) => e.stopPropagation()}
                 disabled={isAddingToCart || isOutOfStock || isStockFullyInCart}
-                size="large"
+                size={isSmallScreen ? "medium" : "large"}
               >
                 <CartPlus weight="Bold" size={20} className="text-white" />
               </IconButton>
