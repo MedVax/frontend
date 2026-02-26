@@ -93,7 +93,7 @@ export function ProductBestSelling() {
                     price: new Intl.NumberFormat("en-NG", {
                       style: "currency",
                       currency: product.currency || "NGN",
-                      }).format(product.price),
+                    }).format(product.price),
                     image: product.images?.[0] || "/assets/dummy-product.png",
                     isOutOfStock: product.stockQuantity <= 0,
                     favorite: false,
@@ -144,7 +144,7 @@ export function ProductBestSelling() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:hidden">
-        {products.slice(0, 6).map((product) => (
+        {products.slice(0, 8).map((product) => (
           <ProductItem
             key={product.id}
             product={{
@@ -160,7 +160,7 @@ export function ProductBestSelling() {
               price: new Intl.NumberFormat("en-NG", {
                 style: "currency",
                 currency: product.currency || "NGN",
-                  }).format(product.price),
+              }).format(product.price),
             }}
           />
         ))}
