@@ -47,7 +47,7 @@ export function HeroSection() {
                   color="text.secondary"
                   className="max-w-[451px] text-center sm:text-left"
                 >
-                  A women-centric telemedicine platform, providing discreet services for Fertility, STIs| STDs, Post-abortion care, oncology, Period care, postnatal and sexual and reproductive healthcare needs.
+                  A women-centric telemedicine platform, providing discreet services for Fertility, STIs| STDs, oncology, Period care, postnatal and sexual and reproductive healthcare needs.
                 </Typography>
               </div>
 
