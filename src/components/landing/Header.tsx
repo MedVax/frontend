@@ -177,9 +177,9 @@ export function Header() {
 
             {/* Right Actions */}
             <div className="flex items-center gap-4">
-              {!isSmallScreen && <div>
-                <MyAccountButton />
-              </div>}
+              {/* {!isSmallScreen && <div> */}
+              <MyAccountButton />
+              {/* </div>} */}
 
               <IconButton onClick={() => router.push("/cart")}>
                 <Badge badgeContent={cartItemCount} color="primary">
@@ -187,11 +187,11 @@ export function Header() {
                 </Badge>
               </IconButton>
 
-              {isSmallScreen && <IconButton onClick={() => router.push("/dashboard")}>
+              {/* {isSmallScreen && <IconButton onClick={() => router.push("/dashboard")}>
                 <User size={20} />
-              </IconButton>}
+              </IconButton>} */}
 
-              <WhatsAppButton />
+              {!isSmallScreen && <WhatsAppButton />}
             </div>
           </Toolbar>
 
