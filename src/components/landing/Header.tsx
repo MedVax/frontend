@@ -350,10 +350,10 @@ function MyAccountButton() {
     return (
       <Button
         variant="soft"
-        onClick={() => router.push("/signup")}
+        onClick={() => router.push("/signin")}
         startIcon={<User size={20} />}
       >
-        Create Account
+        Sign in
       </Button>
     );
   }
@@ -372,10 +372,10 @@ function MyAccountButton() {
       ) : (
         <Button
           variant="soft"
-          onClick={() => router.push("/signup")}
+          onClick={() => router.push("/signin")}
           startIcon={<User size={20} />}
         >
-          Create Account
+          Sign in
         </Button>
       )}
       <Menu

@@ -105,7 +105,7 @@ const CartPage = () => {
 
   const subtotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const price = item.product.price;
+      const price = item.product.price; // price is in Naira
       return total + price * item.quantity;
     }, 0);
   }, [cartItems]);
@@ -200,7 +200,7 @@ const CartPage = () => {
 
             <div className="flex flex-col gap-2 w-full mt-4">
               {cartItems.map((item) => {
-                const productPrice = item.product.price;
+                const productPrice = item.product.price; // price is in Naira
                 const itemTotal = productPrice * item.quantity;
                 const productImage =
                   item.product.images && item.product.images.length > 0

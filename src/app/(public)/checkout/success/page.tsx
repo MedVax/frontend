@@ -65,7 +65,7 @@ const CheckoutSuccess = () => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: currencyObj.code,
-    }).format(amount / 100);
+    }).format(amount);
   };
 
   const handleSetRecurring = async () => {

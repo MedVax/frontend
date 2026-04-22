@@ -86,7 +86,7 @@ const Watchlist = () => {
             const formattedPrice = new Intl.NumberFormat("en-NG", {
               style: "currency",
               currency: product.currency || "NGN",
-            }).format(product.price / 100);
+            }).format(product.price);
 
             return (
               <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={favorite.id}>

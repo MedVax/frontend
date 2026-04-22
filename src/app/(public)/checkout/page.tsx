@@ -110,7 +110,7 @@ const CheckoutPage = () => {
 
   const subtotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const price = item.product.price;
+      const price = item.product.price; // price is stored in Naira
       return total + price * item.quantity;
     }, 0);
   }, [cartItems]);
@@ -129,26 +129,22 @@ const CheckoutPage = () => {
 
   // Calculate delivery fee (same-day delivery)
   // Only calculate if "Delivery" is selected (not "Pickup")
-  const orderValueInKobo = Math.round(subtotal * 100);
   const isDelivery = selectedShippingMethod === "Delivery";
-  const { data: deliveryFeeData, isLoading: deliveryFeeLoading, error: deliveryFeeError } = useCalculateDeliveryFeeQuery(
+  const { data: deliveryFeeData, isLoading: deliveryFeeLoading } = useCalculateDeliveryFeeQuery(
     {
       params: {
-        orderValue: orderValueInKobo,
+        orderValue: subtotal,
         city: deliveryAddress?.city || undefined,
         state: deliveryAddress?.state || undefined,
       },
     },
     {
-      skip: subtotal === 0 || cartItems.length === 0 || !isDelivery, // Skip if cart is empty or pickup is selected
+      skip: subtotal === 0 || cartItems.length === 0 || !isDelivery,
     }
   );
 
-  // Extract delivery fee from response (default to 1000 Naira = 100000 kobo if not available)
-  // Set to 0 if pickup is selected
-  // Response structure: { data: { deliveryFee, ... } } (RTK Query unwraps ServerResponse)
-  const deliveryFee = isDelivery ? (deliveryFeeData?.data?.deliveryFee ?? 100000) : 0; // No fee for pickup
-  const deliveryFeeInNaira = deliveryFee / 100;
+  // deliveryFee from API is in Naira. Default to ₦1,000 if not available. 0 for pickup.
+  const deliveryFeeInNaira = isDelivery ? (deliveryFeeData?.data?.deliveryFee ?? 1000) : 0; // already in Naira
   const total = subtotal + deliveryFeeInNaira;
 
   const handlePlaceOrder = async (orderData: Partial<CreateOrderRequest>) => {
@@ -164,7 +160,7 @@ const CheckoutPage = () => {
         paymentMethod: "paystack",
         isRecurring: isRecurring,
         recurringFrequency: isRecurring ? recurringFrequency : undefined,
-        deliveryFee: deliveryFee,
+        deliveryFee: deliveryFeeInNaira,
       };
 
       if (isAuthenticated && !orderData.guestInfo) {
@@ -488,7 +484,7 @@ const CheckoutPage = () => {
 
             <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
               {cartItems.map((item) => {
-                const productPrice = item.product.price;
+                const productPrice = item.product.price; // price is in Naira
                 const itemTotal = productPrice * item.quantity;
                 const productImage =
                   item.product.images && item.product.images.length > 0

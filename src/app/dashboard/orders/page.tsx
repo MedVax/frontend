@@ -182,7 +182,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
     };
 
     const formatPrice = (amount: number) => {
-        return currency(amount / 100).format({ symbol: "₦" });
+        return currency(amount).format({ symbol: "₦" });
     };
 
     return (

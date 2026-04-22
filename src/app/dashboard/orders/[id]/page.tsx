@@ -68,7 +68,7 @@ const OrderDetails = () => {
         return new Intl.NumberFormat("en-NG", {
             style: "currency",
             currency: currency.code,
-        }).format(amount / 100);
+        }).format(amount);
     };
 
     const getStatusColor = (
