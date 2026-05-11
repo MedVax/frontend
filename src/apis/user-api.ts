@@ -45,7 +45,7 @@ const userApi = medvaxApi.injectEndpoints({
       QueryRequest<{ email: string }, void, void>
     >({
       query: ({ ...config }) => ({
-        url: TAG + "/password/forgot",
+        url: "/auth/password/forgot",
         method: "POST",
         ...config,
       }),
@@ -60,7 +60,7 @@ const userApi = medvaxApi.injectEndpoints({
       >
     >({
       query: ({ ...config }) => ({
-        url: TAG + "/password/reset",
+        url: "/auth/password/reset",
         method: "PUT",
         ...config,
       }),
@@ -79,7 +79,7 @@ const userApi = medvaxApi.injectEndpoints({
       >
     >({
       query: ({ ...config }) => ({
-        url: TAG + "/password/change",
+        url: "/auth/password/change",
         method: "PUT",
         ...config,
       }),
