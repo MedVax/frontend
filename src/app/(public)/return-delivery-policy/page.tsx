@@ -444,7 +444,7 @@ export default function ReturnDeliveryPolicyPage() {
                             <li>
                                 <strong>WhatsApp:</strong>{" "}
                                 <a
-                                    href="https://wa.me/2348123834240"
+                                    href="https://wa.me/2347067125522"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-primary-500 hover:underline"

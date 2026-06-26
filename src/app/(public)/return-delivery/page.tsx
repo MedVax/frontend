@@ -251,7 +251,7 @@ export default function ReturnDeliveryPolicyPage() {
                   </a>{" "}
                   or call{" "}
                   <a
-                    href="tel:+2348123834240"
+                    href="tel:+2347067125522"
                     className="text-primary-500 hover:underline"
                   >
                     +234 812 383 4240
@@ -379,7 +379,7 @@ export default function ReturnDeliveryPolicyPage() {
               <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                 <li>
                   Refunds are typically processed within <strong>5-10 business
-                  days</strong> after we receive the returned item(s)
+                    days</strong> after we receive the returned item(s)
                 </li>
                 <li>
                   For cancelled orders (before shipment), refunds are processed
@@ -560,7 +560,7 @@ export default function ReturnDeliveryPolicyPage() {
               <li>
                 Phone:{" "}
                 <a
-                  href="tel:+2348123834240"
+                  href="tel:+2347067125522"
                   className="text-primary-500 hover:underline"
                 >
                   +234 812 383 4240
