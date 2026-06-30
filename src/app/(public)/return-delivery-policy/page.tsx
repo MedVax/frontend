@@ -228,7 +228,7 @@ export default function ReturnDeliveryPolicyPage() {
                                     >
                                         support@medvaxhealth.com
                                     </a>{" "}
-                                    or call +234 812 383 4240 with your order number.
+                                    or call +234 706 712 5522 with your order number.
                                 </li>
                                 <li>
                                     Provide your order number, reason for return, and photos (if
@@ -439,7 +439,7 @@ export default function ReturnDeliveryPolicyPage() {
                                 </a>
                             </li>
                             <li>
-                                <strong>Phone:</strong> +234 812 383 4240 (Mon-Fri, 9am-6pm)
+                                <strong>Phone:</strong> +234 706 712 5522 (Mon-Fri, 9am-6pm)
                             </li>
                             <li>
                                 <strong>WhatsApp:</strong>{" "}

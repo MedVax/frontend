@@ -116,7 +116,7 @@ export function Footer() {
             Contact Us
           </span>
           <span className="font-medium text-base text-black">
-            +234 812 383 4240
+            +234 706 712 5522
           </span>
         </div>
 

@@ -254,7 +254,7 @@ export default function ReturnDeliveryPolicyPage() {
                     href="tel:+2347067125522"
                     className="text-primary-500 hover:underline"
                   >
-                    +234 812 383 4240
+                    +234 706 712 5522
                   </a>{" "}
                   within the return eligibility period
                 </li>
@@ -563,7 +563,7 @@ export default function ReturnDeliveryPolicyPage() {
                   href="tel:+2347067125522"
                   className="text-primary-500 hover:underline"
                 >
-                  +234 812 383 4240
+                  +234 706 712 5522
                 </a>
               </li>
               <li>Business Hours: Monday - Friday, 8:00 AM - 6:00 PM (WAT)</li>

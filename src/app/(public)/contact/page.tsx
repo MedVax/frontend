@@ -110,7 +110,7 @@ export default function ContactPage() {
                                         <Icon icon="solar:phone-calling-bold-duotone" width={24} className="text-gray-400 mt-1 shrink-0" />
                                         <div>
                                             <Typography variant="subtitle2" className="text-gray-900 font-semibold">Phone</Typography>
-                                            <Typography variant="body2" className="text-gray-600">+234 812 383 4240</Typography>
+                                            <Typography variant="body2" className="text-gray-600">+234 706 712 5522</Typography>
                                             <Typography variant="caption" className="text-gray-500">Mon-Fri 9am-6pm</Typography>
                                         </div>
                                     </div>
