@@ -111,8 +111,9 @@ export function Header() {
     name: category.name,
     image: category.image,
     subCategories: category.children?.map((child) => ({
+      id: child.id,
       name: child.name,
-      href: `/category/${child.slug}`,
+      href: `/products?categoryId=${child.id}`,
     })),
   }));
 
@@ -281,7 +282,7 @@ export function Header() {
                               <div className="grid grid-cols-2 gap-4">
                                 {category?.subCategories?.map((subCategory) => (
                                   <Link
-                                    key={subCategory.name}
+                                    key={subCategory.id}
                                     href={subCategory.href}
                                     className="text-sm text-gray-600 hover:text-gray-600/80 transition-colors duration-200 py-1"
                                   >

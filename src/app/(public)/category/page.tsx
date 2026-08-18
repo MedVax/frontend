@@ -4,6 +4,7 @@ import categoryApi from "@/apis/category-api";
 import LoadingContent from "@/common/loading-content";
 import { Shell } from "@/components/ui";
 import { Skeleton, Typography } from "@mui/material";
+import Link from "next/link";
 import { Suspense } from "react";
 
 
@@ -30,7 +31,11 @@ const page = () => {
             <LoadingContent loading={getCategories.isLoading} error={getCategories.error} renderLoading={() => <CategoryLoading />}>
                 <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 mt-20">
                     {getCategories.data?.data.map((category) => (
-                        <div key={category.id} className="bg-white p-4 flex flex-col items-center gap-2">
+                        <Link
+                            key={category.id}
+                            href={`/products?categoryId=${category.id}`}
+                            className="bg-white p-4 flex flex-col items-center gap-2 transition-shadow duration-200 hover:shadow-md"
+                        >
                             <div className="flex items-center gap-2 rounded-full overflow-hidden p-2 bg-gray-100 w-fit">
                                 <img
                                     src={category.image || ""}
@@ -39,7 +44,7 @@ const page = () => {
                                 />
                             </div>
                             <Typography variant="body1" className="text-center font-semibold!">{category.name}</Typography>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </LoadingContent>
