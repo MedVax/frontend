@@ -594,3 +594,25 @@ body {
 }
 
 /* End Horizontal scrollbar */
+
+/*
+ * iOS Safari zooms the whole page whenever a control it focuses renders text
+ * below 16px, and never zooms back out. The outlined MUI fields already sit at
+ * 1rem, but native inputs and selects fall back to the 13px typography base and
+ * shove the layout sideways on an iPhone - most painfully mid-checkout.
+ *
+ * 16px on touch pointers is the only fix that keeps pinch-zoom working;
+ * `maximum-scale=1` on the viewport would also stop it, by taking zoom away
+ * from people who need it.
+ */
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea,
+  .MuiInputBase-root,
+  .MuiInputBase-input,
+  .MuiSelect-select,
+  .MuiNativeSelect-select {
+    font-size: 16px !important;
+  }
+}
